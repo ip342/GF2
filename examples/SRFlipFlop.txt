@@ -1,36 +1,20 @@
 DEVICES [
-    A, B, C, D = DTYPE;
-   RST, ST = SWITCH 0;
-   CKL1 = CLOCK 1;
+    A, B = NAND;
+    S1, S2 = SWITCH;
+    A, B have 2 inputs;
 ]
 
 CONNECTIONS [
-   device A {
-       A.QBAR -> A.DATA;
-       RST -> A.CLEAR;
-       ST -> A.SET;
-       CKL1 -> A.CLK;
-   }
-   device B {
-       B.QBAR -> B.DATA;
-       RST -> B.CLEAR;
-       ST -> B.SET;
-       A.Q -> B.CLK;
-   }
-   device C {
-       C.QBAR -> C.DATA;
-       RST -> C.CLEAR;
-       ST -> C.SET;
-       B.Q -> C.CLK;
-   }
-   device D {
-       D.QBAR -> D.DATA;
-       RST -> D.CLEAR;
-       ST -> D.SET;
-       C.Q -> D.CLK;
-   }
+    device A {
+        S1 -> A.I1;
+        B -> A.I2;
+    }
+    device B {
+       A -> B.I1;
+       S2 -> B.I2;
+    }
 ]
 
 MONITOR [
-   A.Q, B.Q, C.Q, D.Q, CKL1;
+    A, B;
 ]
