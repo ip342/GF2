@@ -12,6 +12,7 @@ connection = signame , "->" , signame , ";";
 
 signame = name , ["." , name];
 
-devices_type = ("DTYPE" | "NAND" | "NOR" | "XOR" | "AND" | "OR" | clock | switch );
+devices_type = ( gates| clock | switch );
+gates = ("DTYPE" | "NAND" | "NOR" | "XOR" | "AND" | "OR") , "," , digit; 
 clock = "CLOCK" , digit;
 switch = "SWITCH" , (0 | 1);
