@@ -2,8 +2,8 @@ circuit = device_list , connect_list , monitor_list , "//";
 
 comments = "#", {letter|digit}, "#";
 
-device_list = "DEVICES" , "[" , device , ";" , {"," , device , ";"} , "]";
-connect_list = "CONNECTIONS" , "[" , device_connections , ";" , {"," , device_connections , ";"} , "]";
+device_list = "DEVICES" , "[" , device , {"," , device} , "]";
+connect_list = "CONNECTIONS" , "[" , device_connections , {"," , device_connections} , "]";
 monitor_list = "MONITORS" , "[" , name , {"," , name} , ";" "]";
 
 device = name , {"," , name} , "=" , devices_type , ";";
