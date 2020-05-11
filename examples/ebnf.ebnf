@@ -1,0 +1,17 @@
+circuit = device_list , connect_list , monitor_list , "//";
+
+comments = "#", {letter|digit}, "#";
+
+device_list = "DEVICES" , "[" , device , ";" , {"," , device , ";"} , "]";
+connect_list = "CONNECTIONS" , "[" , device_connections , ";" , {"," , device_connections , ";"} , "]";
+monitor_list = "MONITORS" , "[" , name , {"," , name} , ";" "]";
+
+device = name , {"," , name} , "=" , device_type , ";"
+device_connections = "device" , name , "{" , connection , {connection};
+connection = signame , "->" , signame , ";"; 
+
+signame = name , ["." , name];
+
+devices_type = ("DTYPE" | "NAND" | "NOR" | "XOR" | "AND" | "OR" | clock | switch );
+clock = "CLOCK" , digit;
+switch = "SWITCH" , (0 | 1);
