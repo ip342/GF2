@@ -13,7 +13,7 @@ import random
 
 class Device:
 
-    """Store device properties. *TEST GIT*
+    """Store device properties.
 
     Parameters
     ----------
