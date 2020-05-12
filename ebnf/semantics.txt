@@ -1,0 +1,8 @@
+A device must be initialised before being able to call any conections to it.
+
+The device must be of the right gate type to be able to use specific connections such as .QBAR for DTYPE.
+
+Connections may only be made to a device if that device has enough inputs, as defined in DEVICES.
+
+The name to the left of the connections arrow -> must be a device output, and that to the right must be a device input.
+
