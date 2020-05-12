@@ -4,7 +4,7 @@ comments = "#", {letter|digit}, "#";
 
 device_list = "DEVICES" , "[" , device , {"," , device} , "]";
 connect_list = "CONNECTIONS" , "[" , device_connections , {"," , device_connections} , "]";
-monitor_list = "MONITORS" , "[" , name , {"," , name} , ";" "]";
+monitor_list = "MONITORS" , "[" , ( name | "all" ) , {"," , name} , ";" "]";
 
 device = name , {"," , name} , "=" , devices_type , ";";
 device_connections = "device" , name , "{" , connection , {connection} , "}";
