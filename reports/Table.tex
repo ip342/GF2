@@ -1,0 +1,52 @@
+\documentclass[11pt]{article}
+\usepackage{geometry}
+\geometry{a4paper}              
+\usepackage[parfill]{parskip}   
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{blindtext}
+\usepackage{enumitem}
+\usepackage{epstopdf}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{minted}
+
+\usepackage{xparse}
+
+\NewDocumentCommand{\codeword}{v}{%
+\texttt{\textcolor{black}{#1}}%
+}
+
+\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}                                   
+
+\begin{document}
+
+\begin{center}
+\begin{table}[]
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{TASK} 					& \multicolumn{1}{c|}{\textbf{TEAM MEMBER}} 	& \multicolumn{1}{c|}{\textbf{DEADLINE}} \\ \hline
+EBNF for syntax 				& \multicolumn{1}{c|}{Group} 				& \multicolumn{1}{c|}{17/05/20} \\
+Identification of semantic errors 	& \multicolumn{1}{c|}{Group}				& \multicolumn{1}{c|}{17/05/20} \\
+Error handling 					& \multicolumn{1}{c|}{Group} 				& \multicolumn{1}{c|}{17/05/20} \\
+Example definition files 			& \multicolumn{1}{c|}{Group} 				& \multicolumn{1}{c|}{17/05/20} \\
+\textbf{First interim report} 		& \multicolumn{1}{c|}{\textbf{Group}} 			& \multicolumn{1}{c|}{\textbf{17/05/20}} \\
+\codeword{names.py} 			& \multicolumn{1}{c|}{Ilakya} 				& \multicolumn{1}{c|}{22/05/20} \\
+\codeword{scanner.py} 			& \multicolumn{1}{c|}{Ethan} 				& \multicolumn{1}{c|}{22/05/20} \\
+\codeword{parser.py} 			& \multicolumn{1}{c|}{Chang \& Ethan} 		& \multicolumn{1}{c|}{22/05/20} \\
+\codeword{names.py} pytests 		& \multicolumn{1}{c|}{Ethan} 				& \multicolumn{1}{c|}{29/05/20} \\
+\codeword{scanner.py} pytests 		& \multicolumn{1}{c|}{Chang} 				& \multicolumn{1}{c|}{29/05/20} \\
+\codeword{parser.py} pytests 		& \multicolumn{1}{c|}{Ilakya} 				& \multicolumn{1}{c|}{29/05/20} \\
+Integration 					& \multicolumn{1}{c|}{Ethan} 				& \multicolumn{1}{c|}{29/05/20} \\
+GUI 							&  \multicolumn{1}{c|}{Ilakya \& Ethan} 		& \multicolumn{1}{c|}{29/05/20} \\
+GUI pytests 					& \multicolumn{1}{c|}{Chang} 				& \multicolumn{1}{c|}{29/05/20} \\
+User guide 					&\multicolumn{1}{c|}{Individual} 			& \multicolumn{1}{c|}{29/05/20} \\
+\textbf{Second interim report} 		& \multicolumn{1}{c|}{\textbf{Individual}} 		& \multicolumn{1}{c|}{\textbf{29/05/20}} \\
+Maintenance 					& \multicolumn{1}{c|}{Group} 				& \multicolumn{1}{c|}{04/05/20} \\
+\textbf{Final report} 				& \multicolumn{1}{c|}{\textbf{Individual}} 		& \multicolumn{1}{c|}{\textbf{04/06/20}} \\ \hline
+\end{tabular}
+\end{table}
+\end{center}
+
+\end{document}  
