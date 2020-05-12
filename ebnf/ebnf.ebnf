@@ -1,7 +1,5 @@
 circuit = device_list , connect_list , monitor_list , "//";
 
-comments = "#", {letter|digit}, "#";
-
 device_list = "DEVICES" , "[" , device , {"," , device} , "]";
 connect_list = "CONNECTIONS" , "[" , device_connections , {"," , device_connections} , "]";
 monitor_list = "MONITORS" , "[" , ( name | "all" ) , {"," , name} , ";" "]";
@@ -15,7 +13,7 @@ dtype = "DTYPE";
 single_gate = ("NAND" | "NOR" | "AND" | "OR") , digit , [digit], ("input" | "inputs");
 xor_gate = "XOR";
 clock = "CLOCK" , digit , ("cycle" | "cycles");
-switch = "SWITCH" , (0 | 1);
+switch = "SWITCH" , ("0" | "1");
 
 start_con = name , ["." , ("QBAR" | "Q")];
 end_con = name , "." , (( "I" , digit , [digit] ) | "SET" | "CLK" | "CLEAR" | "DATA" );
