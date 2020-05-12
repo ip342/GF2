@@ -16,5 +16,4 @@ CONNECTIONS [
 
 MONITOR [
    G1, G2;
-]
-//
+] //
