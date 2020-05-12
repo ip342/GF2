@@ -1,0 +1,7 @@
+Errors will be raised as soon as they are found during the parsing of the definition file.
+
+Parsing will be able to resume continuing from the next punctuation symbol (;).
+
+Develop custom error handling messages to return to the user for all syntax and semantic errors.
+
+Error message should include a caret that points to the location of the error in the definition file.
