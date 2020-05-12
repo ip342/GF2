@@ -33,4 +33,4 @@ CONNECTIONS [
 
 MONITOR [
    A.Q, B.Q, C.Q, D.Q, CKL1;
-]
+]//
