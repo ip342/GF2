@@ -1,0 +1,60 @@
+DEVICES [ 
+    A = XOR 2 inputs;
+    B, G = AND 2 inputs;
+    C = NAND 2 inputs;
+    D, H = OR 2 inputs;
+    E = NOR 3 inputs;
+    F = DTYPE;
+    S1, S3 = SWTICH 0;
+    S2 = SWITCH 1;
+    CLK = CLOCK 1 cycle;
+]
+
+CONNECTIONS [
+    device A {
+        S2 -> A.I1;
+        S1 -> A.I2;
+    }
+
+    device B {
+        S1 -> B.I1;
+        S3 -> B.I2;
+    }
+
+    device C {
+        B -> C.I1;
+        S3 -> C.I2
+    }
+
+    device D {
+        A -> D.I1;
+        B -> D.I2;
+    }
+    
+    device E {
+        S2 -> E.I1;
+        D -> E.I2;
+        C -> E.I3;
+    }
+
+    device F {
+        S2 -> F.DATA;
+        CLK -> F.CLK;
+        C -> F.CLEAR;
+        D -> F.SET;
+    }
+
+    device G {
+        E -> G.I1;
+        F.Q -> G.I2;
+    }
+
+    device H {
+        F.QBAR -> H.I1;
+        C -> H.I2;
+    }
+]
+
+MONITOR [
+    CLK, G, H;
+]
