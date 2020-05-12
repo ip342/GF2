@@ -10,9 +10,10 @@ device = name , {"," , name} , "=" , devices_type , ";";
 device_connections = "device" , name , "{" , connection , {connection} , "}";
 connection = start_con , "->" , end_con , ";"; 
 
-devices_type = ( dtype | single_gate | clock | switch );
-dtype = "DTYPE" ; 
-single_gate = ("NAND" | "NOR" | "XOR" | "AND" | "OR") , digit , [digit], ("input" | "inputs");
+devices_type = ( dtype | xor_gate | single_gate | clock | switch );
+dtype = "DTYPE"; 
+single_gate = ("NAND" | "NOR" | "AND" | "OR") , digit , [digit], ("input" | "inputs");
+xor_gate = "XOR";
 clock = "CLOCK" , digit , ("cycle" | "cycles");
 switch = "SWITCH" , (0 | 1);
 
