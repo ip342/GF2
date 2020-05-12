@@ -17,4 +17,4 @@ CONNECTIONS [
 
 MONITOR [
     A, B;
-]//
+] //
