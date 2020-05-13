@@ -17,7 +17,7 @@ from devices import Devices
 from network import Network
 from monitors import Monitors
 from scanner import Scanner
-from parser import Parser
+from parse import Parser
 
 
 class MyGLCanvas(wxcanvas.GLCanvas):
