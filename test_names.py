@@ -26,7 +26,7 @@ def used_names(name_string_list):
 
 
 def test_get_string_raises_exceptions(used_names):
-    """Test if get_string raises expected exceptions."""
+    """Test if get_name_string raises expected exceptions."""
     with pytest.raises(TypeError):
         used_names.get_name_string(1.4)
     with pytest.raises(TypeError):
@@ -42,7 +42,7 @@ def test_get_string_raises_exceptions(used_names):
     (3, None)
 ])
 def test_get_string(used_names, new_names, name_id, expected_string):
-    """Test if get_string returns the expected string."""
+    """Test if get_name_string returns the expected string."""
     # Name is present
     assert used_names.get_name_string(name_id) == expected_string
     # Name is absent
