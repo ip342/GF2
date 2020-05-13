@@ -9,8 +9,6 @@ Classes
 Parser - parses the definition file and builds the logic network.
 """
 
-"Ilakya branch test"
-
 class Parser:
 
     """Parse the definition file and build the logic network.
