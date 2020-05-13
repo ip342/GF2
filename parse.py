@@ -46,15 +46,9 @@ class Parser:
         # For now just return True, so that userint and gui can run in the
         # skeleton code. When complete, should return False when there are
         # errors in the circuit definition file.
-<<<<<<< HEAD:parse.py
         # while True:
         #     # Gets next symbol from definition file
         #     self.symbol = self.scanner.get_symbol()
-=======
-        
-        while True:
-            self.symbol = self.scanner.get_symbol()
->>>>>>> 204f4893e341632390a270f1431b66f8c69d2074:parser.py
 
         #     if self.symbol.type == 1:
         #         pass
