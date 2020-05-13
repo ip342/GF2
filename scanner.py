@@ -52,5 +52,11 @@ class Scanner:
     def __init__(self, path, names):
         """Open specified file and initialise reserved words and IDs."""
 
+        try:
+            self.input_file = open(path, 'r')
+        except FileNotFoundError:
+            raise FileNotFoundError('Error: No such file in current directory')
+            sys.exit()
+
     def get_symbol(self):
         """Translate the next sequence of characters into a symbol."""
