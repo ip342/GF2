@@ -41,6 +41,7 @@ class Names:
     def __init__(self):
         """Initialise names list."""
         self.error_code_count = 0  # how many error codes have been declared
+        self.names = []
 
     def unique_error_codes(self, num_error_codes):
         """Return a list of unique integer error codes."""
@@ -66,8 +67,7 @@ class Names:
         If the name string is not present in the names list, add it.
         """
         if type(name_string_list) is not list:
-            raise TypeError("Error! Lookup argument must be a list."
-                            .format(name_id))
+            raise TypeError("Error! Lookup argument must be a list.")
         name_id_list = []
         for name_string in name_string_list:
             if name_string not in self.names:
@@ -81,8 +81,8 @@ class Names:
         If the name_id is not an index in the names list, return None.
         """
         if name_id < 0:
-        raise ValueError("Error! {} is not a valid name ID."
-                         .format(name_id))
+            raise ValueError("Error! {} is not a valid name ID."
+                             .format(name_id))
         try:
             return self.names[name_id]
         except IndexError:
