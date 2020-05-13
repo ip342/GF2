@@ -35,9 +35,32 @@ class Parser:
     def __init__(self, names, devices, network, monitors, scanner):
         """Initialise constants."""
 
+        self.names = names
+        self.devices = devices
+        self.network = network
+        self.monitors = monitors
+        self.scanner = scanner
+
     def parse_network(self):
         """Parse the circuit definition file."""
         # For now just return True, so that userint and gui can run in the
         # skeleton code. When complete, should return False when there are
         # errors in the circuit definition file.
+        while True:
+            self.symbol = self.scanner.get_symbol()
+
         return True
+
+    def parse_section(self):
+        pass
+
+    def parse_DEVICES_section(self):
+        pass
+
+    def parse_CONNECTIONS_section(self):
+        pass
+
+    def parse_MONITORS_section(self):
+        pass
+
+    
