@@ -284,3 +284,12 @@ class Gui(wx.Frame):
         text_box_value = self.text_box.GetValue()
         text = "".join(["New text box value: ", text_box_value])
         self.canvas.render(text)
+
+
+    def TemporaryThingSoICanUseClassAttributesInParser(self):
+        self.names = Names()
+        self.devices = Devices(self.names)
+        self.network = Network(self.names, self.devices)
+        self.monitors = Monitors(self.names, self.devices, self.network)
+        self.scanner = Scanner(self.input_text.GetValue(), self.names, True)
+        self.parser = Parser(self.names, self.devices, self.network, self.monitors, self.scanner)
