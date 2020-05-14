@@ -69,10 +69,11 @@ class Scanner:
         
         # Initialise symbol types
         self.names = names
-        self.symbol_list = [self.HEADER, self.PARAMETER, self.NAME, self.EQUALS, self.COMMA, self.OPEN_SQUARE, self.CLOSE_SQUARE, self.EQUALS, self.SEMICOLON, self.ARROW, self.DOT, self.OPEN_CURLY, self.CLOSE_CURLY, self.HASH, self.EOF]
+        self.symbol_list = [self.HEADER, self.PARAMETER, self.NAME, self.EQUALS, self.COMMA, self.OPEN_SQUARE,
+        self.CLOSE_SQUARE, self.SEMICOLON, self.ARROW, self.DOT, self.OPEN_CURLY, self.CLOSE_CURLY, self.HASH, self.EOF] = range(14)
 
-        self.header_list = ['DEVICES', 'CONNECTIONS', 'MONITOR']
-        [self.DEVICES_ID, self.CONNECTIONS_ID, self.MONITOR_ID] = self.names.lookup(self.header_list)
+        self.header_list = ['DEVICES', 'CONNECTIONS', 'MONITORS']
+        [self.DEVICES_ID, self.CONNECTIONS_ID, self.MONITORS_ID] = self.names.lookup(self.header_list)
 
         self.parameter_list = ['cycle', 'cycles', 'input', 'inputs']
         [self.CYCLE, self.CYCLES, self.INPUT, self.INPUTS] = self.names.lookup(self.parameter_list)
@@ -88,3 +89,17 @@ class Scanner:
 
     def get_symbol(self):
         """Translate the next sequence of characters into a symbol."""
+        
+        symbol = Symbol()
+        # Go to current non whitespace character
+        self.skip_spaces()
+        
+        if self.current_character.isalpha(): #name
+            name_string = self.get_name()
+            if name_string.upper() in self.header_list:
+                symbol.type = self.HEADER
+                symbol.id = self.names.query(self.name_string.upper())
+            elif name_string.lower() in self.parameter_list:
+                symbol.type = self.PARAMETER
+                symbol.id = self.names.query(self.name_string.lower())
+            elif
