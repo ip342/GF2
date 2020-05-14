@@ -111,6 +111,7 @@ class Parser:
         
 
         # FIND connection DEVICE 
+        pass
 
     def parse_MONITORS_section(self):
 
