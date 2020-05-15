@@ -1,27 +1,20 @@
-DEVICES [
-   A, B, C, D = DTYPE;
-   RST, ST = SWITCH 0;
-   CKL1 = CLOCK 1 cycle;
-]
-
-CONNECTIONS [
-   device A {
-       A.QBAR -> A.DATA;
-       RST -> A.CLEAR;
-       ST -> A.SET;
-       CKL1 -> A.CLK;
-   }
-   device B {
-       B.QBAR -> B.DATA;
-       RST -> B.CLEAR;
-       ST -> B.SET;
-       A.Q -> B.CLK;
-   }
-   device C {
-       C.QBAR -> C.DATA;
-       RST -> C.CLEAR;
-       ST -> C.SET;
-       B.Q -> C.CLK;
+DEVICES[A,B,C,D=DTYPE;RSTST=SWITCH0;CKL1=CLOCK1cycle;]CONNECTIONS[deviceA{
+A.QBAR -> A.DATA;
+RST -> A.CLEAR;
+ST -> A.SET;
+CKL1 -> A.CLK;
+}
+device B {
+B.QBAR -> B.DATA;
+RST -> B.CLEAR;
+ST -> B.SET;
+A.Q -> B.CLK;
+}
+device C {
+C.QBAR -> C.DATA;
+RST -> C.CLEAR;
+ST -> C.SET;
+B.Q -> C.CLK;
    }
    device D {
        D.QBAR -> D.DATA;
