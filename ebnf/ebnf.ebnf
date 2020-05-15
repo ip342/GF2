@@ -2,7 +2,7 @@ circuit = device_list , connect_list , monitor_list , "//";
 
 device_list = "DEVICES" , "[" , device , {"," , device} , "]";
 connect_list = "CONNECTIONS" , "[" , device_connections , {device_connections} , "]";
-monitor_list = "MONITORS" , "[" , ( name | "all" ) , {"," , name} , ";" "]";
+monitor_list = "MONITORS" , "[" , ( start_con | end_con | "all" ) , {"," , ( start_con | end_con )} , ";" "]";
 
 device = name , {"," , name} , "=" , devices_type , ";";
 device_connections = "device" , name , "{" , connection , {connection} , "}";
