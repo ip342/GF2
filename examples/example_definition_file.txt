@@ -55,6 +55,6 @@ CONNECTIONS [
     }
 ]
 
-MONITOR [
+MONITORS [
     CLK, G, H;
 ]

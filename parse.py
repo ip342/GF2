@@ -57,11 +57,18 @@ class Parser:
             if self.symbol.type == self.scanner.HEADER:
 
                 # parse if HEADER is DEVICES, CONNECTIONS or MONITORS
-                if self.symbol.id == self.scanner.DEVICES_ID or self.scanner.CONNECTIONS_ID \
-                    or self.scanner.MONITORS_ID:
+                if self.symbol.id == self.scanner.DEVICES_ID:
 
-                    self.parse_section(self.symbol.id)
-     
+                    self.parse_section('DEVICES')
+
+                elif self.symbol.id == self.scanner.CONNECTIONS_ID:
+
+                    self.parse_section('CONNECTIONS')
+
+                elif self.symbol.id == self.scanner.MONITORS_ID:
+
+                    self.parse_section('MONITORS')
+
                 # SYNTAX error - invalid HEADER name
                 else:
 
@@ -83,37 +90,132 @@ class Parser:
 
             self.symbol = self.scanner.get_symbol()
 
-        # Add error for invalid symbol after HEADER type
-        if self.symbol != self.scanner.SECTION_START:
+        # Add error for symbol after HEADER that isn't OPEN_SQUARE
+        if self.symbol != self.scanner.OPEN_SQUARE:
 
             pass
 
-        if header_ID == self.scanner.DEVICES_ID:
+        # Keeps parsing respective sections until doesn't return True (error)
+        if header_ID == 'DEVICES':
 
             # parse for DEVICES
-            self.parse_DEVICES_section()
+            while self.parse_DEVICES_section():
+                pass
 
-        elif header_ID == self.scanner.CONNECTIONS_ID:
+        elif header_ID == 'CONNECTIONS':
 
             # parse for CONNECTIONS
-            self.parse_CONNECTIONS_section()
+            while self.parse_CONNECTIONS_section():
+                pass
 
-        elif header_ID == self.scanner.MONITORS_ID:
+        elif header_ID == 'MONITORS':
 
             # parse for MONITORS
-            self.parse_MONITORS_section()
+            while self.parse_MONITORS_section():
+                pass
 
     def parse_DEVICES_section(self):
+
+        # Reading DEVICES section line by line..
+
+        # First try to get a list of all devices on this line
+        devices_on_line = []
+
+        while True:
+            self.symbol = self.scanner.get_symbol()
+
+            # Skip spaces
+            if self.symbol is None:
+                continue
+
+            # CHECK for NAME and append to devices_on_line
+            elif self.symbol.type == self.scanner.NAME:
+
+                # Need scanner complete to be able to grab device name
+                pass
+
         pass
 
     def parse_CONNECTIONS_section(self):
 
-        
-
-        # FIND connection DEVICE 
+        # FIND connection DEVICE
+        pass
 
     def parse_MONITORS_section(self):
 
-        pass
+        # GET next symbol (after OPEN_SQUARE)
+        self.symbol = self.scanner.get_symbol()
 
-    
+        # Symbols in MONITOR can ONLY be NAME, COMMA, SEMICOLON
+        # CHECK for NAME
+        if self.symbol.type == self.scanner.NAME:
+
+            # CHECK for ID error, if none, proceed to fetch device object
+            if self.symbol.id is None:
+
+                pass
+
+            device = self.devices.get_device(self.symbol.id)
+
+            # CHECK for device - get_device returns None for invalid device_id
+            if device is None:
+
+                pass
+
+            # Special case if NAME is DTYPE as can have .Q or .QBAR appended
+            if device.device_kind == self.devices.D_TYPE:
+
+                # Track device_id here to create monitor later
+                device_id = self.symbol.id
+
+                # GET next symbol and CHECK it's DOT
+                self.symbol = self.scanner.get_symbol()
+                if self.symbol.type == self.scanner.DOT:
+
+                    # Symbol following DTYPE and DOT must be Q or QBAR
+                    self.symbol = self.scanner.get_symbol()
+                    if self.symbol.id in self.devices.dtype_output_ids:
+
+                        # Make monitor for device with output..
+                        self.monitors.make_monitor(device_id, self.symbol.id)
+
+                    # Error if symbol after DOT is not Q or QBAR
+                    else:
+
+                        pass
+
+                # Error for DTYPE not being followed by DOT
+                else:
+
+                    pass
+
+            # For devices that are not DTYPE, make monitor with output_id None
+            else:
+
+                self.monitors.make_monitor(self.symbol.id, None)
+
+                # NEED TO ADD ERRORS SOMEWHERE HERE..
+
+        # CHECK for COMMA
+        elif self.symbol.type == self.scanner.COMMA:
+
+            # Return True here to continue to next symbol
+            return True
+
+        # CHECK for SEMICOLON
+        elif self.symbol.type == self.scanner.SEMICOLON:
+
+            return True
+
+        # Checks for CLOSE_SQUARE for end of section
+        elif self.symbol.type == self.scanner.CLOSE_SQUARE:
+
+            # Exits parse_section while loop
+            return False
+
+        # Error for unexpected symbol
+        else:
+
+            pass
+
+        return True
