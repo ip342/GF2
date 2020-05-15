@@ -1,0 +1,24 @@
+<circuit> ::= <device_list> <connect_list> <monitor_list> "//"
+
+<device_list> ::= "DEVICES" "["  <device>  (<device>)*  "]"
+<connect_list> ::= "CONNECTIONS" "[" <device_connections> (","  <device_connections>)*  "]"
+<monitor_list> ::= "MONITORS" "[" ( <name> | "all" ) ("," <name>)* ";" "]"
+
+<device> ::= <name> ("," <name>)* "=" <devices_type> ";"
+<device_connections> ::= "device" <name> "{" <connection> <connection>+ "}"
+<connection> ::= <start_con> "->" <end_con> ";"
+
+<devices_type> ::= ( <dtype> | <xor_gate> | <single_gate> | <clock> | <switch> )
+<dtype> ::= "DTYPE"
+<single_gate> ::= ("NAND" | "NOR" | "AND" | "OR") <digit> <digit>? ("input" | "inputs")
+<xor_gate> ::= "XOR"
+<clock> ::= "CLOCK" <digit> ("cycle" | "cycles")
+<switch> ::= "SWITCH" ("0" | "1")
+
+<start_con> ::= <name> ("." ("QBAR" | "Q"))?
+<end_con> ::= <name> "." (( "I" <digit> <digit>? ) | "SET" | "CLK" | "CLEAR" | "DATA" )
+
+<name> ::= <letter> (<letter> | <digit>)*
+
+<letter> ::= ( "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z" | "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z" )
+<digit> ::= ( "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" )
