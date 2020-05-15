@@ -115,6 +115,25 @@ class Parser:
                 pass
 
     def parse_DEVICES_section(self):
+
+        # Reading DEVICES section line by line..
+
+        # First try to get a list of all devices on this line
+        devices_on_line = []
+
+        while True:
+            self.symbol = self.scanner.get_symbol()
+
+            # Skip spaces
+            if self.symbol is None:
+                continue
+
+            # CHECK for NAME and append to devices_on_line
+            elif self.symbol.type == self.scanner.NAME:
+
+                # Need scanner complete to be able to grab device name
+                pass
+
         pass
 
     def parse_CONNECTIONS_section(self):
@@ -131,29 +150,29 @@ class Parser:
         # CHECK for NAME
         if self.symbol.type == self.scanner.NAME:
 
-            device = self.devices.get_device(self.symbol.id)
-
-            # CHECK for ID error
+            # CHECK for ID error, if none, proceed to fetch device object
             if self.symbol.id is None:
 
                 pass
 
-            # CHECK that device with ID exists
+            device = self.devices.get_device(self.symbol.id)
+
+            # CHECK for device - get_device returns None for invalid device_id
             if device is None:
 
                 pass
 
-            # Special case if NAME is DTYPE as can have .Q or .QBAR
+            # Special case if NAME is DTYPE as can have .Q or .QBAR appended
             if device.device_kind == self.devices.D_TYPE:
 
-                # Track device_id here to create monitor
+                # Track device_id here to create monitor later
                 device_id = self.symbol.id
 
                 # GET next symbol and CHECK it's DOT
                 self.symbol = self.scanner.get_symbol()
                 if self.symbol.type == self.scanner.DOT:
 
-                    # Symbol following DTYPE and DOT must be a valid output
+                    # Symbol following DTYPE and DOT must be Q or QBAR
                     self.symbol = self.scanner.get_symbol()
                     if self.symbol.id in self.devices.dtype_output_ids:
 
@@ -198,3 +217,5 @@ class Parser:
         else:
 
             pass
+
+        return True

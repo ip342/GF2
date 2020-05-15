@@ -293,3 +293,4 @@ class Gui(wx.Frame):
         self.monitors = Monitors(self.names, self.devices, self.network)
         self.scanner = Scanner(self.input_text.GetValue(), self.names, True)
         self.parser = Parser(self.names, self.devices, self.network, self.monitors, self.scanner)
+        
