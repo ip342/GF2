@@ -58,7 +58,7 @@ class Scanner:
         except FileNotFoundError:
             raise FileNotFoundError('Error: No such file in current directory')
             sys.exit()
-            
+
         # Remove blank lines, store file in list of each line
         self.file_as_list = []
         with self.input_file as file:
@@ -66,19 +66,27 @@ class Scanner:
                 line = line.strip()
                 if line:
                     self.file_as_list.append(line)
-        
+
         # Initialise symbol types
         self.names = names
-        self.symbol_type_list = [self.HEADER, self.KEYWORD, self.NAME, self.EQUALS, self.COMMA, self.OPEN_SQUARE,
-        self.CLOSE_SQUARE, self.SEMICOLON, self.ARROW, self.DOT, self.OPEN_CURLY, self.CLOSE_CURLY, self.HASH, self.EOF] = range(14)
+        self.symbol_type_list = [self.HEADER, self.KEYWORD, self.NAME,
+                                 self.EQUALS, self.COMMA, self.OPEN_SQUARE,
+                                 self.CLOSE_SQUARE, self.SEMICOLON, self.ARROW,
+                                 self.DOT, self.OPEN_CURLY, self.CLOSE_CURLY,
+                                 self.HASH, self.EOF] = range(14)
 
         self.header_list = ['DEVICES', 'CONNECTIONS', 'MONITORS']
-        [self.DEVICES_ID, self.CONNECTIONS_ID, self.MONITORS_ID] = self.names.lookup(self.header_list)
+
+        self.names.lookup(self.header_list) =
+        [self.DEVICES_ID, self.CONNECTIONS_ID, self.MONITORS_ID]
 
         self.keyword_list = ['cycle', 'cycles', 'input', 'inputs', 'device']
-        [self.CYCLE, self.CYCLES, self.INPUT, self.INPUTS, self.DEVICE] = self.names.lookup(self.parameter_list)
 
-        self.end_symbols = [self.SEMICOLON, self.CLOSE_CURLY, self.CLOSE_SQUARE, self.EOF]
+        self.names.lookup(self.parameter_list) =
+        [self.CYCLE, self.CYCLES, self.INPUT, self.INPUTS, self.DEVICE]
+
+        self.end_symbols =
+        [self.SEMICOLON, self.CLOSE_CURLY, self.CLOSE_SQUARE, self.EOF]
 
         self.current_character = ''
         self.current_line = 0
@@ -94,7 +102,7 @@ class Scanner:
 
         # words
         if self.current_character.isalpha():
-            name_string = self.get_name()
+            name_string = self.get_name()[0]
             if name_string.upper() in self.header_list:
                 symbol.type = self.HEADER
                 symbol.id = self.names.query(self.name_string.upper())
@@ -104,15 +112,15 @@ class Scanner:
             else:
                 symbol.type = self.NAME
                 symbol.id = self.names.query(self.name_string)
-                
-         #   return (self.name_string + ' ') not sure if line is required
+
+            return (self.name_string + ' ')
 
         # numbers
         elif self.current_character.isdigit():
             symbol.type = self.NUMBER
-            symbol.id = self.get_number()
-            
-         #   return (symbol.id[0] + ' ') not sure if line is required
+            symbol.id = self.get_number()[0]
+
+            return (symbol.id + ' ')
 
         # punctuation
         elif self.current_character == '=':
@@ -130,7 +138,7 @@ class Scanner:
         elif self.current_character == ']':
             symbol.type = self.CLOSE_SQUARE
             self.advance()
-            
+
         elif self.current_character == ';':
             symbol.type = self.SEMICOLON
             self.advance()
@@ -140,7 +148,9 @@ class Scanner:
                 symbol.type = self.ARROW
                 self.advance()
             else:
-                self.display_error(SyntaxError, 'Unexpected character, expected '>' after '-'')
+                self.display_error
+                (SyntaxError,
+                 'Unexpected character, expected > after -')
 
         elif self.current_character == '.':
             symbol.type = self.DOT
@@ -154,30 +164,34 @@ class Scanner:
             symbol.type = self.CLOSE_CURLY
             self.advance()
 
-        # comments 
+        # comments
         elif self.current_character == '#':
             symbol.type = self.HASH
             self.advance()
-            
-            while self.current_character =! '#':
+
+            while self.current_character != '#':
                 self.advance()
 
                 if self.current_character == '':
-                    self.display_error(SyntaxError, 'Expected # at the end of comment')
-                    
+                    self.display_error
+                    (SyntaxError,
+                     'Expected # at the end of comment')
+
             self.advance()
-            
+
         elif self.current_character == '/':
             self.advance()
             if self.current_character == '/':
                 symbol.type = self.EOF
             else:
-                self.display_error(SyntaxError, 'Expected '/' after '/' to indicate End of File')
-                
+                self.display_error
+                (SyntaxError,
+                 'Expected '/' after '/' to indicate End of File')
+
         else:
             self.display_error(SyntaxError, 'Invalid character')
 
-        return symbol 
+        return symbol
 
     def skip_spaces(self):
         """ Advance until non space symbol is encountered """
@@ -189,7 +203,7 @@ class Scanner:
         """ Advance to next character """
         self.current_character = self.input_file.read(1)
         self.current_character_number += 1
-        
+
         if self.current_character == '\n':
             self.current_line += 1
             self.current_character_number = 0
@@ -197,7 +211,7 @@ class Scanner:
         return self.current_character
 
     def get_name(self):
-        
+
         """" When current character is a letter, return whole word """
 
         name = self.current_character
@@ -205,12 +219,12 @@ class Scanner:
         while True:
             self.current_character = self.advance()
             if self.current_character.isalnum():
-                name = name + self.current_character 
+                name = name + self.current_character
             else:
-                return name
+                return [name, self.current_character]
 
     def get_number(self):
-        
+
         """ When current character is a number, return whole number """
 
         number = self.current_character
@@ -218,9 +232,9 @@ class Scanner:
         while True:
             self.current_character = self.advance()
             if self.current_character.isdigit():
-                number = number + self.current_character 
+                number = number + self.current_character
             else:
-                return number
+                return [number, self.current_character]
 
     def display_error(self, error_type, error_message=''):
         self.error_count += 1
@@ -230,39 +244,7 @@ class Scanner:
             if self.symbol.type in self.end_symbols:
                 break
 
-        print(error_type + error_message + '\n' + 'Line ' self.current_line + ':' + '\n'
-            self.file_as_list[self.current_line])
+        print(error_type + error_message + '\n' + 'Line ' +
+              self.current_line + ':' + '\n' +
+              self.file_as_list[self.current_line])
         print(" "*(self.current_character_number) + '^')
-
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                
-        
-            
