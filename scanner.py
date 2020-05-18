@@ -83,6 +83,7 @@ class Scanner:
         self.current_character = ''
         self.current_line = 0
         self.current_character_number = 0
+        self.error_count = 0
 
     def get_symbol(self):
         """Translate the next sequence of characters into a symbol."""
@@ -139,7 +140,7 @@ class Scanner:
                 symbol.type = self.ARROW
                 self.advance()
             else:
-                self.error(SyntaxError, 'Unexpected character, expected '>' after '-'')
+                self.display_error(SyntaxError, 'Unexpected character, expected '>' after '-'')
 
         elif self.current_character == '.':
             symbol.type = self.DOT
@@ -162,7 +163,7 @@ class Scanner:
                 self.advance()
 
                 if self.current_character == '':
-                    self.error(SyntaxError, 'Expected # at the end of comment')
+                    self.display_error(SyntaxError, 'Expected # at the end of comment')
                     
             self.advance()
             
@@ -171,17 +172,30 @@ class Scanner:
             if self.current_character == '/':
                 symbol.type = self.EOF
             else:
-                self.error(SyntaxError, 'Expected '/' after '/' to indicate End of File')
+                self.display_error(SyntaxError, 'Expected '/' after '/' to indicate End of File')
                 
         else:
-            self.error(SyntaxError, 'Invalid character')
+            self.display_error(SyntaxError, 'Invalid character')
 
         return symbol 
 
     def skip_spaces(self):
-        
+        """ Advance until non space symbol is encountered """
+
+        while self.current_character.isspace():
+            self.current_character = self.advance()
+
     def advance(self):
+        """ Advance to next character """
+        self.current_character = self.input_file.read(1)
+        self.current_character_number += 1
         
+        if self.current_character == '\n':
+            self.current_line += 1
+            self.current_character_number = 0
+
+        return self.current_character
+
     def get_name(self):
         
         """" When current character is a letter, return whole word """
@@ -206,7 +220,21 @@ class Scanner:
             if self.current_character.isdigit():
                 number = number + self.current_character 
             else:
-                return number 
+                return number
+
+    def display_error(self, error_type, error_message=''):
+        self.error_count += 1
+
+        while True:
+            self.symbol = self.get_symbol()
+            if self.symbol.type in self.end_symbols:
+                break
+
+        print(error_type + error_message + '\n' + 'Line ' self.current_line + ':' + '\n'
+            self.file_as_list[self.current_line])
+        print(" "*(self.current_character_number) + '^')
+
+        
 
 
 
