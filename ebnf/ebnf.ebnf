@@ -2,17 +2,15 @@ circuit = device_list , connect_list , monitor_list , "//";
 
 device_list = "DEVICES" , "[" , device , {"," , device} , "]";
 connect_list = "CONNECTIONS" , "[" , device_connections , {device_connections} , "]";
-monitor_list = "MONITORS" , "[" , ( start_con | end_con | "all" ) , {"," , ( start_con | end_con )} , ";" "]";
+monitor_list = "MONITORS" , "[" , (start_con , {"," , start_con} | "all" ) ";", "]";
 
 device = name , {"," , name} , "=" , devices_type , ";";
 device_connections = "device" , name , "{" , connection , {connection} , "}";
 connection = start_con , "->" , end_con , ";"; 
 
-devices_type = ( dtype | xor_gate | single_gate | clock | switch );
-dtype = "DTYPE"; 
-single_gate = ("NAND" | "NOR" | "AND" | "OR") , digit , [digit], ("input" | "inputs");
-xor_gate = "XOR";
-clock = "CLOCK" , digit , ("cycle" | "cycles");
+devices_type = ( "DTYPE" | "XOR" | single_gate | clock | switch );
+single_gate = ("NAND" | "NOR" | "AND" | "OR") , digit , [digit];
+clock = "CLOCK" , digit;
 switch = "SWITCH" , ("0" | "1");
 
 start_con = name , ["." , ("QBAR" | "Q")];

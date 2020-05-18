@@ -25,7 +25,7 @@ def used_names(name_string_list):
     return my_name
 
 
-def test_get_string_raises_exceptions(used_names):
+def test_get_name_string_raises_exceptions(used_names):
     """Test if get_name_string raises expected exceptions."""
     with pytest.raises(TypeError):
         used_names.get_name_string(1.4)
@@ -41,9 +41,32 @@ def test_get_string_raises_exceptions(used_names):
     (2, "Ilakya"),
     (3, None)
 ])
-def test_get_string(used_names, new_names, name_id, expected_string):
+def test_get_name_string(used_names, new_names, name_id, expected_string):
     """Test if get_name_string returns the expected string."""
     # Name is present
     assert used_names.get_name_string(name_id) == expected_string
     # Name is absent
     assert new_names.get_name_string(name_id) is None
+
+
+def test_query_raises_exceptions(used_names):
+    """Test if query raises expected exceptions."""
+    with pytest.raises(TypeError):
+        used_names.query(1)
+    with pytest.raises(TypeError):
+        used_names.query("1abc")
+    with pytest.raises(TypeError):
+        used_names.query("Hello!")
+
+
+@pytest.mark.parametrize("name_string, expected_name_id", [
+    ("Chang", 0),
+    ("Ethan", 1),
+    ("Ilakya", 2)
+])
+def test_query(used_names, new_names, expected_name_id, name_string):
+    """Test if query returns the expected name ID."""
+    # Name is present
+    assert used_names.query(name_string) == expected_name_id
+    # Name is absent
+    assert new_names.query(name_string) is None
