@@ -56,6 +56,8 @@ class Names:
 
         If the name string is not present in the names list, return None.
         """
+        if not name_string[0].isalpha() or not name_string.isalnum():
+            raise TypeError("Error! Query argument must be a name.")
         if name_string in self.names:
             return self.names.index(name_string)
         else:
