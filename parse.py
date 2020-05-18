@@ -119,22 +119,139 @@ class Parser:
         # Reading DEVICES section line by line..
 
         # First try to get a list of all devices on this line
-        devices_on_line = []
+        device_name_list = []
 
-        while True:
+        # Distinguish between device_names and their type
+        equals_encountered = False
+
+        # Call to get list of all devices that occur before EQUALS
+        while equals_encountered is False:
             self.symbol = self.scanner.get_symbol()
 
             # Skip spaces
             if self.symbol is None:
+
                 continue
 
-            # CHECK for NAME and append to devices_on_line
+            # CHECK for NAME and append to device_name_list
             elif self.symbol.type == self.scanner.NAME:
 
-                # Need scanner complete to be able to grab device name
-                pass
+                device_name = self.scanner.names.get_name_string(
+                    self.symbol.id)
+                device_name_list.append(device_name)
 
-        pass
+            # Continue through COMMA
+            elif self.symbol.type == self.scanner.COMMA:
+
+                continue
+
+            # Trigger to exit loop and look for device type
+            elif self.symbol.type == self.scanner.EQUALS:
+
+                equals_encountered = True
+
+            else:
+
+                # Some error message about invalid symbols
+                self.scanner.display_error(SemanticError, "Invalid symbol \
+                    expecting a device or list of devices.")
+
+        self.symbol = self.scanner.get_symbol()
+        device_id_list = self.devices.names.lookup(device_name_list)
+
+        # Make devices
+        for device_id in device_id_list:
+
+            if self.symbol.id == self.devices.D_TYPE:
+
+                self.devices.make_d_type(device_id)
+
+            elif self.symbol.id in self.devices.gate_types:
+                self.devices.add_device(device_id, self.symbol.id)
+
+                # Special case for XOR gate
+                if self.symbol.id == self.devices.XOR:
+
+                    # Adding the 2 inputs to names list and getting IDs
+                    I1, I2 = self.devices.names.lookup(["I1", "I2"])
+                    self.devices.add_input(device_id, I1)
+                    self.devices.add_input(device_id, I2)
+
+            elif self.symbol.id == self.devices.CLOCK:
+
+                # Need to figure out how to do this..
+                # Grab clock period then..? half_period?
+
+                # Make it 1 for now
+                self.devices.make_clock(device_id, 1)
+
+            elif self.symbol.id == self.devices.SWITCH:
+
+                # Same as above, set switch off for now
+                self.devices.make_switch(device_id, 0)
+
+            else:
+
+                # Error for invalid device
+                invalid_device = self.scanner.names.get_name_string(
+                    self.symbol.id)
+                self.scanner.display_error(SyntaxError, "%s is an \
+                    invalid device type." % invalid_device)
+
+        # Add the device inputs
+        self.symbol = self.scanner.get_symbol()
+
+        if self.symbol.type == self.scanner.NUMBER:
+
+            n = int(self.scanner.get_number())
+
+            for device_id in device_id_list:
+
+                if self.devices.get_device(device_id).device_kind == self.devices.D_TYPE:
+
+                    self.scanner.display_error(
+                        SemanticError, "Cannot specify inputs for DTYPE.")
+
+                elif self.devices.get_device(device_id).device_kind == self.devices.SWITCH:
+
+                    if n != 0 or n != 1:
+
+                        self.scanner.display_error(
+                            SemanticError, "Switch can only take state 0 or 1")
+
+                elif self.devices.get_device(device_id).device_kind == self.devices.XOR:
+
+                    self.scanner.display_error(
+                        SemanticError, "XOR gates don't need input parameter.")
+
+                elif self.devices.get_device(device_id).device_kind == self.devices.CLOCK:
+
+                    if n != 0 or n != 1:
+
+                        self.scanner.display_error(
+                            SemanticError, "Clock can only take state 0 or 1")
+
+                elif self.devices.get_device(device_id) is None:
+
+                    self.scanner.display_error(
+                        SemanticError, "Device doesn't exist.")
+
+                else:
+
+                    # Gates can only have 1-16 inputs
+                    if n > 16:
+
+                        self.scanner.display_error(
+                            SemanticError, "Device can only have 1-16 inputs.")
+
+                    # Add all the inputs to the device..
+                    else:
+
+                        for input_num in range(1, n + 1):
+                            [input_id] = self.devices.names.lookup(
+                                ["I"+str(input_num)])
+
+                            self.devices.add_input(device_id, input_id)
 
     def parse_CONNECTIONS_section(self):
 
@@ -146,7 +263,6 @@ class Parser:
         # GET next symbol (after OPEN_SQUARE)
         self.symbol = self.scanner.get_symbol()
 
-        # Symbols in MONITOR can ONLY be NAME, COMMA, SEMICOLON
         # CHECK for NAME
         if self.symbol.type == self.scanner.NAME:
 
