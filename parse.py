@@ -276,14 +276,18 @@ class Parser:
             # CHECK for ID error, if none, proceed to fetch device object
             if self.symbol.id is None:
 
-                pass
+                name = self.scanner.names.get_name_string(self.symbol.id)
+                self.scanner.display_error(
+                    SemanticError, "%s is not a valid device." % name)
 
             device = self.devices.get_device(self.symbol.id)
 
             # CHECK for device - get_device returns None for invalid device_id
             if device is None:
 
-                pass
+                name = self.scanner.names.get_name_string(self.symbol.id)
+                self.scanner.display_error(
+                    SemanticError, "%s is not a valid device." % name)
 
             # Special case if NAME is DTYPE as can have .Q or .QBAR appended
             if device.device_kind == self.devices.D_TYPE:
@@ -305,12 +309,14 @@ class Parser:
                     # Error if symbol after DOT is not Q or QBAR
                     else:
 
-                        pass
+                        self.scanner.display_error(
+                            SemanticError, "DTYPE can only use .Q or .QBAR")
 
                 # Error for DTYPE not being followed by DOT
                 else:
 
-                    pass
+                    self.scanner.display_error(
+                        SemanticError, "DTYPE must be followed by .")
 
             # For devices that are not DTYPE, make monitor with output_id None
             else:
@@ -339,6 +345,7 @@ class Parser:
         # Error for unexpected symbol
         else:
 
-            pass
+            self.scanner.display_error(
+                SemanticError, "Invalid symbol")
 
         return True
