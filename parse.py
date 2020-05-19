@@ -198,7 +198,7 @@ class Parser:
                 self.scanner.display_error(SyntaxError, "%s is an \
                     invalid device type." % invalid_device)
 
-        # Add the device inputs
+        # Device parameter..
         self.symbol = self.scanner.get_symbol()
 
         if self.symbol.type == self.scanner.NUMBER:
@@ -214,7 +214,15 @@ class Parser:
 
                 elif self.devices.get_device(device_id).device_kind == self.devices.SWITCH:
 
-                    if n != 0 or n != 1:
+                    if n == 0:
+
+                        continue
+
+                    elif n == 1:
+
+                        self.devices.set_switch(device_id, 1)
+
+                    else:
 
                         self.scanner.display_error(
                             SemanticError, "Switch can only take state 0 or 1")
@@ -222,14 +230,13 @@ class Parser:
                 elif self.devices.get_device(device_id).device_kind == self.devices.XOR:
 
                     self.scanner.display_error(
-                        SemanticError, "XOR gates don't need input parameter.")
+                        SemanticError, "Cannot specify inputs for XOR")
 
                 elif self.devices.get_device(device_id).device_kind == self.devices.CLOCK:
 
-                    if n != 0 or n != 1:
-
-                        self.scanner.display_error(
-                            SemanticError, "Clock can only take state 0 or 1")
+                    # Set clock cycle..
+                    clock_device = self.devices.get_device(device_id)
+                    clock_device.clock_half_period = n
 
                 elif self.devices.get_device(device_id) is None:
 
