@@ -26,8 +26,9 @@ class Error(Exception):
         if error_class == SyntaxError:
             error_type = 'SyntaxError'
 
-        print(error_type + ' Line ' + line_number + ':' + message +
-              '\n' + line + '\n' + character*' ' + '^')
+        print('Line number ' + line_number + ', Character ' + character + '\n' +
+              line + '\n' + character*' ' + '^' + '\n' +
+              '***' + error_type + ':' + message + '***')
 
 class SemanticError(Exception):
     pass
