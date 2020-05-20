@@ -9,6 +9,7 @@ Scanner - reads definition file and translates characters into symbols.
 Symbol - encapsulates a symbol and stores its properties.
 """
 
+
 class Symbol:
 
     """Encapsulate a symbol and store its properties.
@@ -26,6 +27,7 @@ class Symbol:
         """Initialise symbol properties."""
         self.type = None
         self.id = None
+
 
 class Scanner:
 
@@ -66,22 +68,23 @@ class Scanner:
         self.names = names
         self.symbol_type_list = [self.HEADER, self.KEYWORD, self.NAME,
                                  self.NUMBER, self.EQUALS, self.COMMA,
-                                 self.OPEN_SQUARE, self.CLOSE_SQUARE, self.SLASH,
-                                 self.SEMICOLON, self.ARROW, self.DOT, self.OPEN_CURLY,
-                                 self.CLOSE_CURLY, self.HASH, self.EOF] = range(16)
+                                 self.OPEN_SQUARE, self.CLOSE_SQUARE,
+                                 self.SLASH, self.SEMICOLON, self.ARROW,
+                                 self.DOT, self.OPEN_CURLY, self.CLOSE_CURLY,
+                                 self.HASH, self.EOF] = range(16)
 
         self.header_list = ['DEVICES', 'CONNECTIONS', 'MONITORS']
 
-        self.names.lookup(self.header_list) =
-        [self.DEVICES_ID, self.CONNECTIONS_ID, self.MONITORS_ID]
+        [self.DEVICES_ID, self.CONNECTIONS_ID, self.MONITORS_ID] = \
+        self.names.lookup(self.header_list)
 
         self.keyword_list = ['cycle', 'cycles', 'input', 'inputs', 'device']
 
-        self.names.lookup(self.parameter_list) =
-        [self.CYCLE, self.CYCLES, self.INPUT, self.INPUTS, self.DEVICE]
+        [self.CYCLE, self.CYCLES, self.INPUT, self.INPUTS, self.DEVICE] = \
+        self.names.lookup(self.parameter_list)
 
-        self.end_symbols =
-        [self.SEMICOLON, self.CLOSE_CURLY, self.CLOSE_SQUARE, self.EOF]
+        [self.SEMICOLON, self.CLOSE_CURLY, self.CLOSE_SQUARE, self.EOF] = \
+        self.end_symbols
 
         self.current_character = ''
         self.current_line = 0
@@ -243,10 +246,10 @@ class Scanner:
         self.error_count += 1
 
         Error(error_type, error_message, self.current_line,
-              self.file_as_list[self.current_line], self.current_character_number)
+              self.file_as_list[self.current_line],
+              self.current_character_number)
 
         while True:
             self.symbol = self.get_symbol()
             if self.symbol.type in self.end_symbols:
                 break
-
