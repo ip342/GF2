@@ -8,7 +8,7 @@ Classes
 Scanner - reads definition file and translates characters into symbols.
 Symbol - encapsulates a symbol and stores its properties.
 """
-
+from errors import *
 
 class Symbol:
 
@@ -79,9 +79,10 @@ class Scanner:
         self.names.lookup(self.header_list)
 
         self.keyword_list = ['cycle', 'cycles', 'input', 'inputs', 'device']
+        self.end_symbols = [self.SEMICOLON, self.CLOSE_CURLY, self.CLOSE_SQUARE, self.EOF]
 
         [self.CYCLE, self.CYCLES, self.INPUT, self.INPUTS, self.DEVICE] = \
-        self.names.lookup(self.parameter_list)
+        self.names.lookup(self.keyword_list)
 
         [self.SEMICOLON, self.CLOSE_CURLY, self.CLOSE_SQUARE, self.EOF] = \
         self.end_symbols

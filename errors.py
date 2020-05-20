@@ -13,23 +13,23 @@ import sys
 
 
 class Error(Exception):
-    def __init__(self, error_class, message, line_number, line, character)
+    def __init__(self, error_class, message, line_number, line, character):
 
-    # Call the base class constructor with the parameters it needs
-    super().__init__(message)
+        # Call the base class constructor with the parameters it needs
+        super().__init__(message)
 
-    self.error_type = error_class
-    self.message = message
+        self.error_type = error_class
+        self.message = message
 
-    if error_class == SemanticError:
-        error_type = 'SemanticError'
+        if error_class == SemanticError:
+            error_type = 'SemanticError'
 
-    if error_class == SyntaxError:
-        error_type = 'SyntaxError'
+        if error_class == SyntaxError:
+            error_type = 'SyntaxError'
 
-    print('Line number ' + line_number + ', Character ' + character + '\n'
-          + line + '\n' + character*' ' + '^' + '\n'
-          + '***' + error_type + ':' + message + '***')
+        print('Line number ' + line_number + ', Character ' + character + '\n'
+            + line + '\n' + character*' ' + '^' + '\n'
+            + '***' + error_type + ':' + message + '***')
 
 
 class SemanticError(Exception):
