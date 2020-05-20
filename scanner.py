@@ -59,34 +59,32 @@ class Scanner:
             raise FileNotFoundError('Error: No such file in current directory')
             sys.exit()
 
-        # Remove blank lines, store file in list of each line
-        self.file_as_list = []
+        # Create list of each file line
         with self.input_file as file:
-            for line in file:
-                line = line.strip()
-                if line:
-                    self.file_as_list.append(line)
+            self.file_as_list = file.readlines()
+        self.file_as_list = [x.strip() for x in self.file_as_list]
 
         # Initialise symbol types
         self.names = names
         self.symbol_type_list = [self.HEADER, self.KEYWORD, self.NAME,
                                  self.NUMBER, self.EQUALS, self.COMMA,
                                  self.OPEN_SQUARE, self.CLOSE_SQUARE,
-                                 self.SEMICOLON, self.ARROW, self.DOT, self.OPEN_CURLY,
-                                 self.CLOSE_CURLY, self.HASH, self.EOF] = range(14)
+                                 self.SLASH, self.SEMICOLON, self.ARROW,
+                                 self.DOT, self.OPEN_CURLY, self.CLOSE_CURLY,
+                                 self.HASH, self.EOF] = range(16)
 
         self.header_list = ['DEVICES', 'CONNECTIONS', 'MONITORS']
 
-        self.names.lookup(self.header_list) =
-        [self.DEVICES_ID, self.CONNECTIONS_ID, self.MONITORS_ID]
+        [self.DEVICES_ID, self.CONNECTIONS_ID, self.MONITORS_ID] = \
+        self.names.lookup(self.header_list)
 
         self.keyword_list = ['cycle', 'cycles', 'input', 'inputs', 'device']
 
-        self.names.lookup(self.parameter_list) =
-        [self.CYCLE, self.CYCLES, self.INPUT, self.INPUTS, self.DEVICE]
+        [self.CYCLE, self.CYCLES, self.INPUT, self.INPUTS, self.DEVICE] = \
+        self.names.lookup(self.parameter_list)
 
-        self.end_symbols =
-        [self.SEMICOLON, self.CLOSE_CURLY, self.CLOSE_SQUARE, self.EOF]
+        [self.SEMICOLON, self.CLOSE_CURLY, self.CLOSE_SQUARE, self.EOF] = \
+        self.end_symbols
 
         self.current_character = ''
         self.current_line = 0
@@ -97,7 +95,8 @@ class Scanner:
         """Translate the next sequence of characters into a symbol."""
 
         symbol = Symbol()
-        # Go to current non whitespace character
+
+        # go to current non whitespace character
         self.skip_spaces()
 
         # words
@@ -175,19 +174,26 @@ class Scanner:
                 if self.current_character == '':
                     self.display_error
                     (SyntaxError,
-                     'Expected # at the end of comment')
+                     'Expected # at the end of multi-line comment')
 
             self.advance()
 
         elif self.current_character == '/':
             self.advance()
             if self.current_character == '/':
-                symbol.type = self.EOF
+                symbol.type = self.SLASH
+                while self.current_character != '\n':
+                    self.advance()
             else:
                 self.display_error
                 (SyntaxError,
-                 'Expected '/' after '/' to indicate End of File')
+                 'Expected '/' after '/' to indicate comment')
 
+        # end of file
+        elif self.current_character == '':
+            symbol_type = self.EOF
+
+        # invalid character
         else:
             self.display_error(SyntaxError, 'Invalid character')
 
@@ -239,12 +245,11 @@ class Scanner:
     def display_error(self, error_type, error_message=''):
         self.error_count += 1
 
+        Error(error_type, error_message, self.current_line,
+              self.file_as_list[self.current_line],
+              self.current_character_number)
+
         while True:
             self.symbol = self.get_symbol()
             if self.symbol.type in self.end_symbols:
                 break
-
-        print(error_type + error_message + '\n' + 'Line ' +
-              self.current_line + ':' + '\n' +
-              self.file_as_list[self.current_line])
-        print(" "*(self.current_character_number) + '^')

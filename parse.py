@@ -269,21 +269,25 @@ class Parser:
         # CHECK for word device
         self.symbol = self.scanner.get_symbol()
         if self.symbol.id != self.scanner.DEVICE: # Revist this
-            # Error
+            self.scanner.display_error(
+                SemanticError, "List of connections must start with word device.")
         
         # CHECK for device name   
         self.symbol = self.scanner.get_symbol()
         if self.symbol.type == self.scanner.NAME:
             con_device = self.devices.get_device(self.symbol.id)
             if con_device == None:
-                # Error
+                self.scanner.display_error(
+                    SemanticError, "List of connections must start with word device.")
         else:
-            # Error    
+            self.scanner.display_error(
+                SemanticError, "List of connections must start with word device.")   
         
         # CHECK for opening curly bracket
         self.symbol = self.scanner.get_symbol()
         if self.symbol != self.scanner.OPEN_CURLY:
-            # Error
+            self.scanner.display_error(
+                SemanticError, "List of connections must start with word device.")
         
         # PARSE each line encompassed by curly brackets
         while True:
@@ -293,17 +297,21 @@ class Parser:
             
             # CHECK for start connection
             elif self.symbol.type != self.scanner.NAME:
-                # Error
+                self.scanner.display_error(
+                    SemanticError, "List of connections must start with word device.")
             start_con = self.devices.get_device(self.symbol.id)
             if start_con is None:
-                # Error
+                self.scanner.display_error(
+                    SemanticError, "List of connections must start with word device.")
             elif start_con.device_kind == self.devices.D_TYPE:
                 self.symbol self.scanner.get_symbol()
                 if self.symbol.type != self.scanner.DOT:
-                    # Error
+                    self.scanner.display_error(
+                        SemanticError, "List of connections must start with word device.")
                 self.symbol self.scanner.get_symbol()
                 if self.symbol.id not in self.devices.dtype_output_ids:
-                    # Error
+                    self.scanner.display_error(
+                        SemanticError, "List of connections must start with word device.")
                 start_con_port_id = self.symbol.id
             else:
                 start_con_port_id = None    
@@ -311,23 +319,29 @@ class Parser:
             # CHECK for arrow
             self.symbol = self.scanner.get_symbol()
             if self.symbol.type != self.scanner.ARROW:
-                # Error
+                self.scanner.display_error(
+                    SemanticError, "List of connections must start with word device.")
 
             # CHECK for end connection
             self.symbol = self.scanner.get_symbol()
             if self.symbol.type != self.scanner.NAME:
-                # Error
+                self.scanner.display_error(
+                    SemanticError, "List of connections must start with word device.")
             end_con = self.devices.get_device(self.symbol.id)
             if end_con is None:
-                # Error
+                self.scanner.display_error(
+                    SemanticError, "List of connections must start with word device.")
             if end_con != con_device:
-                # Error
+                self.scanner.display_error(
+                    SemanticError, "List of connections must start with word device.")
             self.symbol = self.scanner.get_symbol()
             if self.symbol.type != self.scanner.DOT:
-                # Error
+                self.scanner.display_error(
+                    SemanticError, "List of connections must start with word device.")
             self.symbol = self.scanner.get_symbol()
             if self.symbol.type != self.scanner.NAME:
-                # Error
+                self.scanner.display_error(
+                    SemanticError, "List of connections must start with word device.")
             end_con_port_id = self.symbol.id
 
             # CHECK for semicolon
@@ -336,16 +350,20 @@ class Parser:
                 con_status = self.network.make_connection(
                              start_con.device_id, start_con_port_id, 
                              end_con.device_id, end_con_port_id)
-                if status == self.network.INPUT_CONNECTED:
-                    # Error
-                elif status == self.network.INPUT_TO_INPUT:
-                    # Error
-                elif status == self.network.PORT_ABSENT:
-                    # Error
-                elif status == self.network.NO_ERROR:
+                if con_status == self.network.INPUT_CONNECTED:
+                    self.scanner.display_error(
+                        SemanticError, "List of connections must start with word device.")
+                elif con_status == self.network.INPUT_TO_INPUT:
+                    self.scanner.display_error(
+                        SemanticError, "List of connections must start with word device.")
+                elif con_status == self.network.PORT_ABSENT:
+                    self.scanner.display_error(
+                        SemanticError, "List of connections must start with word device.")
+                elif con_status == self.network.NO_ERROR:
                     pass
             else:
-                # Error
+                self.scanner.display_error(
+                    SemanticError, "List of connections must start with word device.")
                 return False             
                 
         return True
