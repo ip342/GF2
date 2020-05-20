@@ -274,7 +274,7 @@ class Parser:
             con_device = self.devices.get_device(self.symbol.id)
             if con_device == None:
                 self.scanner.display_error(
-                    SemanticError, "List of connections must start with word device.")
+                    SemanticError, "Device {} does not exist.".format())
         else:
             self.scanner.display_error(
                 SemanticError, "List of connections must start with word device.")   
@@ -300,11 +300,11 @@ class Parser:
                 self.scanner.display_error(
                     SemanticError, "List of connections must start with word device.")
             elif start_con.device_kind == self.devices.D_TYPE:
-                self.symbol self.scanner.get_symbol()
+                self.symbol = self.scanner.get_symbol()
                 if self.symbol.type != self.scanner.DOT:
                     self.scanner.display_error(
                         SemanticError, "List of connections must start with word device.")
-                self.symbol self.scanner.get_symbol()
+                self.symbol = self.scanner.get_symbol()
                 if self.symbol.id not in self.devices.dtype_output_ids:
                     self.scanner.display_error(
                         SemanticError, "List of connections must start with word device.")
