@@ -60,9 +60,8 @@ class Scanner:
             sys.exit()
 
         # Create list of each file line
-        with self.input_file as file:
-            self.file_as_list = file.readlines()
-        self.file_as_list = [x.strip() for x in self.file_as_list]
+
+        self.file_as_list = [line.rstrip('\n') for line in open(path, 'r')]
 
         # Initialise symbol types
         self.names = names
@@ -105,22 +104,22 @@ class Scanner:
             name_string = self.get_name()[0]
             if name_string.upper() in self.header_list:
                 symbol.type = self.HEADER
-                symbol.id = self.names.query(self.name_string.upper())
+                symbol.id = self.names.query(name_string.upper())
             elif name_string.lower() in self.keyword_list:
                 symbol.type = self.KEYWORD
-                symbol.id = self.names.query(self.name_string.lower())
+                symbol.id = self.names.query(name_string.lower())
             else:
                 symbol.type = self.NAME
-                symbol.id = self.names.query(self.name_string)
+                symbol.id = self.names.lookup([name_string])
 
-            return (self.name_string + ' ')
+            #return (self.name_string + ' ')
 
         # numbers
         elif self.current_character.isdigit():
             symbol.type = self.NUMBER
             symbol.id = self.get_number()[0]
 
-            return (symbol.id + ' ')
+            #return (symbol.id + ' ')
 
         # punctuation
         elif self.current_character == '=':
@@ -240,7 +239,10 @@ class Scanner:
             self.current_character = self.advance()
             if self.current_character.isdigit():
                 number = number + self.current_character
+                
             else:
+                print('here')
+                print([number, self.current_character])
                 return [number, self.current_character]
 
     def display_error(self, error_type, error_message=''):
