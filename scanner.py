@@ -87,7 +87,7 @@ class Scanner:
         [self.SEMICOLON, self.CLOSE_CURLY, self.CLOSE_SQUARE, self.EOF] = \
         self.end_symbols
 
-        self.current_character = ''
+        self.current_character = ' '
         self.current_line = 0
         self.current_character_number = 0
         self.error_count = 0
