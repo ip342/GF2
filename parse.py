@@ -138,8 +138,89 @@ class Parser:
 
     def parse_CONNECTIONS_section(self):
 
-        # FIND connection DEVICE
-        pass
+        # CHECK for word device
+        self.symbol = self.scanner.get_symbol()
+        if self.symbol.id != self.scanner.DEVICE: # Revist this
+            # Error
+        
+        # CHECK for device name   
+        self.symbol = self.scanner.get_symbol()
+        if self.symbol.type == self.scanner.NAME:
+            con_device = self.devices.get_device(self.symbol.id)
+            if con_device == None:
+                # Error
+        else:
+            # Error    
+        
+        # CHECK for opening curly bracket
+        self.symbol = self.scanner.get_symbol()
+        if self.symbol != self.scanner.OPEN_CURLY:
+            # Error
+        
+        # PARSE each line encompassed by curly brackets
+        while True:
+            self.symbol = self.scanner.get_symbol()
+            if self.symbol.type == self.scanner.CLOSE_CURLY:
+                break
+            
+            # CHECK for start connection
+            elif self.symbol.type != self.scanner.NAME:
+                # Error
+            start_con = self.devices.get_device(self.symbol.id)
+            if start_con is None:
+                # Error
+            elif start_con.device_kind == self.devices.D_TYPE:
+                self.symbol self.scanner.get_symbol()
+                if self.symbol.type != self.scanner.DOT:
+                    # Error
+                self.symbol self.scanner.get_symbol()
+                if self.symbol.id not in self.devices.dtype_output_ids:
+                    # Error
+                start_con_port_id = self.symbol.id
+            else:
+                start_con_port_id = None    
+                
+            # CHECK for arrow
+            self.symbol = self.scanner.get_symbol()
+            if self.symbol.type != self.scanner.ARROW:
+                # Error
+
+            # CHECK for end connection
+            self.symbol = self.scanner.get_symbol()
+            if self.symbol.type != self.scanner.NAME:
+                # Error
+            end_con = self.devices.get_device(self.symbol.id)
+            if end_con is None:
+                # Error
+            if end_con != con_device:
+                # Error
+            self.symbol = self.scanner.get_symbol()
+            if self.symbol.type != self.scanner.DOT:
+                # Error
+            self.symbol = self.scanner.get_symbol()
+            if self.symbol.type != self.scanner.NAME:
+                # Error
+            end_con_port_id = self.symbol.id
+
+            # CHECK for semicolon
+            self.symbol = self.scanner.get_symbol()
+            if self.symbol.type == self.scanner.SEMICOLON:
+                con_status = self.network.make_connection(
+                             start_con.device_id, start_con_port_id, 
+                             end_con.device_id, end_con_port_id)
+                if status == self.network.INPUT_CONNECTED:
+                    # Error
+                elif status == self.network.INPUT_TO_INPUT:
+                    # Error
+                elif status == self.network.PORT_ABSENT:
+                    # Error
+                elif status == self.network.NO_ERROR:
+                    pass
+            else:
+                # Error
+                return False             
+                
+        return True
 
     def parse_MONITORS_section(self):
 
