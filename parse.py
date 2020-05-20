@@ -332,13 +332,13 @@ class Parser:
                 con_status = self.network.make_connection(
                              start_con.device_id, start_con_port_id, 
                              end_con.device_id, end_con_port_id)
-                if status == self.network.INPUT_CONNECTED:
+                if con_status == self.network.INPUT_CONNECTED:
                     # Error
-                elif status == self.network.INPUT_TO_INPUT:
+                elif con_status == self.network.INPUT_TO_INPUT:
                     # Error
-                elif status == self.network.PORT_ABSENT:
+                elif con_status == self.network.PORT_ABSENT:
                     # Error
-                elif status == self.network.NO_ERROR:
+                elif con_status == self.network.NO_ERROR:
                     pass
             else:
                 # Error
