@@ -70,10 +70,10 @@ class Scanner:
         # Initialise symbol types
         self.names = names
         self.symbol_type_list = [self.HEADER, self.KEYWORD, self.NAME,
-                                 self.EQUALS, self.COMMA, self.OPEN_SQUARE,
-                                 self.CLOSE_SQUARE, self.SEMICOLON, self.ARROW,
-                                 self.DOT, self.OPEN_CURLY, self.CLOSE_CURLY,
-                                 self.HASH, self.EOF] = range(14)
+                                 self.NUMBER, self.EQUALS, self.COMMA,
+                                 self.OPEN_SQUARE, self.CLOSE_SQUARE,
+                                 self.SEMICOLON, self.ARROW, self.DOT, self.OPEN_CURLY,
+                                 self.CLOSE_CURLY, self.HASH, self.EOF] = range(14)
 
         self.header_list = ['DEVICES', 'CONNECTIONS', 'MONITORS']
 
