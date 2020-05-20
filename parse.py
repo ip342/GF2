@@ -77,8 +77,7 @@ class Parser:
             # Or it's the end of the file
             elif self.symbol.type == self.scanner.EOF:
 
-                # Handle not finding HEADER type errors here
-                pass
+                break
 
         return True
 
@@ -207,12 +206,14 @@ class Parser:
 
             for device_id in device_id_list:
 
-                if self.devices.get_device(device_id).device_kind == self.devices.D_TYPE:
+                if self.devices.get_device(device_id).device_kind \
+                        == self.devices.D_TYPE:
 
                     self.scanner.display_error(
                         SemanticError, "Cannot specify inputs for DTYPE.")
 
-                elif self.devices.get_device(device_id).device_kind == self.devices.SWITCH:
+                elif self.devices.get_device(device_id).device_kind \
+                        == self.devices.SWITCH:
 
                     if n == 0:
 
@@ -227,12 +228,14 @@ class Parser:
                         self.scanner.display_error(
                             SemanticError, "Switch can only take state 0 or 1")
 
-                elif self.devices.get_device(device_id).device_kind == self.devices.XOR:
+                elif self.devices.get_device(device_id).device_kind \
+                        == self.devices.XOR:
 
                     self.scanner.display_error(
                         SemanticError, "Cannot specify inputs for XOR")
 
-                elif self.devices.get_device(device_id).device_kind == self.devices.CLOCK:
+                elif self.devices.get_device(device_id).device_kind \
+                        == self.devices.CLOCK:
 
                     # Set clock cycle..
                     clock_device = self.devices.get_device(device_id)
