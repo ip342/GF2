@@ -1,0 +1,10 @@
+DEVICES [
+    G1 = OR 2;
+    SW1 = SWITCH 0;
+]
+
+CONNECTIONS [
+    device G1 {
+        SW1 -> G1.I1;
+    }
+]

@@ -99,6 +99,33 @@ class Scanner:
         # go to current non whitespace character
         self.skip_spaces()
 
+        if self.current_character == '#':
+            print("entered comment")
+            self.advance()
+
+            while self.current_character != '#':
+                self.advance()
+
+                if self.current_character == '':
+                    self.display_error
+                    (SyntaxError,
+                     'Expected # at the end of multi-line comment')
+            print("left comment")
+            self.advance()
+            self.skip_spaces()
+
+        if self.current_character == '/':
+            self.advance()
+            if self.current_character == '/':
+                while self.current_character != '\n':
+                    self.advance()
+            else:
+                self.display_error
+                (SyntaxError,
+                 'Expected '/' after '/' to indicate comment')
+            self.advance()
+            self.skip_spaces()
+
         # words
         if self.current_character.isalpha():
             name_string = self.get_name()[0]
@@ -163,35 +190,9 @@ class Scanner:
             symbol.type = self.CLOSE_CURLY
             self.advance()
 
-        # comments
-        elif self.current_character == '#':
-            symbol.type = self.HASH
-            self.advance()
-
-            while self.current_character != '#':
-                self.advance()
-
-                if self.current_character == '':
-                    self.display_error
-                    (SyntaxError,
-                     'Expected # at the end of multi-line comment')
-
-            self.advance()
-
-        elif self.current_character == '/':
-            self.advance()
-            if self.current_character == '/':
-                symbol.type = self.SLASH
-                while self.current_character != '\n':
-                    self.advance()
-            else:
-                self.display_error
-                (SyntaxError,
-                 'Expected '/' after '/' to indicate comment')
-
         # end of file
         elif self.current_character == '':
-            symbol_type = self.EOF
+            symbol.type = self.EOF
 
         # invalid character
         else:
@@ -241,8 +242,7 @@ class Scanner:
                 number = number + self.current_character
                 
             else:
-                print('here')
-                print([number, self.current_character])
+
                 return [number, self.current_character]
 
     def display_error(self, error_type, error_message=''):
@@ -253,6 +253,7 @@ class Scanner:
               self.current_character_number)
 
         while True:
+            self.advance
             self.symbol = self.get_symbol()
             if self.symbol.type in self.end_symbols:
                 break

@@ -9,6 +9,7 @@ Classes
 Parser - parses the definition file and builds the logic network.
 """
 
+from errors import SyntaxError, SemanticError
 
 class Parser:
 
@@ -154,7 +155,6 @@ class Parser:
 
         # Make devices
         for device_id in device_id_list:
-            print('device id ',str(self.symbol.id))
 
             if self.symbol.id == self.devices.D_TYPE:
 
@@ -197,8 +197,7 @@ class Parser:
 
         if self.symbol.type == self.scanner.NUMBER:
 
-            n = self.scanner.get_number()
-            #print(n)
+            n = int(self.symbol.id)
 
             for device_id in device_id_list:
 
@@ -258,6 +257,7 @@ class Parser:
                                 ["I"+str(input_num)])
 
                             self.devices.add_input(device_id, input_id)
+        print("\n END OF DEVICES \n")
 
     def parse_CONNECTIONS_section(self):
 

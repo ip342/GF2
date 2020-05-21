@@ -28,7 +28,7 @@ class Error(Exception):
             error_type = 'SyntaxError'
 
         print('Line number ' + str(line_number) + ', Character ' + str(character) + '\n'
-            + line + '\n' + character*' ' + '^' + '\n'
+            + line + '\n' + (character - 2)*' ' + '^' + '\n'
             + '***' + ':' + str(message) + '***')
 
 # fix print error type
