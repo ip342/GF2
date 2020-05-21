@@ -85,14 +85,13 @@ class Parser:
 
         # FIND symbol after HEADER that isn't a space
         self.symbol = self.scanner.get_symbol()
-        while self.symbol is None:
-
-            self.symbol = self.scanner.get_symbol()
 
         # Add error for symbol after HEADER that isn't OPEN_SQUARE
-        if self.symbol != self.scanner.OPEN_SQUARE:
+        if self.symbol.type != self.scanner.OPEN_SQUARE:
 
-            pass
+            self.scanner.display_error(
+                SyntaxError, "Expecting opening square bracket after \
+                    section header")
 
         # Keeps parsing respective sections until doesn't return True (error)
         if header_ID == 'DEVICES':
@@ -127,16 +126,11 @@ class Parser:
         while equals_encountered is False:
             self.symbol = self.scanner.get_symbol()
 
-            # Skip spaces
-            if self.symbol is None:
-
-                continue
-
             # CHECK for NAME and append to device_name_list
-            elif self.symbol.type == self.scanner.NAME:
-
+            if self.symbol.type == self.scanner.NAME:
+                
                 device_name = self.scanner.names.get_name_string(
-                    self.symbol.id)
+                    self.symbol.id[0])
                 device_name_list.append(device_name)
 
             # Continue through COMMA
@@ -160,12 +154,13 @@ class Parser:
 
         # Make devices
         for device_id in device_id_list:
+            print('device id ',str(self.symbol.id))
 
             if self.symbol.id == self.devices.D_TYPE:
 
                 self.devices.make_d_type(device_id)
 
-            elif self.symbol.id in self.devices.gate_types:
+            elif self.symbol.id[0] in self.devices.gate_types:
                 self.devices.add_device(device_id, self.symbol.id)
 
                 # Special case for XOR gate
@@ -193,16 +188,17 @@ class Parser:
 
                 # Error for invalid device
                 invalid_device = self.scanner.names.get_name_string(
-                    self.symbol.id)
-                self.scanner.display_error(SyntaxError, "%s is an \
-                    invalid device type." % invalid_device)
+                    self.symbol.id[0])
+                self.scanner.display_error(SyntaxError, "%s is an " \
+                    "invalid device type." % invalid_device)
 
         # Device parameter..
         self.symbol = self.scanner.get_symbol()
 
         if self.symbol.type == self.scanner.NUMBER:
 
-            n = int(self.scanner.get_number())
+            n = self.scanner.get_number()
+            #print(n)
 
             for device_id in device_id_list:
 
