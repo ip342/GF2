@@ -263,104 +263,116 @@ class Parser:
 
         # CHECK for word device
         self.symbol = self.scanner.get_symbol()
-        if self.symbol.id != self.scanner.DEVICE: # Revist this
+        if self.symbol.id != self.scanner.DEVICE:  # Revist this
             self.scanner.display_error(
-                SemanticError, "List of connections must start with word device.")
-        
-        # CHECK for device name   
+                SyntaxcError, "List of connections must start \
+                               with the word 'device'.")
+
+        # CHECK for device name
         self.symbol = self.scanner.get_symbol()
         if self.symbol.type == self.scanner.NAME:
             con_device = self.devices.get_device(self.symbol.id)
-            if con_device == None:
+            if con_device is None:
                 self.scanner.display_error(
-                    SemanticError, "List of connections must start with word device.")
+                    SemanticError, "Device '{}' does not exist."
+                                   .format(con_device))
         else:
             self.scanner.display_error(
-                SemanticError, "List of connections must start with word device.")   
-        
+                SyntaxError, "Expected a device name after the word 'device'.")
+
         # CHECK for opening curly bracket
         self.symbol = self.scanner.get_symbol()
         if self.symbol != self.scanner.OPEN_CURLY:
             self.scanner.display_error(
-                SemanticError, "List of connections must start with word device.")
-        
+                SyntaxError, "Expected '{' after device name.")
+
         # PARSE each line encompassed by curly brackets
         while True:
             self.symbol = self.scanner.get_symbol()
             if self.symbol.type == self.scanner.CLOSE_CURLY:
                 break
-            
+
             # CHECK for start connection
             elif self.symbol.type != self.scanner.NAME:
                 self.scanner.display_error(
-                    SemanticError, "List of connections must start with word device.")
+                    SyntaxError, "Connection must start with a device name.")
             start_con = self.devices.get_device(self.symbol.id)
             if start_con is None:
                 self.scanner.display_error(
-                    SemanticError, "List of connections must start with word device.")
+                    SemanticError, "Device '{}' does not exist."
+                                   .format(start_con))
             elif start_con.device_kind == self.devices.D_TYPE:
                 self.symbol = self.scanner.get_symbol()
                 if self.symbol.type != self.scanner.DOT:
                     self.scanner.display_error(
-                        SemanticError, "List of connections must start with word device.")
+                        SyntaxError, "Expected '.' after DTYPE name.")
                 self.symbol = self.scanner.get_symbol()
                 if self.symbol.id not in self.devices.dtype_output_ids:
                     self.scanner.display_error(
-                        SemanticError, "List of connections must start with word device.")
+                        SyntaxError, "Invalid DTYPE output name")
                 start_con_port_id = self.symbol.id
             else:
-                start_con_port_id = None    
-                
+                start_con_port_id = None
+
             # CHECK for arrow
             self.symbol = self.scanner.get_symbol()
             if self.symbol.type != self.scanner.ARROW:
                 self.scanner.display_error(
-                    SemanticError, "List of connections must start with word device.")
+                    SyntaxError, "Expected '->' inbetween \
+                                  start and end connections.")
 
             # CHECK for end connection
             self.symbol = self.scanner.get_symbol()
             if self.symbol.type != self.scanner.NAME:
                 self.scanner.display_error(
-                    SemanticError, "List of connections must start with word device.")
+                    SyntaxError, "A device name must follow \
+                                  the connection arrow.")
             end_con = self.devices.get_device(self.symbol.id)
             if end_con is None:
                 self.scanner.display_error(
-                    SemanticError, "List of connections must start with word device.")
+                    SemanticError, "Device '{}' does not exist."
+                                   .format(end_con))
             if end_con != con_device:
                 self.scanner.display_error(
-                    SemanticError, "List of connections must start with word device.")
+                    SyntaxError, "This connection has been listsed under the \
+                                  incorrect device subsection.")
             self.symbol = self.scanner.get_symbol()
             if self.symbol.type != self.scanner.DOT:
                 self.scanner.display_error(
-                    SemanticError, "List of connections must start with word device.")
+                    SyntaxError, "Expected '.' after device name")
             self.symbol = self.scanner.get_symbol()
             if self.symbol.type != self.scanner.NAME:
                 self.scanner.display_error(
-                    SemanticError, "List of connections must start with word device.")
+                    SyntaxError, "Invalid port name.")
             end_con_port_id = self.symbol.id
 
             # CHECK for semicolon
             self.symbol = self.scanner.get_symbol()
             if self.symbol.type == self.scanner.SEMICOLON:
                 con_status = self.network.make_connection(
-                             start_con.device_id, start_con_port_id, 
+                             start_con.device_id, start_con_port_id,
                              end_con.device_id, end_con_port_id)
                 if con_status == self.network.INPUT_CONNECTED:
                     self.scanner.display_error(
-                        SemanticError, "List of connections must start with word device.")
+                        SemanticError, "{}.{} is already connected.".format(
+                                       end_con.device_id,
+                                       self.devices.names.get_name_string
+                                       (end_con_port_id)))
                 elif con_status == self.network.INPUT_TO_INPUT:
+                    # Syntax or Semantic?
                     self.scanner.display_error(
-                        SemanticError, "List of connections must start with word device.")
+                        SemanticError, "Cannot connect two input ports.")
                 elif con_status == self.network.PORT_ABSENT:
                     self.scanner.display_error(
-                        SemanticError, "List of connections must start with word device.")
+                        SemanticError, "Invalid port index '{}'."
+                                       .format(self.scanner.name_string))
                 elif con_status == self.network.NO_ERROR:
                     pass
             else:
                 self.scanner.display_error(
-                    SemanticError, "List of connections must start with word device.")
-                return False             
-                
+                    SyntaxError, "Expected ';' to end connection line.")
+                return False
+
         return True
 
     def parse_MONITORS_section(self):
