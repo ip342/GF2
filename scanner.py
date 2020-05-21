@@ -241,8 +241,7 @@ class Scanner:
                 number = number + self.current_character
                 
             else:
-                print('here')
-                print([number, self.current_character])
+
                 return [number, self.current_character]
 
     def display_error(self, error_type, error_message=''):
@@ -253,6 +252,7 @@ class Scanner:
               self.current_character_number)
 
         while True:
+            self.advance
             self.symbol = self.get_symbol()
             if self.symbol.type in self.end_symbols:
                 break
