@@ -43,6 +43,8 @@ class Parser:
         self.monitors = monitors
         self.scanner = scanner
 
+        self.count = 1
+
     def parse_network(self):
         """Parse the circuit definition file."""
         # For now just return True, so that userint and gui can run in the
@@ -53,22 +55,23 @@ class Parser:
 
             # Gets next symbol from definition file
             self.symbol = self.scanner.get_symbol()
-
+            #print(self.symbol.type)
             # At top level, symbol type can ONLY be HEADER
             if self.symbol.type == self.scanner.HEADER:
-
+                print("0")
                 # parse if HEADER is DEVICES, CONNECTIONS or MONITORS
                 if self.symbol.id == self.scanner.DEVICES_ID:
-
+                    print("1")
                     self.parse_section('DEVICES')
 
                 elif self.symbol.id == self.scanner.CONNECTIONS_ID:
-
+                    print("2")
                     self.parse_section('CONNECTIONS')
 
                 elif self.symbol.id == self.scanner.MONITORS_ID:
-
+                    print("3")
                     self.parse_section('MONITORS')
+                    print("left monitors")
 
                 # SYNTAX error - invalid HEADER name
                 else:
@@ -77,9 +80,9 @@ class Parser:
 
             # Or it's the end of the file
             elif self.symbol.type == self.scanner.EOF:
-
+                print('EOF')
                 break
-
+        print("end")        
         return True
 
     def parse_section(self, header_ID):
@@ -101,11 +104,15 @@ class Parser:
             while self.parse_DEVICES_section():
                 pass
 
+            print("\n END OF DEVICES \n")
+
         elif header_ID == 'CONNECTIONS':
 
             # parse for CONNECTIONS
             while self.parse_CONNECTIONS_section():
                 pass
+
+            print("\n END OF CONNECTIONS \n")
 
         elif header_ID == 'MONITORS':
 
@@ -113,10 +120,12 @@ class Parser:
             while self.parse_MONITORS_section():
                 pass
 
+            print("\n END OF MONITORS \n")
+
     def parse_DEVICES_section(self):
 
         # Reading DEVICES section line by line..
-
+        self.count += 1
         # First try to get a list of all devices on this line
         device_name_list = []
 
@@ -131,13 +140,17 @@ class Parser:
             if self.symbol.type == self.scanner.NAME:
                 
                 device_name = self.scanner.names.get_name_string(
-                    self.symbol.id[0])
+                    self.symbol.id)
                 device_name_list.append(device_name)
 
             # Continue through COMMA
             elif self.symbol.type == self.scanner.COMMA:
 
                 continue
+
+            elif self.symbol.type == self.scanner.CLOSE_SQUARE:
+
+                return False
 
             # Trigger to exit loop and look for device type
             elif self.symbol.type == self.scanner.EQUALS:
@@ -147,11 +160,17 @@ class Parser:
             else:
 
                 # Some error message about invalid symbols
-                self.scanner.display_error(SemanticError, "Invalid symbol \
-                    expecting a device or list of devices.")
+                self.scanner.display_error(SemanticError, "Invalid symbol "\
+                    "expecting a device or list of devices.")
+
+                print("symbol: ", str(self.symbol.type))
 
         self.symbol = self.scanner.get_symbol()
+
         device_id_list = self.devices.names.lookup(device_name_list)
+
+        if type(device_id_list) == int:
+            device_id_list = [device_id_list]
 
         # Make devices
         for device_id in device_id_list:
@@ -160,7 +179,8 @@ class Parser:
 
                 self.devices.make_d_type(device_id)
 
-            elif self.symbol.id[0] in self.devices.gate_types:
+            elif self.symbol.id in self.devices.gate_types:
+
                 self.devices.add_device(device_id, self.symbol.id)
 
                 # Special case for XOR gate
@@ -188,7 +208,7 @@ class Parser:
 
                 # Error for invalid device
                 invalid_device = self.scanner.names.get_name_string(
-                    self.symbol.id[0])
+                    self.symbol.id)
                 self.scanner.display_error(SyntaxError, "%s is an " \
                     "invalid device type." % invalid_device)
 
@@ -253,36 +273,46 @@ class Parser:
                     else:
 
                         for input_num in range(1, n + 1):
-                            [input_id] = self.devices.names.lookup(
+                            input_id = self.devices.names.lookup(
                                 ["I"+str(input_num)])
 
                             self.devices.add_input(device_id, input_id)
-        print("\n END OF DEVICES \n")
+
+        self.symbol = self.scanner.get_symbol()
+        
+        return True
 
     def parse_CONNECTIONS_section(self):
 
         # CHECK for word device
         self.symbol = self.scanner.get_symbol()
-        if self.symbol.id != self.scanner.DEVICE:  # Revist this
+
+        if self.symbol.type == self.scanner.CLOSE_SQUARE:
+
+            return False
+
+        elif self.symbol.id != self.scanner.DEVICE:  # Revist this
             self.scanner.display_error(
-                SyntaxcError, "List of connections must start \
-                               with the word 'device'.")
+                SyntaxError, "List of connections must start " \
+                               "with the word 'device'.")
+
 
         # CHECK for device name
         self.symbol = self.scanner.get_symbol()
         if self.symbol.type == self.scanner.NAME:
             con_device = self.devices.get_device(self.symbol.id)
             if con_device is None:
+                con_device_name = self.names.get_name_string(self.symbol.id)
                 self.scanner.display_error(
                     SemanticError, "Device '{}' does not exist."
-                                   .format(con_device))
+                                   .format(con_device_name))
         else:
             self.scanner.display_error(
                 SyntaxError, "Expected a device name after the word 'device'.")
 
         # CHECK for opening curly bracket
         self.symbol = self.scanner.get_symbol()
-        if self.symbol != self.scanner.OPEN_CURLY:
+        if self.symbol.type != self.scanner.OPEN_CURLY:
             self.scanner.display_error(
                 SyntaxError, "Expected '{' after device name.")
 
@@ -298,9 +328,11 @@ class Parser:
                     SyntaxError, "Connection must start with a device name.")
             start_con = self.devices.get_device(self.symbol.id)
             if start_con is None:
-                self.scanner.display_error(
-                    SemanticError, "Device '{}' does not exist."
-                                   .format(start_con))
+                print(self.symbol.id)
+                start_con_name = self.names.get_name_string(self.symbol.id)
+                # self.scanner.display_error(
+                #     SemanticError, "Device '{}' does not exist."
+                #                    .format(start_con_name))
             elif start_con.device_kind == self.devices.D_TYPE:
                 self.symbol = self.scanner.get_symbol()
                 if self.symbol.type != self.scanner.DOT:
@@ -318,15 +350,15 @@ class Parser:
             self.symbol = self.scanner.get_symbol()
             if self.symbol.type != self.scanner.ARROW:
                 self.scanner.display_error(
-                    SyntaxError, "Expected '->' inbetween \
-                                  start and end connections.")
+                    SyntaxError, "Expected '->' inbetween" \
+                                  "start and end connections.")
 
             # CHECK for end connection
             self.symbol = self.scanner.get_symbol()
             if self.symbol.type != self.scanner.NAME:
                 self.scanner.display_error(
-                    SyntaxError, "A device name must follow \
-                                  the connection arrow.")
+                    SyntaxError, "A device name must follow " \
+                                  "the connection arrow.")
             end_con = self.devices.get_device(self.symbol.id)
             if end_con is None:
                 self.scanner.display_error(
@@ -334,8 +366,8 @@ class Parser:
                                    .format(end_con))
             if end_con != con_device:
                 self.scanner.display_error(
-                    SyntaxError, "This connection has been listsed under the \
-                                  incorrect device subsection.")
+                    SyntaxError, "This connection has been listsed under the " \
+                                  "incorrect device subsection.")
             self.symbol = self.scanner.get_symbol()
             if self.symbol.type != self.scanner.DOT:
                 self.scanner.display_error(
@@ -349,29 +381,30 @@ class Parser:
             # CHECK for semicolon
             self.symbol = self.scanner.get_symbol()
             if self.symbol.type == self.scanner.SEMICOLON:
-                con_status = self.network.make_connection(
-                             start_con.device_id, start_con_port_id,
-                             end_con.device_id, end_con_port_id)
-                if con_status == self.network.INPUT_CONNECTED:
-                    self.scanner.display_error(
-                        SemanticError, "{}.{} is already connected.".format(
-                                       end_con.device_id,
-                                       self.devices.names.get_name_string
-                                       (end_con_port_id)))
-                elif con_status == self.network.INPUT_TO_INPUT:
-                    # Syntax or Semantic?
-                    self.scanner.display_error(
-                        SemanticError, "Cannot connect two input ports.")
-                elif con_status == self.network.PORT_ABSENT:
-                    self.scanner.display_error(
-                        SemanticError, "Invalid port index '{}'."
-                                       .format(self.scanner.name_string))
-                elif con_status == self.network.NO_ERROR:
-                    pass
+                pass
+                # con_status = self.network.make_connection(
+                #              start_con.device_id, start_con_port_id,
+                #              end_con.device_id, end_con_port_id)
+                # if con_status == self.network.INPUT_CONNECTED:
+                #     self.scanner.display_error(
+                #         SemanticError, "{}.{} is already connected.".format(
+                #                        end_con.device_id,
+                #                        self.devices.names.get_name_string
+                #                        (end_con_port_id)))
+                # elif con_status == self.network.INPUT_TO_INPUT:
+                #     # Syntax or Semantic?
+                #     self.scanner.display_error(
+                #         SemanticError, "Cannot connect two input ports.")
+                # elif con_status == self.network.PORT_ABSENT:
+                #     self.scanner.display_error(
+                #         SemanticError, "Invalid port index '{}'."
+                #                        .format(self.scanner.names.get_name_string(end_con_port_id)))
+                # elif con_status == self.network.NO_ERROR:
+                #     pass
             else:
                 self.scanner.display_error(
                     SyntaxError, "Expected ';' to end connection line.")
-                return False
+
 
         return True
 
