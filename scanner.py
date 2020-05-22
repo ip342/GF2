@@ -99,6 +99,7 @@ class Scanner:
         # go to current non whitespace character
         self.skip_spaces()
 
+        # ignore multi line comments
         if self.current_character == '#':
             print("entered comment")
             self.advance()
@@ -114,6 +115,7 @@ class Scanner:
             self.advance()
             self.skip_spaces()
 
+        # ignore single line comments
         if self.current_character == '/':
             self.advance()
             if self.current_character == '/':
