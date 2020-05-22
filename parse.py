@@ -11,6 +11,7 @@ Parser - parses the definition file and builds the logic network.
 
 from errors import SyntaxError, SemanticError
 
+
 class Parser:
 
     """Parse the definition file and build the logic network.
@@ -425,15 +426,8 @@ class Parser:
 
         return True
 
-
-
-
-
-
-
-
     def parse_Connections_lines(self):
-        
+
         self.symbol = self.scanner.get_symbol()
         if self.symbol.type == self.scanner.CLOSE_CURLY:
             return False
@@ -504,8 +498,6 @@ class Parser:
                 SyntaxError, "Invalid port name.")
             return True
         end_con_port_id = self.symbol.id
-
-        
         con_status = self.network.make_connection(
                      start_con.device_id, start_con_port_id,
                      end_con.device_id, end_con_port_id)
@@ -518,9 +510,7 @@ class Parser:
             return True
         elif con_status == self.network.PORT_ABSENT:
             self.scanner.display_error(
-                SemanticError, "Invalid port index '{}'.".format(
-                               self.scanner.names.get_name_string(
-                               end_con_port_id)))
+                SemanticError, "Invalid port index.")
             return True
         elif con_status == self.network.NO_ERROR:
             print('NO ERROR')
@@ -534,5 +524,5 @@ class Parser:
             self.scanner.display_error(
                 SyntaxError, "Expected ';' to end connection line.")
             return True
-        
+
         return True
