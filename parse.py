@@ -43,8 +43,6 @@ class Parser:
         self.monitors = monitors
         self.scanner = scanner
 
-        self.count = 1
-
     def parse_network(self):
         """Parse the circuit definition file."""
         # For now just return True, so that userint and gui can run in the
@@ -55,34 +53,34 @@ class Parser:
 
             # Gets next symbol from definition file
             self.symbol = self.scanner.get_symbol()
-            #print(self.symbol.type)
+
             # At top level, symbol type can ONLY be HEADER
             if self.symbol.type == self.scanner.HEADER:
-                print("0")
+
                 # parse if HEADER is DEVICES, CONNECTIONS or MONITORS
                 if self.symbol.id == self.scanner.DEVICES_ID:
-                    print("1")
+
                     self.parse_section('DEVICES')
 
                 elif self.symbol.id == self.scanner.CONNECTIONS_ID:
-                    print("2")
+
                     self.parse_section('CONNECTIONS')
 
                 elif self.symbol.id == self.scanner.MONITORS_ID:
-                    print("3")
+
                     self.parse_section('MONITORS')
-                    print("left monitors")
-
-                # SYNTAX error - invalid HEADER name
-                else:
-
-                    pass
 
             # Or it's the end of the file
             elif self.symbol.type == self.scanner.EOF:
-                print('EOF')
+
                 break
-        print("end")        
+
+            # SYNTAX error - invalid HEADER name
+            else:
+                name = self.names.get_name_string(self.symbol.id)
+                self.scanner.display_error(
+                    SyntaxError, "%s is an invalid header" % name)
+
         return True
 
     def parse_section(self, header_ID):
@@ -94,8 +92,8 @@ class Parser:
         if self.symbol.type != self.scanner.OPEN_SQUARE:
 
             self.scanner.display_error(
-                SyntaxError, "Expecting opening square bracket after \
-                    section header")
+                SyntaxError, "Expecting opening square bracket after "
+                             "section header")
 
         # Keeps parsing respective sections until doesn't return True (error)
         if header_ID == 'DEVICES':
@@ -125,7 +123,6 @@ class Parser:
     def parse_DEVICES_section(self):
 
         # Reading DEVICES section line by line..
-        self.count += 1
         # First try to get a list of all devices on this line
         device_name_list = []
 
@@ -138,7 +135,7 @@ class Parser:
 
             # CHECK for NAME and append to device_name_list
             if self.symbol.type == self.scanner.NAME:
-                
+
                 device_name = self.scanner.names.get_name_string(
                     self.symbol.id)
                 device_name_list.append(device_name)
@@ -152,6 +149,10 @@ class Parser:
 
                 return False
 
+            elif self.symbol.type == self.scanner.EOF:
+
+                return False
+
             # Trigger to exit loop and look for device type
             elif self.symbol.type == self.scanner.EQUALS:
 
@@ -160,10 +161,10 @@ class Parser:
             else:
 
                 # Some error message about invalid symbols
-                self.scanner.display_error(SemanticError, "Invalid symbol "\
+                self.scanner.display_error(
+                    SemanticError, "Invalid symbol - "
                     "expecting a device or list of devices.")
-
-                print("symbol: ", str(self.symbol.type))
+                return True
 
         self.symbol = self.scanner.get_symbol()
 
@@ -193,9 +194,6 @@ class Parser:
 
             elif self.symbol.id == self.devices.CLOCK:
 
-                # Need to figure out how to do this..
-                # Grab clock period then..? half_period?
-
                 # Make it 1 for now
                 self.devices.make_clock(device_id, 1)
 
@@ -209,8 +207,10 @@ class Parser:
                 # Error for invalid device
                 invalid_device = self.scanner.names.get_name_string(
                     self.symbol.id)
-                self.scanner.display_error(SyntaxError, "%s is an " \
+                self.scanner.display_error(
+                    SyntaxError, "%s is an "
                     "invalid device type." % invalid_device)
+                return True
 
         # Device parameter..
         self.symbol = self.scanner.get_symbol()
@@ -226,6 +226,7 @@ class Parser:
 
                     self.scanner.display_error(
                         SemanticError, "Cannot specify inputs for DTYPE.")
+                    return True
 
                 elif self.devices.get_device(device_id).device_kind \
                         == self.devices.SWITCH:
@@ -242,12 +243,14 @@ class Parser:
 
                         self.scanner.display_error(
                             SemanticError, "Switch can only take state 0 or 1")
+                        return True
 
                 elif self.devices.get_device(device_id).device_kind \
                         == self.devices.XOR:
 
                     self.scanner.display_error(
                         SemanticError, "Cannot specify inputs for XOR")
+                    return True
 
                 elif self.devices.get_device(device_id).device_kind \
                         == self.devices.CLOCK:
@@ -260,6 +263,7 @@ class Parser:
 
                     self.scanner.display_error(
                         SemanticError, "Device doesn't exist.")
+                    return True
 
                 else:
 
@@ -268,6 +272,7 @@ class Parser:
 
                         self.scanner.display_error(
                             SemanticError, "Device can only have 1-16 inputs.")
+                        return True
 
                     # Add all the inputs to the device..
                     else:
@@ -279,7 +284,7 @@ class Parser:
                             self.devices.add_input(device_id, input_id)
 
         self.symbol = self.scanner.get_symbol()
-        
+
         return True
 
     def parse_CONNECTIONS_section(self):
@@ -291,11 +296,15 @@ class Parser:
 
             return False
 
+        if self.symbol.type == self.scanner.EOF:
+
+            return False
+
         elif self.symbol.id != self.scanner.DEVICE:  # Revist this
             self.scanner.display_error(
-                SyntaxError, "List of connections must start " \
-                               "with the word 'device'.")
-
+                SyntaxError, "List of connections must start "
+                             "with the word 'device'.")
+            return True
 
         # CHECK for device name
         self.symbol = self.scanner.get_symbol()
@@ -306,15 +315,18 @@ class Parser:
                 self.scanner.display_error(
                     SemanticError, "Device '{}' does not exist."
                                    .format(con_device_name))
+                return True
         else:
             self.scanner.display_error(
                 SyntaxError, "Expected a device name after the word 'device'.")
+            return True
 
         # CHECK for opening curly bracket
         self.symbol = self.scanner.get_symbol()
         if self.symbol.type != self.scanner.OPEN_CURLY:
             self.scanner.display_error(
                 SyntaxError, "Expected '{' after device name.")
+            return True
 
         # PARSE each line encompassed by curly brackets
         while True:
@@ -326,6 +338,7 @@ class Parser:
             elif self.symbol.type != self.scanner.NAME:
                 self.scanner.display_error(
                     SyntaxError, "Connection must start with a device name.")
+                return True
             start_con = self.devices.get_device(self.symbol.id)
             if start_con is None:
                 print(self.symbol.id)
@@ -333,15 +346,18 @@ class Parser:
                 # self.scanner.display_error(
                 #     SemanticError, "Device '{}' does not exist."
                 #                    .format(start_con_name))
+                # return True
             elif start_con.device_kind == self.devices.D_TYPE:
                 self.symbol = self.scanner.get_symbol()
                 if self.symbol.type != self.scanner.DOT:
                     self.scanner.display_error(
                         SyntaxError, "Expected '.' after DTYPE name.")
+                    return True
                 self.symbol = self.scanner.get_symbol()
                 if self.symbol.id not in self.devices.dtype_output_ids:
                     self.scanner.display_error(
                         SyntaxError, "Invalid DTYPE output name")
+                    return True
                 start_con_port_id = self.symbol.id
             else:
                 start_con_port_id = None
@@ -350,38 +366,46 @@ class Parser:
             self.symbol = self.scanner.get_symbol()
             if self.symbol.type != self.scanner.ARROW:
                 self.scanner.display_error(
-                    SyntaxError, "Expected '->' inbetween" \
-                                  "start and end connections.")
+                    SyntaxError, "Expected '->' inbetween "
+                                 "start and end connections.")
+                return True
 
             # CHECK for end connection
             self.symbol = self.scanner.get_symbol()
             if self.symbol.type != self.scanner.NAME:
                 self.scanner.display_error(
-                    SyntaxError, "A device name must follow " \
-                                  "the connection arrow.")
+                    SyntaxError, "A device name must follow "
+                                 "the connection arrow.")
+                return True
             end_con = self.devices.get_device(self.symbol.id)
             if end_con is None:
                 self.scanner.display_error(
                     SemanticError, "Device '{}' does not exist."
                                    .format(end_con))
+                return True
             if end_con != con_device:
                 self.scanner.display_error(
-                    SyntaxError, "This connection has been listsed under the " \
-                                  "incorrect device subsection.")
+                    SyntaxError, "This connection has been listsed under the "
+                                 "incorrect device subsection.")
+                return True
             self.symbol = self.scanner.get_symbol()
             if self.symbol.type != self.scanner.DOT:
                 self.scanner.display_error(
                     SyntaxError, "Expected '.' after device name")
+                return True
             self.symbol = self.scanner.get_symbol()
             if self.symbol.type != self.scanner.NAME:
                 self.scanner.display_error(
                     SyntaxError, "Invalid port name.")
+                return True
             end_con_port_id = self.symbol.id
 
             # CHECK for semicolon
             self.symbol = self.scanner.get_symbol()
             if self.symbol.type == self.scanner.SEMICOLON:
                 pass
+                # REMEMBER TO CHUCK IN A BUNCH OF return True WHEN DONE
+
                 # con_status = self.network.make_connection(
                 #              start_con.device_id, start_con_port_id,
                 #              end_con.device_id, end_con_port_id)
@@ -404,7 +428,7 @@ class Parser:
             else:
                 self.scanner.display_error(
                     SyntaxError, "Expected ';' to end connection line.")
-
+                return True
 
         return True
 
@@ -483,6 +507,10 @@ class Parser:
         elif self.symbol.type == self.scanner.CLOSE_SQUARE:
 
             # Exits parse_section while loop
+            return False
+
+        elif self.symbol.type == self.scanner.EOF:
+
             return False
 
         # Error for unexpected symbol
