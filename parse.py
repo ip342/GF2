@@ -213,7 +213,9 @@ class Parser:
                 return True
 
         # Device parameter..
-        self.symbol = self.scanner.get_symbol()
+        devices_no_parameter = [self.devices.D_TYPE, self.devices.XOR]
+        if self.symbol.id not in devices_no_parameter:
+            self.symbol = self.scanner.get_symbol()
 
         if self.symbol.type == self.scanner.NUMBER:
 
@@ -343,10 +345,10 @@ class Parser:
             if start_con is None:
                 print(self.symbol.id)
                 start_con_name = self.names.get_name_string(self.symbol.id)
-                # self.scanner.display_error(
-                #     SemanticError, "Device '{}' does not exist."
-                #                    .format(start_con_name))
-                # return True
+                self.scanner.display_error(
+                    SemanticError, "Device '{}' does not exist."
+                                   .format(start_con_name))
+                return True
             elif start_con.device_kind == self.devices.D_TYPE:
                 self.symbol = self.scanner.get_symbol()
                 if self.symbol.type != self.scanner.DOT:
@@ -403,28 +405,30 @@ class Parser:
             # CHECK for semicolon
             self.symbol = self.scanner.get_symbol()
             if self.symbol.type == self.scanner.SEMICOLON:
-                pass
                 # REMEMBER TO CHUCK IN A BUNCH OF return True WHEN DONE
 
-                # con_status = self.network.make_connection(
-                #              start_con.device_id, start_con_port_id,
-                #              end_con.device_id, end_con_port_id)
-                # if con_status == self.network.INPUT_CONNECTED:
-                #     self.scanner.display_error(
-                #         SemanticError, "{}.{} is already connected.".format(
-                #                        end_con.device_id,
-                #                        self.devices.names.get_name_string
-                #                        (end_con_port_id)))
-                # elif con_status == self.network.INPUT_TO_INPUT:
-                #     # Syntax or Semantic?
-                #     self.scanner.display_error(
-                #         SemanticError, "Cannot connect two input ports.")
-                # elif con_status == self.network.PORT_ABSENT:
-                #     self.scanner.display_error(
-                #         SemanticError, "Invalid port index '{}'."
-                #                        .format(self.scanner.names.get_name_string(end_con_port_id)))
-                # elif con_status == self.network.NO_ERROR:
-                #     pass
+                con_status = self.network.make_connection(
+                             start_con.device_id, start_con_port_id,
+                             end_con.device_id, end_con_port_id)
+                if con_status == self.network.INPUT_CONNECTED:
+                    self.scanner.display_error(
+                        SemanticError, "{}.{} is already connected.".format(
+                                       end_con.device_id,
+                                       self.devices.names.get_name_string
+                                       (end_con_port_id)))
+                    return True
+                elif con_status == self.network.INPUT_TO_INPUT:
+                    # Syntax or Semantic?
+                    self.scanner.display_error(
+                        SemanticError, "Cannot connect two input ports.")
+                    return True
+                elif con_status == self.network.PORT_ABSENT:
+                    self.scanner.display_error(
+                        SemanticError, "Invalid port index '{}'."
+                                       .format(self.scanner.names.get_name_string(end_con_port_id)))
+                    return True
+                elif con_status == self.network.NO_ERROR:
+                    pass
             else:
                 self.scanner.display_error(
                     SyntaxError, "Expected ';' to end connection line.")
