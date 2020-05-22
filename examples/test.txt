@@ -1,10 +1,18 @@
 DEVICES [
-    G1 = OR 2;
-    SW1 = SWITCH 0;
+    SW1 = SWI3TCH 3;
+    // this is a test
+    G1 = AND 3;
+    G3 = DTYPE 5;
+    
 ]
 
 CONNECTIONS [
     device G1 {
         SW1 -> G1.I1;
+        G2 -> G1.I2;
     }
+]
+
+MONITORS [
+   G1;
 ]
