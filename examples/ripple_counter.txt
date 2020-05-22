@@ -1,11 +1,11 @@
 DEVICES[
 	A,B,C,D = DTYPE;
 	RST, ST = SWITCH 0;
-	CKL1 = CLOCK1;
+	CKL1 = CLOCK 1;
 ]
 	
 CONNECTIONS[
-	deviceA{
+	device A {
 		A.QBAR -> A.DATA;
 		RST -> A.CLEAR;
 		ST -> A.SET;
