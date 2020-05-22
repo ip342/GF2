@@ -1,5 +1,5 @@
 DEVICES [
-    G1, G2 = NAND 2 inputs;
+    G1, G2 = NAND 2;
     SW1, SW2 = SWITCH 0;
 ]
 
@@ -16,4 +16,4 @@ CONNECTIONS [
 
 MONITORS [
    G1, G2;
-] //
+]
