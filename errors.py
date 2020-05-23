@@ -30,6 +30,7 @@ class Error(Exception):
         if error_class == CommentError:
             error_type = 'SyntaxError'
 
+        raise error_class
         print('*'*50 + '\n' + 'Line number ' + str(line_number + 1) + ', Character ' + str(character) + '\n'
             + line + '\n' + (character - 2)*' ' + '^' + '\n'
             + error_type +': ' + str(message))
