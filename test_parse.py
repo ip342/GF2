@@ -38,10 +38,7 @@ def test_DEVICES_section():
 
     # Should pass
     parser = new_parser('parser_test_files/test_DEVICES_section_1.txt')
-    parser.parse_DEVICES_section()
-    parser.parse_DEVICES_section()
-    parser.parse_DEVICES_section()
-    parser.parse_DEVICES_section()
+    with 
     parser.parse_DEVICES_section()
     
     assert parser.scanner.error_count == 0
