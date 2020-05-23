@@ -192,7 +192,7 @@ class Parser:
                     I1, I2 = self.devices.names.lookup(["I1", "I2"])
                     self.devices.add_input(device_id, I1)
                     self.devices.add_input(device_id, I2)
-                    self.devices.add_input(device_id, None)
+                    self.devices.add_output(device_id, None)
 
             elif self.symbol.id == self.devices.CLOCK:
 
@@ -286,7 +286,7 @@ class Parser:
                                 ["I"+str(input_num)])
 
                             self.devices.add_input(device_id, input_id)
-                        self.devices.add_input(device_id, None)
+                            self.devices.add_output(device_id, None)
 
         self.symbol = self.scanner.get_symbol()
 
@@ -298,6 +298,9 @@ class Parser:
         self.symbol = self.scanner.get_symbol()
 
         if self.symbol.type == self.scanner.CLOSE_SQUARE:
+            
+            if self.network.check_network():
+                print('Network Connected')
 
             return False
 
