@@ -108,9 +108,11 @@ class Scanner:
                 self.advance()
 
                 if self.current_character == '':
-                    self.display_error
-                    (SyntaxError,
-                     'Expected # at the end of multi-line comment')
+                    print('here')
+                    self.display_error(
+                        SyntaxError, 'Expected # at the end of multi-line comment')
+                    self.symbol.type = self.EOF
+                    break
             print("left comment")
             self.advance()
             self.skip_spaces()
@@ -122,9 +124,8 @@ class Scanner:
                 while self.current_character != '\n':
                     self.advance()
             else:
-                self.display_error
-                (SyntaxError,
-                 'Expected '/' after '/' to indicate comment')
+                self.display_error(
+                    CommentError, "Expected '/' after '/' to indicate comment")
             self.advance()
             self.skip_spaces()
 
@@ -176,9 +177,9 @@ class Scanner:
                 symbol.type = self.ARROW
                 self.advance()
             else:
-                self.display_error
-                (SyntaxError,
-                 'Unexpected character, expected > after -')
+                self.advance()
+                self.display_error(
+                    SyntaxError, 'Unexpected character, expected > after -')
 
         elif self.current_character == '.':
             symbol.type = self.DOT
@@ -198,6 +199,7 @@ class Scanner:
 
         # invalid character
         else:
+            self.advance()
             self.display_error(SyntaxError, 'Invalid character')
 
         return symbol
@@ -254,8 +256,13 @@ class Scanner:
               self.file_as_list[self.current_line],
               self.current_character_number)
 
-        while True:
-            self.advance
-            self.symbol = self.get_symbol()
-            if self.symbol.type in self.end_symbols:
-                break
+        if error_type == CommentError:
+            self.advance()
+            while self.current_character != '\n':
+                self.advance()
+        else:
+
+            while True:
+                self.symbol = self.get_symbol()
+                if self.symbol.type in self.end_symbols:
+                    break

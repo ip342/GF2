@@ -27,9 +27,12 @@ class Error(Exception):
         if error_class == SyntaxError:
             error_type = 'SyntaxError'
 
-        print('Line number ' + str(line_number) + ', Character ' + str(character) + '\n'
+        if error_class == CommentError:
+            error_type = 'SyntaxError'
+
+        print('*'*50 + '\n' + 'Line number ' + str(line_number + 1) + ', Character ' + str(character) + '\n'
             + line + '\n' + (character - 2)*' ' + '^' + '\n'
-            + '***' + ':' + str(message) + '***')
+            + error_type +': ' + str(message))
 
 # fix print error type
 
@@ -39,3 +42,7 @@ class SemanticError(Exception):
 
 class SyntaxError(Exception):
     pass
+
+class CommentError(Exception):
+    pass
+
