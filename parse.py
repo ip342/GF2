@@ -44,6 +44,10 @@ class Parser:
         self.monitors = monitors
         self.scanner = scanner
 
+        self.DEVICES_found = False
+        self.CONNECTIONS_found = False
+        self.MONITORS_found = False
+
     def parse_network(self):
         """Parse the circuit definition file."""
         # For now just return True, so that userint and gui can run in the
@@ -61,14 +65,17 @@ class Parser:
                 # parse if HEADER is DEVICES, CONNECTIONS or MONITORS
                 if self.symbol.id == self.scanner.DEVICES_ID:
 
+                    self.DEVICES_found = True
                     self.parse_section('DEVICES')
 
                 elif self.symbol.id == self.scanner.CONNECTIONS_ID:
 
+                    self.CONNECTIONS_found = True
                     self.parse_section('CONNECTIONS')
 
                 elif self.symbol.id == self.scanner.MONITORS_ID:
 
+                    self.MONITORS_found = True
                     self.parse_section('MONITORS')
 
             # Or it's the end of the file

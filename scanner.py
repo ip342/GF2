@@ -79,17 +79,16 @@ class Scanner:
 
         self.keyword_list = ['cycle', 'cycles', 'input', 'inputs', 'device']
         self.end_symbols = [self.SEMICOLON, self.CLOSE_CURLY, self.CLOSE_SQUARE, self.EOF]
+        self.end_characters = [';', '}', ']', '']
 
         [self.CYCLE, self.CYCLES, self.INPUT, self.INPUTS, self.DEVICE] = \
         self.names.lookup(self.keyword_list)
-
-        [self.SEMICOLON, self.CLOSE_CURLY, self.CLOSE_SQUARE, self.EOF] = \
-        self.end_symbols
 
         self.current_character = ' '
         self.current_line = 0
         self.current_character_number = 0
         self.error_count = 0
+        self.error = False
 
     def get_symbol(self):
         """Translate the next sequence of characters into a symbol."""
@@ -173,6 +172,7 @@ class Scanner:
             else:
                 self.display_error(
                     SyntaxError, 'Unexpected character, expected > after -')
+                self.error = True
 
         elif self.current_character == '.':
             symbol.type = self.DOT
@@ -194,6 +194,8 @@ class Scanner:
         else:
             self.advance()
             self.display_error(SyntaxError, 'Invalid character')
+
+            self.error = True
 
         return symbol
 
@@ -256,6 +258,11 @@ class Scanner:
         else:
 
             while True:
-                self.symbol = self.get_symbol()
-                if self.symbol.type in self.end_symbols:
+                # self.symbol = self.get_symbol()
+                # if self.symbol.type in self.end_symbols:
+                #     break
+                self.advance()
+                if self.current_character in self.end_characters:
+                    # Advances past new line symbol
+                    self.advance()
                     break
