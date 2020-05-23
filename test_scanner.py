@@ -1,17 +1,15 @@
+'''Test the scanner module'''
+
 import pytest
 
 from names import *
 from scanner import *
 from errors import *
 
-'''Test the scanner module
-'''
-
 @pytest.fixture
 def test_names():
     names = Names()
     return names
-
 
 @pytest.fixture
 def test_symbol():
@@ -27,17 +25,24 @@ def test_scanner():
 
 @pytest.fixture
 def no_spaces():
-    return ['d32342inputs,->']
+    return 'd32342inputs,->l2534..'
+
 
 def file_not_found(test_names):
     """Test that a file not found error works"""
     with pytest.raises(FileNotFoundError):
         Scanner("fakefile.txt", test_names)
 
-def test_skip_spaces(test_scanner, test_names, expected_out="d"):
-    """Test the self.skip_spaces() functionality of the scanner class"""
+
+def file_as_list(test_scanner, test_names, second_line=' l2534', third_line=' 5..')
+    """Test that the file as list function works """
+    test_scanner.file_as_list[1] == second_line
+    test_scanner.file_as_list[2] == third_line
+
+def test_skip_spaces(test_scanner, test_names, first_char="d"):
+    """Test the self.skip_spaces() function of the scanner"""
     test_scanner.skip_spaces()
-    assert test_scanner.current_character == expected_out
+    assert test_scanner.current_character == first_char
 
 
 def test_advance(test_scanner, no_spaces):
