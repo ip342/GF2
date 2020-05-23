@@ -1,7 +1,6 @@
 """Used in the Logic Simulator project to define various errors which may occur
 in the definition file. The error type is returned, along with the location
 and a short message describing the error.
-
 Classes
 -------
 Error - Base error class
@@ -46,4 +45,3 @@ class SyntaxError(Exception):
 
 class CommentError(Exception):
     pass
-
