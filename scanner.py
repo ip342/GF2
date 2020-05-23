@@ -10,6 +10,7 @@ Symbol - encapsulates a symbol and stores its properties.
 """
 from errors import *
 
+
 class Symbol:
 
     """Encapsulate a symbol and store its properties.
@@ -60,7 +61,6 @@ class Scanner:
             sys.exit()
 
         # Create list of each file line
-
         self.file_as_list = [line.rstrip('\n') for line in open(path, 'r')]
 
         # Initialise symbol types
@@ -99,23 +99,23 @@ class Scanner:
         # go to current non whitespace character
         self.skip_spaces()
 
+        # ignore multi line comments
         if self.current_character == '#':
-            print("entered comment")
             self.advance()
 
             while self.current_character != '#':
                 self.advance()
 
                 if self.current_character == '':
-                    print('here')
                     self.display_error(
-                        SyntaxError, 'Expected # at the end of multi-line comment')
+                        SyntaxError,
+                        'Expected # at the end of multi-line comment')
                     self.symbol.type = self.EOF
                     break
-            print("left comment")
             self.advance()
             self.skip_spaces()
 
+        # ignore single line comments
         if self.current_character == '/':
             self.advance()
             if self.current_character == '/':
@@ -123,7 +123,7 @@ class Scanner:
                     self.advance()
             else:
                 self.display_error(
-                    CommentError, "Expected '/' after '/' to indicate comment")
+                    CommentError, 'Expected '/' after '/' to indicate comment')
             self.advance()
             self.skip_spaces()
 
@@ -140,14 +140,10 @@ class Scanner:
                 symbol.type = self.NAME
                 symbol.id = self.names.lookup([name_string])
 
-            #return (self.name_string + ' ')
-
         # numbers
         elif self.current_character.isdigit():
             symbol.type = self.NUMBER
             symbol.id = self.get_number()[0]
-
-            #return (symbol.id + ' ')
 
         # punctuation
         elif self.current_character == '=':
@@ -175,7 +171,6 @@ class Scanner:
                 symbol.type = self.ARROW
                 self.advance()
             else:
-                self.advance()
                 self.display_error(
                     SyntaxError, 'Unexpected character, expected > after -')
 
@@ -242,7 +237,7 @@ class Scanner:
             self.current_character = self.advance()
             if self.current_character.isdigit():
                 number = number + self.current_character
-                
+
             else:
 
                 return [number, self.current_character]
@@ -256,7 +251,7 @@ class Scanner:
 
         if error_type == CommentError:
             self.advance()
-            while self.current_character != '\n':
+            while self.advance.current_character != '\n':
                 self.advance()
         else:
 
