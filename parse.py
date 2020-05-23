@@ -133,7 +133,12 @@ class Parser:
         # Call to get list of all devices that occur before EQUALS
         while equals_encountered is False:
             self.symbol = self.scanner.get_symbol()
-
+            
+            if self.scanner is True:
+                
+                self.scanner.error = False
+                return True
+            
             # CHECK for NAME and append to device_name_list
             if self.symbol.type == self.scanner.NAME:
 
@@ -356,6 +361,7 @@ class Parser:
                 name = self.scanner.names.get_name_string(self.symbol.id)
                 self.scanner.display_error(
                     SemanticError, "%s is not a valid device." % name)
+                return True
 
             device = self.devices.get_device(self.symbol.id)
 
@@ -365,6 +371,7 @@ class Parser:
                 name = self.scanner.names.get_name_string(self.symbol.id)
                 self.scanner.display_error(
                     SemanticError, "%s is not a valid device." % name)
+                return True
 
             # Special case if NAME is DTYPE as can have .Q or .QBAR appended
             if device.device_kind == self.devices.D_TYPE:
