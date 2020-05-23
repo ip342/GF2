@@ -10,6 +10,7 @@ Symbol - encapsulates a symbol and stores its properties.
 """
 from errors import *
 
+
 class Symbol:
 
     """Encapsulate a symbol and store its properties.
@@ -60,7 +61,6 @@ class Scanner:
             sys.exit()
 
         # Create list of each file line
-
         self.file_as_list = [line.rstrip('\n') for line in open(path, 'r')]
 
         # Initialise symbol types
@@ -108,7 +108,8 @@ class Scanner:
 
                 if self.current_character == '':
                     self.display_error(
-                        SyntaxError, 'Expected # at the end of multi-line comment')
+                        SyntaxError,
+                        'Expected # at the end of multi-line comment')
                     self.symbol.type = self.EOF
                     break
             self.advance()
@@ -236,7 +237,7 @@ class Scanner:
             self.current_character = self.advance()
             if self.current_character.isdigit():
                 number = number + self.current_character
-                
+
             else:
 
                 return [number, self.current_character]
