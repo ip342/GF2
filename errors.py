@@ -36,6 +36,7 @@ class Error(Exception):
 
 # fix print error type
 
+
 class SemanticError(Exception):
     pass
 
@@ -43,6 +44,10 @@ class SemanticError(Exception):
 class SyntaxError(Exception):
     pass
 
-class CommentError(Exception):
+
+class SyntaxError(Exception):
     pass
 
+
+class CommentError(Exception):
+    pass
