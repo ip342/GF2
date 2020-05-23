@@ -11,6 +11,7 @@ Parser - parses the definition file and builds the logic network.
 
 from errors import SyntaxError, SemanticError
 
+
 class Parser:
 
     """Parse the definition file and build the logic network.
@@ -424,8 +425,9 @@ class Parser:
                     return True
                 elif con_status == self.network.PORT_ABSENT:
                     self.scanner.display_error(
-                        SemanticError, "Invalid port index '{}'."
-                                       .format(self.scanner.names.get_name_string(end_con_port_id)))
+                        SemanticError, "Invalid port index '{}'.".format(
+                            self.scanner.names.get_name_string(
+                                end_con_port_id)))
                     return True
                 elif con_status == self.network.NO_ERROR:
                     pass
