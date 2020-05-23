@@ -192,6 +192,7 @@ class Parser:
                     I1, I2 = self.devices.names.lookup(["I1", "I2"])
                     self.devices.add_input(device_id, I1)
                     self.devices.add_input(device_id, I2)
+                    self.devices.add_input(device_id, None)
 
             elif self.symbol.id == self.devices.CLOCK:
 
@@ -285,6 +286,7 @@ class Parser:
                                 ["I"+str(input_num)])
 
                             self.devices.add_input(device_id, input_id)
+                        self.devices.add_input(device_id, None)
 
         self.symbol = self.scanner.get_symbol()
 
@@ -312,8 +314,8 @@ class Parser:
         # CHECK for device name
         self.symbol = self.scanner.get_symbol()
         if self.symbol.type == self.scanner.NAME:
-            con_device = self.devices.get_device(self.symbol.id)
-            if con_device is None:
+            self.con_device = self.devices.get_device(self.symbol.id)
+            if self.con_device is None:
                 con_device_name = self.names.get_name_string(self.symbol.id)
                 self.scanner.display_error(
                     SemanticError, "Device '{}' does not exist."
@@ -332,109 +334,8 @@ class Parser:
             return True
 
         # PARSE each line encompassed by curly brackets
-        while True:
-            self.symbol = self.scanner.get_symbol()
-            if self.symbol.type == self.scanner.CLOSE_CURLY:
-                break
-
-            # CHECK for start connection
-            elif self.symbol.type != self.scanner.NAME:
-                self.scanner.display_error(
-                    SyntaxError, "Connection must start with a device name.")
-                return True
-            start_con = self.devices.get_device(self.symbol.id)
-            if start_con is None:
-                print(self.symbol.id)
-                start_con_name = self.names.get_name_string(self.symbol.id)
-                self.scanner.display_error(
-                    SemanticError, "Device '{}' does not exist."
-                                   .format(start_con_name))
-                return True
-            elif start_con.device_kind == self.devices.D_TYPE:
-                self.symbol = self.scanner.get_symbol()
-                if self.symbol.type != self.scanner.DOT:
-                    self.scanner.display_error(
-                        SyntaxError, "Expected '.' after DTYPE name.")
-                    return True
-                self.symbol = self.scanner.get_symbol()
-                if self.symbol.id not in self.devices.dtype_output_ids:
-                    self.scanner.display_error(
-                        SyntaxError, "Invalid DTYPE output name")
-                    return True
-                start_con_port_id = self.symbol.id
-            else:
-                start_con_port_id = None
-
-            # CHECK for arrow
-            self.symbol = self.scanner.get_symbol()
-            if self.symbol.type != self.scanner.ARROW:
-                self.scanner.display_error(
-                    SyntaxError, "Expected '->' inbetween "
-                                 "start and end connections.")
-                return True
-
-            # CHECK for end connection
-            self.symbol = self.scanner.get_symbol()
-            if self.symbol.type != self.scanner.NAME:
-                self.scanner.display_error(
-                    SyntaxError, "A device name must follow "
-                                 "the connection arrow.")
-                return True
-            end_con = self.devices.get_device(self.symbol.id)
-            if end_con is None:
-                self.scanner.display_error(
-                    SemanticError, "Device '{}' does not exist."
-                                   .format(end_con))
-                return True
-            if end_con != con_device:
-                self.scanner.display_error(
-                    SyntaxError, "This connection has been listsed under the "
-                                 "incorrect device subsection.")
-                return True
-            self.symbol = self.scanner.get_symbol()
-            if self.symbol.type != self.scanner.DOT:
-                self.scanner.display_error(
-                    SyntaxError, "Expected '.' after device name")
-                return True
-            self.symbol = self.scanner.get_symbol()
-            if self.symbol.type != self.scanner.NAME:
-                self.scanner.display_error(
-                    SyntaxError, "Invalid port name.")
-                return True
-            end_con_port_id = self.symbol.id
-
-            # CHECK for semicolon
-            self.symbol = self.scanner.get_symbol()
-            if self.symbol.type == self.scanner.SEMICOLON:
-                # REMEMBER TO CHUCK IN A BUNCH OF return True WHEN DONE
-
-                con_status = self.network.make_connection(
-                             start_con.device_id, start_con_port_id,
-                             end_con.device_id, end_con_port_id)
-                if con_status == self.network.INPUT_CONNECTED:
-                    self.scanner.display_error(
-                        SemanticError, "{}.{} is already connected.".format(
-                                       end_con.device_id,
-                                       self.devices.names.get_name_string
-                                       (end_con_port_id)))
-                    return True
-                elif con_status == self.network.INPUT_TO_INPUT:
-                    # Syntax or Semantic?
-                    self.scanner.display_error(
-                        SemanticError, "Cannot connect two input ports.")
-                    return True
-                elif con_status == self.network.PORT_ABSENT:
-                    self.scanner.display_error(
-                        SemanticError, "Invalid port index '{}'.".format(
-                            self.scanner.names.get_name_string(
-                                end_con_port_id)))
-                    return True
-                elif con_status == self.network.NO_ERROR:
-                    pass
-            else:
-                self.scanner.display_error(
-                    SyntaxError, "Expected ';' to end connection line.")
-                return True
+        while self.parse_Connections_lines():
+            pass
 
         return True
 
@@ -524,5 +425,105 @@ class Parser:
 
             self.scanner.display_error(
                 SemanticError, "Invalid symbol")
+
+        return True
+
+    def parse_Connections_lines(self):
+
+        self.symbol = self.scanner.get_symbol()
+        if self.symbol.type == self.scanner.CLOSE_CURLY:
+            return False
+
+        # CHECK for start connection
+        elif self.symbol.type != self.scanner.NAME:
+            self.scanner.display_error(
+                SyntaxError, "Connection must start with a device name.")
+            return True
+        start_con = self.devices.get_device(self.symbol.id)
+        if start_con is None:
+            print(self.symbol.id)
+            start_con_name = self.names.get_name_string(self.symbol.id)
+            self.scanner.display_error(
+                SemanticError, "Device '{}' does not exist."
+                               .format(start_con_name))
+            return True
+        elif start_con.device_kind == self.devices.D_TYPE:
+            self.symbol = self.scanner.get_symbol()
+            if self.symbol.type != self.scanner.DOT:
+                self.scanner.display_error(
+                    SyntaxError, "Expected '.' after DTYPE name.")
+                return True
+            self.symbol = self.scanner.get_symbol()
+            if self.symbol.id not in self.devices.dtype_output_ids:
+                self.scanner.display_error(
+                    SyntaxError, "Invalid DTYPE output name")
+                return True
+            start_con_port_id = self.symbol.id
+        else:
+            start_con_port_id = None
+
+        # CHECK for arrow
+        self.symbol = self.scanner.get_symbol()
+        if self.symbol.type != self.scanner.ARROW:
+            self.scanner.display_error(
+                SyntaxError, "Expected '->' inbetween "
+                             "start and end connections.")
+            return True
+
+        # CHECK for end connection
+        self.symbol = self.scanner.get_symbol()
+        if self.symbol.type != self.scanner.NAME:
+            self.scanner.display_error(
+                SyntaxError, "A device name must follow "
+                             "the connection arrow.")
+            return True
+        end_con = self.devices.get_device(self.symbol.id)
+        end_con_name = self.names.get_name_string(self.symbol.id)
+        if end_con is None:
+            self.scanner.display_error(
+                SemanticError, "Device '{}' does not exist."
+                               .format(end_con_name))
+            return True
+        if end_con != self.con_device:
+            self.scanner.display_error(
+                SyntaxError, "This connection has been listsed under the "
+                             "incorrect device subsection.")
+            return True
+        self.symbol = self.scanner.get_symbol()
+        if self.symbol.type != self.scanner.DOT:
+            self.scanner.display_error(
+                SyntaxError, "Expected '.' after device name")
+            return True
+        self.symbol = self.scanner.get_symbol()
+        if self.symbol.type != self.scanner.NAME:
+            self.scanner.display_error(
+                SyntaxError, "Invalid port name.")
+            return True
+        end_con_port_id = self.symbol.id
+        con_status = self.network.make_connection(
+                     start_con.device_id, start_con_port_id,
+                     end_con.device_id, end_con_port_id)
+        if con_status == self.network.INPUT_CONNECTED:
+            self.scanner.display_error(
+                SemanticError, "{}.{} is already connected.".format(
+                               end_con_name,
+                               self.devices.names.get_name_string
+                               (end_con_port_id)))
+            return True
+        elif con_status == self.network.PORT_ABSENT:
+            self.scanner.display_error(
+                SemanticError, "Invalid port index.")
+            return True
+        elif con_status == self.network.NO_ERROR:
+            pass
+
+        # CHECK for semicolon
+        self.symbol = self.scanner.get_symbol()
+        if self.symbol.type == self.scanner.SEMICOLON:
+            pass
+        else:
+            self.scanner.display_error(
+                SyntaxError, "Expected ';' to end connection line.")
+            return True
 
         return True
