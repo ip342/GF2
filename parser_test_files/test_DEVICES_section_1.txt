@@ -1,4 +1,4 @@
-A, H = XOR;
+A!, H = XOR;
 B = OR 2;
 C, G = NAND 2;
 D = AND 3;
