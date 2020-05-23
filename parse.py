@@ -141,7 +141,7 @@ class Parser:
         while equals_encountered is False:
             self.symbol = self.scanner.get_symbol()
             
-            if self.scanner is True:
+            if self.scanner.error is True:
                 
                 self.scanner.error = False
                 return True
@@ -402,12 +402,14 @@ class Parser:
 
                         self.scanner.display_error(
                             SemanticError, "DTYPE can only use .Q or .QBAR")
+                        return True
 
                 # Error for DTYPE not being followed by DOT
                 else:
 
                     self.scanner.display_error(
                         SemanticError, "DTYPE must be followed by .")
+                    return True
 
             # For devices that are not DTYPE, make monitor with output_id None
             else:
@@ -442,6 +444,7 @@ class Parser:
 
             self.scanner.display_error(
                 SemanticError, "Invalid symbol")
+            return True
 
         return True
 
