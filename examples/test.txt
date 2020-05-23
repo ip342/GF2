@@ -1,9 +1,7 @@
 DEVICES [
-    SW1 = SWI3TCH 3;
-    // this is a test
+    X1 = DTYPE;
     G1 = AND 3;
-    G3 = DTYPE 5;
-    
+    SW1 = SWITCH 1;
 ]
 
 CONNECTIONS [
