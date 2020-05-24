@@ -1,6 +1,6 @@
 DEVICES [
     A, H = XOR;
-    B = OR;
+    B = OR 2;
     C, G = NAND 2;
     D = AND 3;
     E = NOR 2;
