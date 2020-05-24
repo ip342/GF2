@@ -207,12 +207,15 @@ class Scanner:
 
     def advance(self):
         """ Advance to next character """
-        self.current_character = self.input_file.read(1)
-        self.current_character_number += 1
+        # self.current_character = self.input_file.read(1)
+        # self.current_character_number += 1
 
         if self.current_character == '\n':
             self.current_line += 1
             self.current_character_number = 0
+            
+        self.current_character = self.input_file.read(1)
+        self.current_character_number += 1
 
         return self.current_character
 
@@ -244,7 +247,7 @@ class Scanner:
 
                 return [number, self.current_character]
 
-    def display_error(self, error_type, error_message=''):
+    def display_error(self, error_type, error_message='', stop=None):
         self.error_count += 1
 
         Error(error_type, error_message, self.current_line,
@@ -255,14 +258,29 @@ class Scanner:
             self.advance()
             while self.advance.current_character != '\n':
                 self.advance()
+                
+        elif stop == "EOL":
+            self.advance()
+        
+        elif self.current_character == '\n':
+                self.advance()
+        
+        elif self.current_character in self.end_characters:
+                self.advance()
+        
         else:
 
             while True:
-                # self.symbol = self.get_symbol()
-                # if self.symbol.type in self.end_symbols:
-                #     break
                 self.advance()
-                if self.current_character in self.end_characters:
-                    # Advances past new line symbol
-                    self.advance()
-                    break
+                if stop is not None:
+                    if self.current_character in stop:
+                        # Advances past new line symbol
+                        self.advance()
+                        break
+                elif self.current_character == ';':
+                        # Advances past new line symbol
+                        self.advance()
+                        print('here')
+                        break 
+                elif self.current_character in self.end_characters:
+                        break
