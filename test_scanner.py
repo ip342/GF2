@@ -73,7 +73,6 @@ def test_get_name_and_number(test_scanner, test_names):
     assert number[1] == " "
 
 def test_raise_comment_error(test_scanner, test_names):
-    
     with pytest.raises(CommentError):
         while test_scanner.current_character != '':
             test_scanner.get_symbol()
