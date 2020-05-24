@@ -1,8 +1,9 @@
 DEVICES [
     X1, X2 = DTYPE;
-    G2 = AND 60;
     G1 = XOR;
-    SW1 = SWITCH 1;
+    SW1 = SWITCH 1; 
+
+    #fix the two hash comments after eachother error#
 ]
 
 CONNECTIONS [
