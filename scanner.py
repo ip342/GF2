@@ -93,7 +93,6 @@ class Scanner:
 
     def get_symbol(self):
         """Translate the next sequence of characters into a symbol."""
-
         symbol = Symbol()
 
         # go to current non whitespace character
@@ -108,9 +107,9 @@ class Scanner:
 
                 if self.current_character == '':
                     self.display_error(
-                        SyntaxError,
+                        CommentError,
                         'Expected # at the end of multi-line comment')
-                    self.symbol.type = self.EOF
+                    symbol.type = self.EOF
                     break
             self.advance()
             self.skip_spaces()
@@ -123,7 +122,7 @@ class Scanner:
                     self.advance()
             else:
                 self.display_error(
-                    CommentError, 'Expected '/' after '/' to indicate comment')
+                    CommentError, "Expected '/' after '/' to indicate comment")
             self.advance()
             self.skip_spaces()
 
@@ -217,7 +216,7 @@ class Scanner:
         if self.current_character == '\n':
             self.current_line += 1
             self.current_character_number = 0
-            
+
         self.current_character = self.input_file.read(1)
         self.current_character_number += 1
 
@@ -254,24 +253,29 @@ class Scanner:
     def display_error(self, error_type, error_message='', stop=None):
         self.error_count += 1
 
-        Error(error_type, error_message, self.current_line,
-              self.file_as_list[self.current_line],
-              self.current_character_number)
+        if 'test' in sys.argv[0].lower():
+            raise error_type
 
+        Error(error_type, error_message, self.current_line,
+            self.file_as_list[self.current_line],
+            self.current_character_number)
+
+        # Comment error special case
         if error_type == CommentError:
             self.advance()
-            while self.advance.current_character != '\n':
+            while self.current_character != '\n':
                 self.advance()
-                
+
+        # Error recovery
         elif stop == "EOL":
             self.advance()
-        
+
         elif self.current_character == '\n':
                 self.advance()
-        
+
         elif self.current_character in self.end_characters:
                 self.advance()
-        
+
         else:
 
             while True:
