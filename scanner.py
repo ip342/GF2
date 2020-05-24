@@ -70,7 +70,7 @@ class Scanner:
                                  self.OPEN_SQUARE, self.CLOSE_SQUARE,
                                  self.SLASH, self.SEMICOLON, self.ARROW,
                                  self.DOT, self.OPEN_CURLY, self.CLOSE_CURLY,
-                                 self.HASH, self.EOF] = range(16)
+                                 self.HASH, self.ALL, self.EOF] = range(17)
 
         self.header_list = ['DEVICES', 'CONNECTIONS', 'MONITORS']
 
@@ -80,6 +80,7 @@ class Scanner:
         self.keyword_list = ['cycle', 'cycles', 'input', 'inputs', 'device']
         self.end_symbols = [self.SEMICOLON, self.CLOSE_CURLY, self.CLOSE_SQUARE, self.EOF]
         self.end_characters = [';', '}', ']', '']
+        self.monitor_all = ['all']
 
         [self.CYCLE, self.CYCLES, self.INPUT, self.INPUTS, self.DEVICE] = \
         self.names.lookup(self.keyword_list)
@@ -134,6 +135,9 @@ class Scanner:
                 symbol.id = self.names.query(name_string.upper())
             elif name_string.lower() in self.keyword_list:
                 symbol.type = self.KEYWORD
+                symbol.id = self.names.query(name_string.lower())
+            elif name_string.lower() in self.monitor_all:
+                symbol.type = self.ALL
                 symbol.id = self.names.query(name_string.lower())
             else:
                 symbol.type = self.NAME
@@ -207,12 +211,15 @@ class Scanner:
 
     def advance(self):
         """ Advance to next character """
-        self.current_character = self.input_file.read(1)
-        self.current_character_number += 1
+        # self.current_character = self.input_file.read(1)
+        # self.current_character_number += 1
 
         if self.current_character == '\n':
             self.current_line += 1
             self.current_character_number = 0
+            
+        self.current_character = self.input_file.read(1)
+        self.current_character_number += 1
 
         return self.current_character
 
@@ -244,7 +251,7 @@ class Scanner:
 
                 return [number, self.current_character]
 
-    def display_error(self, error_type, error_message=''):
+    def display_error(self, error_type, error_message='', stop=None):
         self.error_count += 1
 
         Error(error_type, error_message, self.current_line,
@@ -255,14 +262,28 @@ class Scanner:
             self.advance()
             while self.advance.current_character != '\n':
                 self.advance()
+                
+        elif stop == "EOL":
+            self.advance()
+        
+        elif self.current_character == '\n':
+                self.advance()
+        
+        elif self.current_character in self.end_characters:
+                self.advance()
+        
         else:
 
             while True:
-                # self.symbol = self.get_symbol()
-                # if self.symbol.type in self.end_symbols:
-                #     break
                 self.advance()
-                if self.current_character in self.end_characters:
-                    # Advances past new line symbol
-                    self.advance()
-                    break
+                if stop is not None:
+                    if self.current_character in stop:
+                        # Advances past new line symbol
+                        self.advance()
+                        break
+                elif self.current_character == ';':
+                        # Advances past new line symbol
+                        self.advance()
+                        break 
+                elif self.current_character in self.end_characters:
+                        break

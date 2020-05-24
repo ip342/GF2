@@ -1,13 +1,14 @@
 DEVICES [
-    X1 = DTYPE;
-    G1 = AND 3;
+    X1, X2 = DTYPE;
+    G2 = AND 60;
+    G1 = XOR;
     SW1 = SWITCH 1;
 ]
 
 CONNECTIONS [
     device G1 {
         SW1 -> G1.I1;
-        G2 -> G1.I2;
+        X1.Q -> G1.I2;
     }
 ]
 
