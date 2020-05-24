@@ -9,7 +9,7 @@ Classes
 Parser - parses the definition file and builds the logic network.
 """
 
-from errors import SyntaxError, SemanticError
+from errors import *
 
 
 class Parser:
@@ -80,6 +80,13 @@ class Parser:
 
             # Or it's the end of the file
             elif self.symbol.type == self.scanner.EOF:
+
+                # Print total number of errors
+                if self.scanner.error_count != 0:
+                    if self.scanner.error_count == 1:
+                        print('*'*50 + '\n' + 'Definition file contains %s error' %self.scanner.error_count)
+                    else:
+                        print('*'*50 + '\n' + 'Definition file contains %s errors' %self.scanner.error_count)
 
                 break
 
