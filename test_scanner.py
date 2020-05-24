@@ -25,11 +25,11 @@ def test_scanner():
 
 @pytest.fixture
 def lines():
-    return ['     d3 2342 inputs, ->', ' #l2534', ' 5..']
+    return ['     d3 2342 inputs, ->', ' /l2534', ' 5..']
 
 @pytest.fixture
 def no_spaces():
-    return 'd32342inputs,->#l25345..'
+    return 'd32342inputs,->/l25345..'
 
 
 def test_file_not_found(test_names):
@@ -74,7 +74,6 @@ def test_get_name_and_number(test_scanner, test_names):
 
 def test_raise_comment_error(test_scanner, test_names):
     
-    with pytest.raises(SyntaxError):
-        while test_scanner.current_character != len():
+    with pytest.raises(CommentError):
+        while test_scanner.current_character != '':
             test_scanner.get_symbol()
-            i+=1
