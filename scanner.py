@@ -280,7 +280,6 @@ class Scanner:
                 elif self.current_character == ';':
                         # Advances past new line symbol
                         self.advance()
-                        print('here')
                         break 
                 elif self.current_character in self.end_characters:
                         break

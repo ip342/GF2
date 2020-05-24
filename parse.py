@@ -140,41 +140,61 @@ class Parser:
 
         # Distinguish between device_names and their type
         equals_encountered = False
+        
+        self.symbol = self.scanner.get_symbol()
+        
+        if self.scanner.error is True:
+            
+            self.scanner.error = False
+            return True
+        
+        # CHECK for NAME and append to device_name_list
+        if self.symbol.type == self.scanner.NAME:
+            
+            device_name = self.scanner.names.get_name_string(
+                self.symbol.id)
+                
+            if device_name in self.all_devices_list:
+                self.scanner.display_error(
+                    SemanticError, "Device name '{}' has already been assigned.".format(device_name))
+                return True
+                
+            device_name_list.append(device_name)
+            self.all_devices_list.append(device_name)
+
+        elif self.symbol.type == self.scanner.CLOSE_SQUARE:
+
+            return False
+
+        elif self.symbol.type == self.scanner.EOF:
+
+            return False
+            
+        else:
+
+            # Some error message about invalid symbols
+            self.scanner.display_error(
+                SemanticError, "Expecting a device name.")
+            return True
+        
+        
 
         # Call to get list of all devices that occur before EQUALS
         while equals_encountered is False:
             self.symbol = self.scanner.get_symbol()
             
-            if self.scanner.error is True:
-                
-                self.scanner.error = False
-                return True
-            
-            # CHECK for NAME and append to device_name_list
-            if self.symbol.type == self.scanner.NAME:
-                
-                device_name = self.scanner.names.get_name_string(
-                    self.symbol.id)
-                    
-                if device_name in self.all_devices_list:
-                    self.scanner.display_error(
-                        SemanticError, "Device name '{}' has already been assigned.".format(device_name))
-                    return True
-                    
-                device_name_list.append(device_name)
-                self.all_devices_list.append(device_name)
-
             # Continue through COMMA
-            elif self.symbol.type == self.scanner.COMMA:
-
-                continue
+            if self.symbol.type == self.scanner.COMMA:
+                pass
 
             elif self.symbol.type == self.scanner.CLOSE_SQUARE:
-
+                self.scanner.display_error(
+                    SemanticError, "Expecting comma or equals.")
                 return False
 
             elif self.symbol.type == self.scanner.EOF:
-
+                self.scanner.display_error(
+                    SemanticError, "Expecting comma or equals.")
                 return False
 
             # Trigger to exit loop and look for device type
@@ -186,8 +206,37 @@ class Parser:
 
                 # Some error message about invalid symbols
                 self.scanner.display_error(
-                    SemanticError, "Expecting commaq or equals.")
+                    SemanticError, "Expecting comma or equals.")
                 return True
+             
+            if equals_encountered is False:
+                self.symbol = self.scanner.get_symbol()
+            
+                if self.scanner.error is True:
+                
+                    self.scanner.error = False
+                    return True
+            
+                # CHECK for NAME and append to device_name_list
+                if self.symbol.type == self.scanner.NAME:
+                
+                    device_name = self.scanner.names.get_name_string(
+                        self.symbol.id)
+                    
+                    if device_name in self.all_devices_list:
+                        self.scanner.display_error(
+                            SemanticError, "Device name '{}' has already been assigned.".format(device_name))
+                        return True
+                    
+                    device_name_list.append(device_name)
+                    self.all_devices_list.append(device_name)
+                
+                else:
+
+                    # Some error message about invalid symbols
+                    self.scanner.display_error(
+                        SemanticError, "Expecting a device name.")
+                    return True
 
         self.symbol = self.scanner.get_symbol()
 
