@@ -57,8 +57,13 @@ class Parser:
         while True:
 
             # Gets next symbol from definition file
-            self.symbol = self.scanner.get_symbol()
-
+            self.symbol = self.scanner.get_symbol(["]",""])
+            
+            while self.scanner.error is True:
+            
+                self.scanner.error = False
+                self.symbol = self.scanner.get_symbol(["]",""])
+            
             # At top level, symbol type can ONLY be HEADER
             if self.symbol.type == self.scanner.HEADER:
 
@@ -82,12 +87,16 @@ class Parser:
             elif self.symbol.type == self.scanner.EOF:
 
                 break
+                
+            elif self.symbol.type == self.scanner.NAME:
+                name = self.names.get_name_string(self.symbol.id)
+                self.scanner.display_error(
+                    SyntaxError, "%s is an invalid header" % name, ["]",""])
 
             # SYNTAX error - invalid HEADER name
             else:
-                name = self.names.get_name_string(self.symbol.id)
                 self.scanner.display_error(
-                    SyntaxError, "%s is an invalid header" % name)
+                    SyntaxError, "Expected a header", ["]",""])
 
         return True
 
@@ -98,7 +107,12 @@ class Parser:
         self.all_monitors_list = []
         
         # FIND symbol after HEADER that isn't a space
-        self.symbol = self.scanner.get_symbol()
+        self.symbol = self.scanner.get_symbol(["]",""])
+        
+        if self.scanner.error is True:
+            
+            self.scanner.error = False
+            return True
 
         # Add error for symbol after HEADER that isn't OPEN_SQUARE
         if self.symbol.type != self.scanner.OPEN_SQUARE:
@@ -106,6 +120,7 @@ class Parser:
             self.scanner.display_error(
                 SyntaxError, "Expecting opening square bracket after "
                              "section header")
+            return
 
         # Keeps parsing respective sections until doesn't return True (error)
         if header_ID == 'DEVICES':
@@ -183,6 +198,11 @@ class Parser:
         while equals_encountered is False:
             self.symbol = self.scanner.get_symbol()
             
+            if self.scanner.error is True:
+            
+                self.scanner.error = False
+                return True
+            
             # Continue through COMMA
             if self.symbol.type == self.scanner.COMMA:
                 pass
@@ -239,6 +259,11 @@ class Parser:
                     return True
 
         self.symbol = self.scanner.get_symbol()
+        
+        if self.scanner.error is True:
+        
+            self.scanner.error = False
+            return True
 
         device_id_list = self.devices.names.lookup(device_name_list)
 
@@ -280,7 +305,7 @@ class Parser:
                     SyntaxError, "Expected a device type")
                 return True
 
-            else:
+            elif self.symbol.type == self.scanner.NAME:
 
                 # Error for invalid device
                 invalid_device = self.scanner.names.get_name_string(
@@ -289,11 +314,21 @@ class Parser:
                     SyntaxError, "%s is an "
                     "invalid device type." % invalid_device)
                 return True
+             
+            else:   
+                self.scanner.display_error(
+                    SyntaxError, "Expected a device type")
+                return True
 
         # Device parameter..
         devices_no_parameter = [self.devices.D_TYPE, self.devices.XOR]
         if self.symbol.id not in devices_no_parameter:
             self.symbol = self.scanner.get_symbol()
+            
+            if self.scanner.error is True:
+        
+                self.scanner.error = False
+                return True
 
             if self.symbol.type == self.scanner.NUMBER:
 
@@ -371,6 +406,11 @@ class Parser:
                         
         self.symbol = self.scanner.get_symbol()
         
+        if self.scanner.error is True:
+    
+            self.scanner.error = False
+            return True
+        
         if self.symbol.type == self.scanner.SEMICOLON:
             pass
         elif self.symbol.type == self.scanner.NUMBER:
@@ -391,7 +431,12 @@ class Parser:
     def parse_CONNECTIONS_section(self):
 
         # CHECK for word device
-        self.symbol = self.scanner.get_symbol()
+        self.symbol = self.scanner.get_symbol(["}","]",""])
+        
+        if self.scanner.error is True:
+            
+            self.scanner.error = False
+            return True
 
         if self.symbol.type == self.scanner.CLOSE_SQUARE:
             
@@ -411,7 +456,13 @@ class Parser:
             return True
 
         # CHECK for device name
-        self.symbol = self.scanner.get_symbol()
+        self.symbol = self.scanner.get_symbol(["}","]",""])
+        
+        if self.scanner.error is True:
+            
+            self.scanner.error = False
+            return True
+        
         if self.symbol.type == self.scanner.NAME:
             self.con_device = self.devices.get_device(self.symbol.id)
             con_device_name = self.names.get_name_string(self.symbol.id)
@@ -432,7 +483,13 @@ class Parser:
             return True
 
         # CHECK for opening curly bracket
-        self.symbol = self.scanner.get_symbol()
+        self.symbol = self.scanner.get_symbol(["}","]",""])
+        
+        if self.scanner.error is True:
+            
+            self.scanner.error = False
+            return True
+        
         if self.symbol.type != self.scanner.OPEN_CURLY:
             self.scanner.display_error(
                 SyntaxError, "Expected '{' after device name.", ["}","]",""])
@@ -451,6 +508,11 @@ class Parser:
 
         # GET next symbol (after OPEN_SQUARE)
         self.symbol = self.scanner.get_symbol()
+        
+        if self.scanner.error is True:
+            
+            self.scanner.error = False
+            return True
 
         # CHECK for NAME
         if self.symbol.type == self.scanner.NAME:
@@ -490,10 +552,22 @@ class Parser:
 
                 # GET next symbol and CHECK it's DOT
                 self.symbol = self.scanner.get_symbol()
+                
+                if self.scanner.error is True:
+            
+                    self.scanner.error = False
+                    return True
+                
                 if self.symbol.type == self.scanner.DOT:
 
                     # Symbol following DTYPE and DOT must be Q or QBAR
                     self.symbol = self.scanner.get_symbol()
+                    
+                    if self.scanner.error is True:
+            
+                        self.scanner.error = False
+                        return True
+                    
                     if self.symbol.id in self.devices.dtype_output_ids:
 
                         # Make monitor for device with output..
@@ -557,6 +631,12 @@ class Parser:
         if self.symbol.type == self.scanner.CLOSE_CURLY:
             return False
         self.symbol = self.scanner.get_symbol()
+        
+        if self.scanner.error is True:
+            
+            self.scanner.error = False
+            return True
+        
         if self.symbol.type == self.scanner.CLOSE_CURLY:
             return False
             
@@ -581,11 +661,23 @@ class Parser:
             return True
         elif start_con.device_kind == self.devices.D_TYPE:
             self.symbol = self.scanner.get_symbol()
+            
+            if self.scanner.error is True:
+            
+                self.scanner.error = False
+                return True
+            
             if self.symbol.type != self.scanner.DOT:
                 self.scanner.display_error(
                     SyntaxError, "Expected '.' after DTYPE name.")
                 return True
             self.symbol = self.scanner.get_symbol()
+            
+            if self.scanner.error is True:
+            
+                self.scanner.error = False
+                return True
+            
             if self.symbol.id not in self.devices.dtype_output_ids:
                 self.scanner.display_error(
                     SyntaxError, "Invalid DTYPE output name")
@@ -596,6 +688,12 @@ class Parser:
 
         # CHECK for arrow
         self.symbol = self.scanner.get_symbol()
+        
+        if self.scanner.error is True:
+            
+            self.scanner.error = False
+            return True
+        
         if self.symbol.type != self.scanner.ARROW:
             self.scanner.display_error(
                 SyntaxError, "Expected '->' inbetween "
@@ -604,6 +702,12 @@ class Parser:
 
         # CHECK for end connection
         self.symbol = self.scanner.get_symbol()
+        
+        if self.scanner.error is True:
+            
+            self.scanner.error = False
+            return True
+        
         if self.symbol.type != self.scanner.NAME:
             self.scanner.display_error(
                 SyntaxError, "A device name must follow "
@@ -622,11 +726,23 @@ class Parser:
                              "incorrect device subsection.")
             return True
         self.symbol = self.scanner.get_symbol()
+        
+        if self.scanner.error is True:
+            
+            self.scanner.error = False
+            return True
+        
         if self.symbol.type != self.scanner.DOT:
             self.scanner.display_error(
                 SyntaxError, "Expected '.' after device name")
             return True
         self.symbol = self.scanner.get_symbol()
+        
+        if self.scanner.error is True:
+            
+            self.scanner.error = False
+            return True
+        
         if self.symbol.type != self.scanner.NAME:
             self.scanner.display_error(
                 SyntaxError, "Invalid port name.")
@@ -651,6 +767,12 @@ class Parser:
 
         # CHECK for semicolon
         self.symbol = self.scanner.get_symbol()
+        
+        if self.scanner.error is True:
+            
+            self.scanner.error = False
+            return True
+        
         if self.symbol.type == self.scanner.SEMICOLON:
             pass
         elif self.symbol.type == self.scanner.CLOSE_CURLY:

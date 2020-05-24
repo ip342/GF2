@@ -90,7 +90,7 @@ class Scanner:
         self.error_count = 0
         self.error = False
 
-    def get_symbol(self):
+    def get_symbol(self, stop=None):
         """Translate the next sequence of characters into a symbol."""
 
         symbol = Symbol()
@@ -108,7 +108,7 @@ class Scanner:
                 if self.current_character == '':
                     self.display_error(
                         SyntaxError,
-                        'Expected # at the end of multi-line comment')
+                        'Expected # at the end of multi-line comment', stop)
                     self.symbol.type = self.EOF
                     break
             self.advance()
@@ -122,7 +122,7 @@ class Scanner:
                     self.advance()
             else:
                 self.display_error(
-                    CommentError, 'Expected '/' after '/' to indicate comment')
+                    CommentError, 'Expected '/' after '/' to indicate comment', stop)
             self.advance()
             self.skip_spaces()
 
@@ -171,8 +171,14 @@ class Scanner:
                 self.advance()
             else:
                 self.display_error(
-                    SyntaxError, 'Unexpected character, expected > after -')
+                    SyntaxError, "Unexpected character, expected '>' after '-'", stop)
                 self.error = True
+
+        elif self.current_character == '>':
+            self.advance()
+            self.display_error(
+                SyntaxError, "Unexpected character, '>' must follow '-'", stop)
+            self.error = True
 
         elif self.current_character == '.':
             symbol.type = self.DOT
@@ -193,7 +199,7 @@ class Scanner:
         # invalid character
         else:
             self.advance()
-            self.display_error(SyntaxError, 'Invalid character')
+            self.display_error(SyntaxError, 'Invalid character', stop)
 
             self.error = True
 
@@ -207,12 +213,14 @@ class Scanner:
 
     def advance(self):
         """ Advance to next character """
-        # self.current_character = self.input_file.read(1)
-        # self.current_character_number += 1
-
+        
         if self.current_character == '\n':
             self.current_line += 1
             self.current_character_number = 0
+            
+        if self.current_character == '\t':
+            while (self.current_character_number % 4) != 0:
+                self.current_character_number += 1
             
         self.current_character = self.input_file.read(1)
         self.current_character_number += 1
