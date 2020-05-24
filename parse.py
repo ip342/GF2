@@ -54,6 +54,10 @@ class Parser:
         # skeleton code. When complete, should return False when there are
         # errors in the circuit definition file.
 
+        # List of all expected sections 
+        sections = ['DEVICES', 'CONNECTIONS', 'MONITORS']
+        sections_found = []
+
         while True:
 
             # Gets next symbol from definition file
@@ -67,19 +71,27 @@ class Parser:
 
                     self.DEVICES_found = True
                     self.parse_section('DEVICES')
+                    sections_found.append('DEVICES')
 
                 elif self.symbol.id == self.scanner.CONNECTIONS_ID:
 
                     self.CONNECTIONS_found = True
                     self.parse_section('CONNECTIONS')
+                    sections_found.append('CONNECTIONS')
 
                 elif self.symbol.id == self.scanner.MONITORS_ID:
 
                     self.MONITORS_found = True
                     self.parse_section('MONITORS')
+                    sections_found.append('MONITORS')
 
             # Or it's the end of the file
             elif self.symbol.type == self.scanner.EOF:
+
+                # Check all sections have been found
+                for section in sections:
+                    if section not in sections_found:
+                        self.scanner.display_error(SyntaxError, '%s section missing' % section)
 
                 # Print total number of errors
                 if self.scanner.error_count != 0:
