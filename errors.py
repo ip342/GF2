@@ -1,46 +1,53 @@
-"""Used in the Logic Simulator project to define various errors which may occur
-in the definition file. The error type is returned, along with the location
-and a short message describing the error.
+"""Used in the Logic Simulator project to provide information to the user when 
+errors occurin the definition file to allow them to understand where the error 
+is and why it occurs. The error type is returned, along with the location and a 
+short message describing the error.
+
 Classes
 -------
-Error - Base error class
+Error - Base error class function which prints error type, the line which the 
+error occurs at, a carat pointing to the character at which the error occurs, 
+and a short message describing the error.
+
 SemanticError
-SyntaxError
+CommentError
 """
 
 import sys
 
-
+# Main error class
 class Error(Exception):
-    def __init__(self, error_class, message, line_number, line, character):
+    def __init__(self, error_type, message, line_number, line, character):
 
         # Call the base class constructor with the parameters it needs
         super().__init__(message)
 
-        self.error_type = error_class
+        self.error_type = error_type
         self.message = message
 
-        if error_class == SemanticError:
-            error_type = 'SemanticError'
+        # Error classes grouped for printed error message
+        Semantic = [SemanticError]
+        Syntax = [SyntaxError, CommentError, ArrowError]
 
-        if error_class == SyntaxError:
-            error_type = 'SyntaxError'
+        if error_type in Semantic:
+            error_class = 'SemanticError'
 
-        if error_class == CommentError:
-            error_type = 'SyntaxError'
+        if error_type in Syntax:
+            error_class = 'SyntaxError'
 
         print('*'*50 + '\n' + 'Line number ' + str(line_number + 1) + ', Character ' + str(character - 1) + '\n'
-            + line + '\n' + (character - 2)*' ' + '^' + '\n'
-            + error_type +': ' + str(message))
+              + line + '\n' + (character - 2)*' ' + '^' + '\n'
+              + error_class +': ' + str(message))
 
-# fix print error type
 
+# Specific error classes for accurate pytests
 class SemanticError(Exception):
     pass
 
 
-class SyntaxError(Exception):
+class CommentError(Exception):
     pass
 
-class CommentError(Exception):
+
+class ArrowError(Exception):
     pass

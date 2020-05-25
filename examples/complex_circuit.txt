@@ -1,7 +1,7 @@
 DEVICES [
     A, H = XOR;
     B = OR 2;
-    C, G = NAND 2;
+    B, G = NAND 2;
     D = AND 3;
     E = NOR 2;
     F = DTYPE;
@@ -28,7 +28,7 @@ CONNECTIONS [
         C -> D.I3;
     }
     device E {
-        C -> E.I1;
+        C -> D.I1;
         B -> E.I2;
     }
     device F {
@@ -48,5 +48,5 @@ CONNECTIONS [
 ]
 
 MONITORS [
-    G, H;
+   G, H;
 ]

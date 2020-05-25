@@ -9,7 +9,7 @@ Classes
 Parser - parses the definition file and builds the logic network.
 """
 
-from errors import SyntaxError, SemanticError
+from errors import *
 
 
 class Parser:
@@ -47,12 +47,21 @@ class Parser:
         self.DEVICES_found = False
         self.CONNECTIONS_found = False
         self.MONITORS_found = False
+        
+        self.all_devices_list = []
+        self.all_cons_list = []
+        self.all_monitors_list = []
+        self.does_not_exist_list = []
 
     def parse_network(self):
         """Parse the circuit definition file."""
         # For now just return True, so that userint and gui can run in the
         # skeleton code. When complete, should return False when there are
         # errors in the circuit definition file.
+
+        # List of all expected sections 
+        sections = ['DEVICES', 'CONNECTIONS', 'MONITORS']
+        sections_found = []
 
         while True:
 
@@ -72,19 +81,34 @@ class Parser:
 
                     self.DEVICES_found = True
                     self.parse_section('DEVICES')
+                    sections_found.append('DEVICES')
 
                 elif self.symbol.id == self.scanner.CONNECTIONS_ID:
 
                     self.CONNECTIONS_found = True
                     self.parse_section('CONNECTIONS')
+                    sections_found.append('CONNECTIONS')
 
                 elif self.symbol.id == self.scanner.MONITORS_ID:
 
                     self.MONITORS_found = True
                     self.parse_section('MONITORS')
+                    sections_found.append('MONITORS')
 
             # Or it's the end of the file
             elif self.symbol.type == self.scanner.EOF:
+
+                # Check all sections have been found
+                for section in sections:
+                    if section not in sections_found:
+                        self.scanner.display_error(SyntaxError, '%s section missing' % section)
+
+                # Print total number of errors
+                if self.scanner.error_count != 0:
+                    if self.scanner.error_count == 1:
+                        print('*'*50 + '\n' + 'Definition file contains %s error' %self.scanner.error_count)
+                    else:
+                        print('*'*50 + '\n' + 'Definition file contains %s errors' %self.scanner.error_count)
 
                 break
                 
@@ -101,10 +125,6 @@ class Parser:
         return True
 
     def parse_section(self, header_ID):
-        
-        self.all_devices_list = []
-        self.all_cons_list = []
-        self.all_monitors_list = []
         
         # FIND symbol after HEADER that isn't a space
         self.symbol = self.scanner.get_symbol(["]",""])
@@ -440,8 +460,16 @@ class Parser:
 
         if self.symbol.type == self.scanner.CLOSE_SQUARE:
             
-            if self.network.check_network():
-                print(" All inputs in the network are connected")
+            device_names_to_check = self.list_of_connected_devices()
+                
+            for con_name in self.all_cons_list:
+                if con_name in device_names_to_check:
+                    device_names_to_check.pop(device_names_to_check.index(con_name))
+            undefined_connections = ', '.join(device_names_to_check)
+            
+            if device_names_to_check != []:
+                self.scanner.display_error(
+                    SemanticError, "The following device(s) do not have connections defined: %s" % undefined_connections)
 
             return False
 
@@ -472,6 +500,8 @@ class Parser:
                     SemanticError, "Connections for device '{}' already assigned.".format(con_device_name), ["}","]",""])
                 return True
             if self.con_device is None:
+                # Prevent showing follow on errors if device does not exist
+                self.does_not_exist_list.append(con_device_name)
                 self.scanner.display_error(
                     SemanticError, "Device '{}' does not exist."
                                    .format(con_device_name), ["}","]",""])
@@ -494,10 +524,18 @@ class Parser:
             self.scanner.display_error(
                 SyntaxError, "Expected '{' after device name.", ["}","]",""])
             return True
-
+            
+        counter = 0    
+        
         # PARSE each line encompassed by curly brackets
         while self.parse_Connections_lines():
-            pass
+            counter += 1
+        
+        if counter != len(self.con_device.inputs):
+            self.scanner.display_error(
+                SemanticError, "Device {} has not had all inputs defined".format(con_device_name))
+            return True
+            
             
         if self.square_instead_of_curly == True:
             return False
@@ -535,17 +573,19 @@ class Parser:
                 return True
 
             device = self.devices.get_device(self.symbol.id)
+            name = self.scanner.names.get_name_string(self.symbol.id)
 
             # CHECK for device - get_device returns None for invalid device_id
             if device is None:
+                if name not in self.does_not_exist_list:
 
-                name = self.scanner.names.get_name_string(self.symbol.id)
-                self.scanner.display_error(
-                    SemanticError, "%s is not a valid device." % name)
-                return True
+                
+                    self.scanner.display_error(
+                        SemanticError, "%s is not a valid device." % name)
+                    return True
 
             # Special case if NAME is DTYPE as can have .Q or .QBAR appended
-            if device.device_kind == self.devices.D_TYPE:
+            elif device.device_kind == self.devices.D_TYPE:
 
                 # Track device_id here to create monitor later
                 device_id = self.symbol.id
@@ -652,13 +692,16 @@ class Parser:
                 SyntaxError, "Connection must start with a device name.")
             return True
         start_con = self.devices.get_device(self.symbol.id)
+        start_con_name = self.names.get_name_string(self.symbol.id)
+        
         if start_con is None:
-            print(self.symbol.id)
-            start_con_name = self.names.get_name_string(self.symbol.id)
-            self.scanner.display_error(
-                SemanticError, "Device '{}' does not exist."
-                               .format(start_con_name))
-            return True
+            if start_con_name not in self.does_not_exist_list:
+            
+                self.scanner.display_error(
+                    SemanticError, "Device '{}' does not exist."
+                                   .format(start_con_name))
+                return True
+                
         elif start_con.device_kind == self.devices.D_TYPE:
             self.symbol = self.scanner.get_symbol()
             
@@ -716,10 +759,12 @@ class Parser:
         end_con = self.devices.get_device(self.symbol.id)
         end_con_name = self.names.get_name_string(self.symbol.id)
         if end_con is None:
-            self.scanner.display_error(
-                SemanticError, "Device '{}' does not exist."
-                               .format(end_con_name))
-            return True
+            if end_con_name not in self.does_not_exist_list:
+                
+                self.scanner.display_error(
+                    SemanticError, "Device '{}' does not exist."
+                                   .format(end_con_name))
+                return True
         if end_con != self.con_device:
             self.scanner.display_error(
                 SyntaxError, "This connection has been listsed under the "
@@ -748,22 +793,25 @@ class Parser:
                 SyntaxError, "Invalid port name.")
             return True
         end_con_port_id = self.symbol.id
-        con_status = self.network.make_connection(
-                     start_con.device_id, start_con_port_id,
-                     end_con.device_id, end_con_port_id)
-        if con_status == self.network.INPUT_CONNECTED:
-            self.scanner.display_error(
-                SemanticError, "{}.{} is already connected.".format(
-                               end_con_name,
-                               self.devices.names.get_name_string
-                               (end_con_port_id)))
-            return True
-        elif con_status == self.network.PORT_ABSENT:
-            self.scanner.display_error(
-                SemanticError, "Invalid port index.")
-            return True
-        elif con_status == self.network.NO_ERROR:
-            pass
+        
+        # Only attempt to make network if total error count is 0
+        if self.scanner.error_count == 0:
+            con_status = self.network.make_connection(
+                         start_con.device_id, start_con_port_id,
+                         end_con.device_id, end_con_port_id)
+            if con_status == self.network.INPUT_CONNECTED:
+                self.scanner.display_error(
+                    SemanticError, "{}.{} is already connected.".format(
+                                   end_con_name,
+                                   self.devices.names.get_name_string
+                                   (end_con_port_id)))
+                return True
+            elif con_status == self.network.PORT_ABSENT:
+                self.scanner.display_error(
+                    SemanticError, "Invalid port index.")
+                return True
+            elif con_status == self.network.NO_ERROR:
+                pass
 
         # CHECK for semicolon
         self.symbol = self.scanner.get_symbol()
@@ -785,3 +833,18 @@ class Parser:
             return True
 
         return True
+        
+    def list_of_connected_devices(self):
+        device_names_to_check = []
+        # CHECK all DEVICES have CONNECTIONS defined
+
+        device_ids = self.names.lookup(self.all_devices_list)
+        check_device_ids = []
+        for check_id in device_ids:
+            if self.devices.get_device(check_id) is not None:
+                check_device_kind = self.devices.get_device(check_id).device_kind
+                if check_device_kind != self.devices.SWITCH and check_device_kind != self.devices.CLOCK:
+                    check_name = self.names.get_name_string(check_id)
+                    device_names_to_check.append(check_name)
+
+        return device_names_to_check
