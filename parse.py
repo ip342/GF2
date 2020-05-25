@@ -248,29 +248,29 @@ class Parser:
                 self.scanner.display_error(
                     SemanticError, "Expecting comma or equals.")
                 return True
-             
+
             if equals_encountered is False:
                 self.symbol = self.scanner.get_symbol()
-            
+
                 if self.scanner.error is True:
-                
+
                     self.scanner.error = False
                     return True
-            
+
                 # CHECK for NAME and append to device_name_list
                 if self.symbol.type == self.scanner.NAME:
-                
+
                     device_name = self.scanner.names.get_name_string(
                         self.symbol.id)
-                    
+
                     if device_name in self.all_devices_list:
                         self.scanner.display_error(
                             SemanticError, "Device name '{}' has already been assigned.".format(device_name))
                         return True
-                    
+
                     device_name_list.append(device_name)
                     self.all_devices_list.append(device_name)
-                
+
                 else:
 
                     # Some error message about invalid symbols
@@ -357,13 +357,6 @@ class Parser:
                 for device_id in device_id_list:
 
                     if self.devices.get_device(device_id).device_kind \
-                            == self.devices.D_TYPE:
-
-                        self.scanner.display_error(
-                            SemanticError, "Cannot specify inputs for DTYPE.")
-                        return True
-
-                    elif self.devices.get_device(device_id).device_kind \
                             == self.devices.SWITCH:
 
                         if n == 0:
@@ -379,8 +372,6 @@ class Parser:
                             self.scanner.display_error(
                                 SemanticError, "Switch can only take state 0 or 1")
                             return True
-
-                    
 
                     elif self.devices.get_device(device_id).device_kind \
                             == self.devices.CLOCK:
@@ -452,21 +443,21 @@ class Parser:
 
         # CHECK for word device
         self.symbol = self.scanner.get_symbol(["}","]",""])
-        
+
         if self.scanner.error is True:
-            
+
             self.scanner.error = False
             return True
 
         if self.symbol.type == self.scanner.CLOSE_SQUARE:
-            
+
             device_names_to_check = self.list_of_connected_devices()
-                
+
             for con_name in self.all_cons_list:
                 if con_name in device_names_to_check:
                     device_names_to_check.pop(device_names_to_check.index(con_name))
             undefined_connections = ', '.join(device_names_to_check)
-            
+
             if device_names_to_check != []:
                 self.scanner.display_error(
                     SemanticError, "The following device(s) do not have connections defined: %s" % undefined_connections)
@@ -485,16 +476,16 @@ class Parser:
 
         # CHECK for device name
         self.symbol = self.scanner.get_symbol(["}","]",""])
-        
+
         if self.scanner.error is True:
-            
+
             self.scanner.error = False
             return True
-        
+
         if self.symbol.type == self.scanner.NAME:
             self.con_device = self.devices.get_device(self.symbol.id)
             con_device_name = self.names.get_name_string(self.symbol.id)
-                
+
             if con_device_name in self.all_cons_list:
                 self.scanner.display_error(
                     SemanticError, "Connections for device '{}' already assigned.".format(con_device_name), ["}","]",""])
@@ -514,33 +505,31 @@ class Parser:
 
         # CHECK for opening curly bracket
         self.symbol = self.scanner.get_symbol(["}","]",""])
-        
+
         if self.scanner.error is True:
-            
+
             self.scanner.error = False
             return True
-        
+
         if self.symbol.type != self.scanner.OPEN_CURLY:
             self.scanner.display_error(
                 SyntaxError, "Expected '{' after device name.", ["}","]",""])
             return True
-            
-        counter = 0    
-        
+
+        counter = 0
+
         # PARSE each line encompassed by curly brackets
         while self.parse_Connections_lines():
             counter += 1
-        
+
         if counter != len(self.con_device.inputs):
             self.scanner.display_error(
                 SemanticError, "Device {} has not had all inputs defined".format(con_device_name))
             return True
-            
-            
-        if self.square_instead_of_curly == True:
+
+        if self.square_instead_of_curly is True:
             return False
-        
-        return True
+                return True
 
     def parse_MONITORS_section(self):
 
@@ -767,7 +756,7 @@ class Parser:
                 return True
         if end_con != self.con_device:
             self.scanner.display_error(
-                SyntaxError, "This connection has been listsed under the "
+                SyntaxError, "This connection has been listed under the "
                              "incorrect device subsection.")
             return True
         self.symbol = self.scanner.get_symbol()
