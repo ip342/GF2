@@ -122,7 +122,7 @@ class Scanner:
                     self.advance()
             else:
                 self.display_error(
-                    CommentError, 'Expected '/' after '/' to indicate comment', stop)
+                    CommentError, "Expected '/' after '/' to indicate comment", stop)
             self.advance()
             self.skip_spaces()
 
@@ -264,7 +264,7 @@ class Scanner:
 
         if error_type == CommentError:
             self.advance()
-            while self.advance.current_character != '\n':
+            while self.current_character != '\n':
                 self.advance()
                 
         elif stop == "EOL":
