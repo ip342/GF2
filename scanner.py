@@ -174,7 +174,7 @@ class Scanner:
                 self.advance()
             else:
                 self.display_error(
-                    SyntaxError, 'Unexpected character, expected > after -')
+                    ArrowError, 'Unexpected character, expected > after -')
                 self.error = True
 
         elif self.current_character == '.':
@@ -245,16 +245,16 @@ class Scanner:
             self.current_character = self.advance()
             if self.current_character.isdigit():
                 number = number + self.current_character
-
             else:
-
                 return [number, self.current_character]
 
     def display_error(self, error_type, error_message='', stop=None):
         self.error_count += 1
 
+        # Only raise the error for filenames starting with 'test' 
         if 'test' in sys.argv[0].lower():
             raise error_type
+
 
         Error(error_type, error_message, self.current_line,
             self.file_as_list[self.current_line],

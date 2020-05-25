@@ -27,7 +27,7 @@ class Error(Exception):
 
         # Error classes grouped for printed error message
         Semantic = [SemanticError]
-        Syntax = [SyntaxError, CommentError]
+        Syntax = [SyntaxError, CommentError, ArrowError]
 
         if error_type in Semantic:
             error_class = 'SemanticError'
@@ -46,4 +46,8 @@ class SemanticError(Exception):
 
 
 class CommentError(Exception):
+    pass
+
+
+class ArrowError(Exception):
     pass
