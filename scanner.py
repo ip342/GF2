@@ -99,7 +99,7 @@ class Scanner:
         self.skip_spaces()
 
         # ignore multi line comments
-        if self.current_character == '#':
+        while self.current_character == '#':
             self.advance()
 
             while self.current_character != '#':
@@ -210,12 +210,14 @@ class Scanner:
 
     def advance(self):
         """ Advance to next character """
-        # self.current_character = self.input_file.read(1)
-        # self.current_character_number += 1
 
         if self.current_character == '\n':
             self.current_line += 1
             self.current_character_number = 0
+        
+        # if self.current_character == '\t':
+        #     while (self.current_character_number % 8) != 0:
+        #         self.current_character_number += 1
 
         self.current_character = self.input_file.read(1)
         self.current_character_number += 1
