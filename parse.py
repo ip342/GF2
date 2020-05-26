@@ -94,6 +94,7 @@ class Parser:
                     self.MONITORS_found = True
                     self.parse_section('MONITORS')
                     sections_found.append('MONITORS')
+                    print(len(self.monitors.monitors_dictionary))
 
             # Or it's the end of the file
             elif self.symbol.type == self.scanner.EOF:
@@ -529,34 +530,54 @@ class Parser:
 
         if self.square_instead_of_curly is True:
             return False
-                return True
+        return True
 
     def parse_MONITORS_section(self):
 
         # GET next symbol (after OPEN_SQUARE)
         self.symbol = self.scanner.get_symbol()
-        
+
         if self.scanner.error is True:
-            
+
             self.scanner.error = False
+            return True
+
+        if self.symbol.type == self.scanner.ALL:
+
+            device_objects = self.list_of_connected_devices_objects()
+
+            for device in device_objects:
+                dev_type = self.devices.get_device(
+                    device.device_id).device_kind
+
+                # Q and QBAR outputs for DTYPE
+                if dev_type == self.devices.D_TYPE:
+                    self.monitors.make_monitor(
+                        device.device_id, self.devices.Q_ID)
+                    self.monitors.make_monitor(
+                        device.device_id, self.devices.QBAR_ID)
+                else:
+                    self.monitors.make_monitor(
+                        device.device_id, None)
+
             return True
 
         # CHECK for NAME
         if self.symbol.type == self.scanner.NAME:
-            
+
             self.monitor_device = self.devices.get_device(self.symbol.id)
             monitor_device_name = self.names.get_name_string(self.symbol.id)
-            
+
             if monitor_device_name in self.all_monitors_list:
                 self.scanner.display_error(
                     SemanticError, "Device '{}' already assigned for monitoring.".format(monitor_device_name))
                 return True
-                
+
             self.all_monitors_list.append(monitor_device_name)
 
             # CHECK for ID error, if none, proceed to fetch device object
             if self.symbol.id is None:
-                
+
                 self.scanner.display_error(
                     SemanticError, "%s is not a valid device." % monitor_device_name)
                 return True
@@ -568,7 +589,6 @@ class Parser:
             if device is None:
                 if name not in self.does_not_exist_list:
 
-                
                     self.scanner.display_error(
                         SemanticError, "%s is not a valid device." % name)
                     return True
@@ -581,22 +601,22 @@ class Parser:
 
                 # GET next symbol and CHECK it's DOT
                 self.symbol = self.scanner.get_symbol()
-                
+
                 if self.scanner.error is True:
-            
+
                     self.scanner.error = False
                     return True
-                
+
                 if self.symbol.type == self.scanner.DOT:
 
                     # Symbol following DTYPE and DOT must be Q or QBAR
                     self.symbol = self.scanner.get_symbol()
-                    
+
                     if self.scanner.error is True:
-            
+
                         self.scanner.error = False
                         return True
-                    
+
                     if self.symbol.id in self.devices.dtype_output_ids:
 
                         # Make monitor for device with output..
@@ -606,14 +626,14 @@ class Parser:
                     else:
 
                         self.scanner.display_error(
-                            SemanticError, "DTYPE can only use .Q or .QBAR")
+                            SyntaxError, "DTYPE can only use .Q or .QBAR")
                         return True
 
                 # Error for DTYPE not being followed by DOT
                 else:
 
                     self.scanner.display_error(
-                        SemanticError, "DTYPE must be followed by .")
+                        SyntaxError, "DTYPE must be followed by .")
                     return True
 
             # For devices that are not DTYPE, make monitor with output_id None
@@ -837,3 +857,14 @@ class Parser:
                     device_names_to_check.append(check_name)
 
         return device_names_to_check
+
+    def list_of_connected_devices_objects(self):
+        device_object_list = []
+
+        device_ids = self.names.lookup(self.all_devices_list)
+        for device_id in device_ids:
+            if self.devices.get_device(device_id) is not None:
+                device_object = self.devices.get_device(device_id)
+                device_object_list.append(device_object)
+
+        return device_object_list

@@ -1,0 +1,7 @@
+[
+    D = DTYPE;
+    SW1, SW2 = SWITCH 0;
+]
+[
+   D.QQ;
+]

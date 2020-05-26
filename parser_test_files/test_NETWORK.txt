@@ -48,5 +48,5 @@ CONNECTIONS [
 ]
 
 MONITORS [
-   G, H;
+   all;
 ]
