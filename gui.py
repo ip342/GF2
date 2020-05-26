@@ -229,7 +229,8 @@ class Gui(wx.Frame):
         self.character = ""  # current character
         self.line = ""  # current string entered by the user
         self.cursor = 0  # cursor position
-        self.spin_value = 10
+        self.spin_ctrl_1_value = 10
+        self.current_cycles = 10
         
         
         
@@ -249,29 +250,80 @@ class Gui(wx.Frame):
         self.canvas = MyGLCanvas(self, devices, monitors)
 
         # Configure the widgets
-        self.text = wx.StaticText(self, wx.ID_ANY, "Cycles")
-        self.spin = wx.SpinCtrl(self, wx.ID_ANY, "10")
-        self.run_button = wx.Button(self, wx.ID_ANY, "Run")
-        self.text_box = wx.TextCtrl(self, wx.ID_ANY, "",
-                                    style=wx.TE_PROCESS_ENTER)
+        label_1 = wx.StaticText(self, wx.ID_ANY, "Cycles")
+        label_2 = wx.StaticText(self, wx.ID_ANY, "Switch")
+        label_3 = wx.StaticText(self, wx.ID_ANY, "Controls")
+        label_4 = wx.StaticText(self, wx.ID_ANY, "Monitor")
+        self.spin_ctrl_1 = wx.SpinCtrl(self, wx.ID_ANY, "10", min=0, max=100)
+        self.choice_1 = wx.Choice(self, wx.ID_ANY, choices=["SW1", "SW2", "SW3"])
+        self.choice_2 = wx.Choice(self, wx.ID_ANY, choices=["0", "1"])
+        self.choice_3 = wx.Choice(self, wx.ID_ANY, choices=["A", "B", "C"])
+        self.button_1 = wx.Button(self, wx.ID_ANY, "Continue")
+        self.button_2 = wx.Button(self, wx.ID_ANY, "Run")
+        self.button_3 = wx.Button(self, wx.ID_ANY, "Set")
+        self.button_4 = wx.Button(self, wx.ID_ANY, "Set")
+        self.button_5 = wx.Button(self, wx.ID_ANY, "Zap")
+        
+        # Configure the widget properties
+        self.SetBackgroundColour(wx.Colour(72, 72, 72))
+        label_1.SetForegroundColour(wx.Colour(255, 255, 255))
+        label_2.SetForegroundColour(wx.Colour(255, 255, 255))
+        label_3.SetForegroundColour(wx.Colour(255, 255, 255))
+        label_4.SetForegroundColour(wx.Colour(255, 255, 255))
 
         # Bind events to widgets
         self.Bind(wx.EVT_MENU, self.on_menu)
-        self.spin.Bind(wx.EVT_SPINCTRL, self.on_spin)
-        self.run_button.Bind(wx.EVT_BUTTON, self.on_run_button)
-        self.text_box.Bind(wx.EVT_TEXT_ENTER, self.on_text_box)
+        self.spin_ctrl_1.Bind(wx.EVT_SPINCTRL, self.on_spin_ctrl_1)
+        self.choice_1.Bind(wx.EVT_CHOICE, self.on_choice_1)
+        self.choice_2.Bind(wx.EVT_CHOICE, self.on_choice_2)
+        self.choice_3.Bind(wx.EVT_CHOICE, self.on_choice_3)
+        self.button_1.Bind(wx.EVT_BUTTON, self.on_button_1)
+        self.button_2.Bind(wx.EVT_BUTTON, self.on_button_2)
+        self.button_3.Bind(wx.EVT_BUTTON, self.on_button_3)
+        self.button_4.Bind(wx.EVT_BUTTON, self.on_button_4)
+        self.button_5.Bind(wx.EVT_BUTTON, self.on_button_5)
 
         # Configure sizers for layout
         main_sizer = wx.BoxSizer(wx.HORIZONTAL)
         side_sizer = wx.BoxSizer(wx.VERTICAL)
+        sizer_1 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_2 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_3 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_4 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_5 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_6 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_7 = wx.BoxSizer(wx.HORIZONTAL)
 
         main_sizer.Add(self.canvas, 5, wx.EXPAND | wx.ALL, 5)
         main_sizer.Add(side_sizer, 1, wx.ALL, 5)
-
-        side_sizer.Add(self.text, 1, wx.TOP, 10)
-        side_sizer.Add(self.spin, 1, wx.ALL, 5)
-        side_sizer.Add(self.run_button, 1, wx.ALL, 5)
-        side_sizer.Add(self.text_box, 1, wx.ALL, 5)
+        
+        side_sizer.Add(sizer_1, 1, wx.ALL, 0)
+        side_sizer.Add(sizer_2, 1, wx.ALL, 5)
+        side_sizer.Add(sizer_3, 1, wx.ALL, 0)
+        side_sizer.Add(sizer_4, 1, wx.ALL, 10)
+        side_sizer.Add(sizer_5, 1, wx.ALL, 0)
+        side_sizer.Add(sizer_6, 1, wx.ALL, 10)
+        side_sizer.Add(sizer_7, 1, wx.ALL, 0)
+        
+        sizer_1.Add(label_3, 1, wx.ALL, 10)
+        
+        sizer_2.Add(label_1, 1, wx.ALL, 10)
+        sizer_2.Add(self.spin_ctrl_1, 0, wx.ALL, 10)
+        
+        sizer_3.Add(self.button_1, 1, wx.ALL, 10)
+        sizer_3.Add(self.button_2, 1, wx.ALL, 10)
+        
+        sizer_4.Add(label_2, 1, wx.ALL, 10)
+        sizer_4.Add(self.choice_1, 1, wx.ALL, 10)
+        
+        sizer_5.Add(self.choice_2, 1, wx.ALL, 10)
+        sizer_5.Add(self.button_3, 1, wx.ALL, 10)
+        
+        sizer_6.Add(label_4, 1, wx.ALL, 10)
+        sizer_6.Add(self.choice_3, 1, wx.ALL, 10)
+        
+        sizer_7.Add(self.button_4, 1, wx.ALL, 10)
+        sizer_7.Add(self.button_5, 1, wx.ALL, 10)
 
         self.SetSizeHints(600, 600)
         self.SetSizer(main_sizer)
@@ -285,23 +337,67 @@ class Gui(wx.Frame):
             wx.MessageBox("Logic Simulator\nCreated by Mojisola Agboola\n2017",
                           "About Logsim", wx.ICON_INFORMATION | wx.OK)
 
-    def on_spin(self, event):
-        """Handle the event when the user changes the spin control value."""
-        self.spin_value = self.spin.GetValue()
-        text = "".join(["New spin control value: ", str(self.spin_value)])
-        self.canvas.render(text, self.spin_value)
+    def on_spin_ctrl_1(self, event):
+        """Handle the event when the user changes the spin control 1 value."""
+        self.spin_ctrl_1_value = self.spin_ctrl_1.GetValue()
+        text = "".join(["New spin control 1 value: ", str(self.spin_ctrl_1_value)])
+        self.canvas.render(text, self.current_cycles)
+        
+    def on_choice_1(self, event):
+        """Handle the event when the user changes the choice 1 selection."""
+        self.choice_1_selection = self.choice_1.GetCurrentSelection()
+        text = "".join(["New choice 1 selection: ", str(self.choice_1_selection)])
+        self.canvas.render(text, self.choice_1_selection)
+    
+    def on_choice_2(self, event):
+        """Handle the event when the user changes the choice 2 selection."""
+        self.choice_2_selection = self.choice_2.GetCurrentSelection()
+        text = "".join(["New choice 2 selection: ", str(self.choice_2_selection)])
+        self.canvas.render(text, self.choice_2_selection)
+        
+    def on_choice_3(self, event):
+        """Handle the event when the user changes the choice 3 selection."""
+        self.choice_3_selection = self.choice_3.GetCurrentSelection()
+        text = "".join(["New choice 3 selection: ", str(self.choice_3_selection)])
+        self.canvas.render(text, self.choice_3_selection)
 
-    def on_run_button(self, event):
+    def on_button_1(self, event):
+        """Handle the event when the user clicks button 1."""
+        text = "Continue button pressed."
+        self.current_cycles = self.spin_ctrl_1_value
+        self.canvas.render(text, self.spin_ctrl_1_value)
+        self.continue_command()
+
+    def on_button_2(self, event):
+        """Handle the event when the user clicks button 2."""
+        text = "Run button pressed."
+        self.current_cycles = self.spin_ctrl_1_value
+        self.canvas.render(text, self.spin_ctrl_1_value)
+        self.run_command()
+        
+    def on_button_3(self, event):
+        """Handle the event when the user clicks button 3."""
+        text = "Run button pressed."
+        self.canvas.render(text, self.spin_value)
+        self.run_command()
+        
+    def on_button_4(self, event):
+        """Handle the event when the user clicks the run button."""
+        text = "Run button pressed."
+        self.canvas.render(text, self.spin_value)
+        self.run_command()
+        
+    def on_button_5(self, event):
         """Handle the event when the user clicks the run button."""
         text = "Run button pressed."
         self.canvas.render(text, self.spin_value)
         self.run_command()
 
-    def on_text_box(self, event):
-        """Handle the event when the user enters text."""
-        text_box_value = self.text_box.GetValue()
-        text = "".join(["New text box value: ", text_box_value])
-        self.canvas.render(text, self.spin_value)
+    # def on_text_box(self, event):
+    #     """Handle the event when the user enters text."""
+    #     text_box_value = self.text_box.GetValue()
+    #     text = "".join(["New text box value: ", text_box_value])
+    #     self.canvas.render(text, self.spin_value)
         
     # def command_interface(self):
     #     """Read the command entered and call the corresponding function."""
@@ -485,7 +581,7 @@ class Gui(wx.Frame):
         """Run the simulation from scratch."""
         self.cycles_completed = 0
         # cycles = self.read_number(0, None)
-        cycles = self.spin_value
+        cycles = self.spin_ctrl_1_value
 
         if cycles is not None:  # if the number of cycles provided is valid
             self.monitors.reset_monitors()
@@ -493,17 +589,18 @@ class Gui(wx.Frame):
             self.devices.cold_startup()
             if self.run_network(cycles):
                 self.cycles_completed += cycles
-    #
-    # def continue_command(self):
-    #     """Continue a previously run simulation."""
-    #     cycles = self.read_number(0, None)
-    #     if cycles is not None:  # if the number of cycles provided is valid
-    #         if self.cycles_completed == 0:
-    #             print("Error! Nothing to continue. Run first.")
-    #         elif self.run_network(cycles):
-    #             self.cycles_completed += cycles
-    #             print(" ".join(["Continuing for", str(cycles), "cycles.",
-    #                             "Total:", str(self.cycles_completed)]))
+
+    def continue_command(self):
+        """Continue a previously run simulation."""
+        # cycles = self.read_number(0, None)
+        cycles = self.spin_ctrl_1_value
+        if cycles is not None:  # if the number of cycles provided is valid
+            if self.cycles_completed == 0:
+                print("Error! Nothing to continue. Run first.")
+            elif self.run_network(cycles):
+                self.cycles_completed += cycles
+                print(" ".join(["Continuing for", str(cycles), "cycles.",
+                                "Total:", str(self.cycles_completed)]))
     
     def display_signals(self):
         """Display the signal trace(s) in the text console."""
