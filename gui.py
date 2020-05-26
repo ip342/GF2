@@ -227,14 +227,28 @@ class Gui(wx.Frame):
         self.cycles_completed = 0  # number of simulation cycles completed
 
         self.character = ""  # current character
-        self.line = ""  # current string entered by the user
         self.cursor = 0  # cursor position
         self.spin_ctrl_1_value = 10
         self.current_cycles = 10
-        
-        
-        
-        
+        self.switch_list = []
+        self.device_list = []
+
+        self.device_id_list = self.devices.find_devices()
+        for device_id in self.device_id_list:
+            if self.devices.get_device(device_id).device_kind == self.devices.D_TYPE:
+                self.device_list.append("{}.Q".format(self.names.get_name_string(device_id)))
+                self.device_list.append("{}.QBAR".format(self.names.get_name_string(device_id)))
+            else:
+                self.device_list.append(self.names.get_name_string(device_id))
+
+        self.switch_id_list = self.devices.find_devices(self.devices.SWITCH)
+        for switch in self.switch_id_list:
+            self.switch_list.append(self.names.get_name_string(switch))
+            
+        self.choice_1_selection = self.switch_list[0]
+        self.choice_2_selection = 0
+        self.choice_3_selection = self.device_list[0]
+
         """Initialise widgets and layout."""
         super().__init__(parent=None, title=title, size=(800, 600))
 
@@ -255,9 +269,9 @@ class Gui(wx.Frame):
         label_3 = wx.StaticText(self, wx.ID_ANY, "Controls")
         label_4 = wx.StaticText(self, wx.ID_ANY, "Monitor")
         self.spin_ctrl_1 = wx.SpinCtrl(self, wx.ID_ANY, "10", min=0, max=100)
-        self.choice_1 = wx.Choice(self, wx.ID_ANY, choices=["SW1", "SW2", "SW3"])
+        self.choice_1 = wx.Choice(self, wx.ID_ANY, choices=self.switch_list)
         self.choice_2 = wx.Choice(self, wx.ID_ANY, choices=["0", "1"])
-        self.choice_3 = wx.Choice(self, wx.ID_ANY, choices=["A", "B", "C"])
+        self.choice_3 = wx.Choice(self, wx.ID_ANY, choices=self.device_list)
         self.button_1 = wx.Button(self, wx.ID_ANY, "Continue")
         self.button_2 = wx.Button(self, wx.ID_ANY, "Run")
         self.button_3 = wx.Button(self, wx.ID_ANY, "Set")
@@ -269,6 +283,7 @@ class Gui(wx.Frame):
         label_1.SetForegroundColour(wx.Colour(255, 255, 255))
         label_2.SetForegroundColour(wx.Colour(255, 255, 255))
         label_3.SetForegroundColour(wx.Colour(255, 255, 255))
+        label_3.SetFont(wx.Font(20, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, 0, ""))
         label_4.SetForegroundColour(wx.Colour(255, 255, 255))
 
         # Bind events to widgets
@@ -338,231 +353,126 @@ class Gui(wx.Frame):
                           "About Logsim", wx.ICON_INFORMATION | wx.OK)
 
     def on_spin_ctrl_1(self, event):
-        """Handle the event when the user changes the spin control 1 value."""
+        """Handle the event when the user changes the cycles spin control value."""
         self.spin_ctrl_1_value = self.spin_ctrl_1.GetValue()
         text = "".join(["New spin control 1 value: ", str(self.spin_ctrl_1_value)])
         self.canvas.render(text, self.current_cycles)
         
     def on_choice_1(self, event):
-        """Handle the event when the user changes the choice 1 selection."""
-        self.choice_1_selection = self.choice_1.GetCurrentSelection()
+        """Handle the event when the user changes the switch selection."""
+        self.choice_1_index = self.choice_1.GetCurrentSelection()
+        self.choice_1_selection = self.choice_1.GetString(self.choice_1_index)
         text = "".join(["New choice 1 selection: ", str(self.choice_1_selection)])
-        self.canvas.render(text, self.choice_1_selection)
+        self.canvas.render(text, self.current_cycles)
     
     def on_choice_2(self, event):
-        """Handle the event when the user changes the choice 2 selection."""
-        self.choice_2_selection = self.choice_2.GetCurrentSelection()
+        """Handle the event when the user changes the switch state selection."""
+        self.choice_2_index = self.choice_2.GetCurrentSelection()
+        self.choice_2_selection = self.choice_2.GetString(self.choice_2_index)
         text = "".join(["New choice 2 selection: ", str(self.choice_2_selection)])
-        self.canvas.render(text, self.choice_2_selection)
+        self.canvas.render(text, self.current_cycles)
         
     def on_choice_3(self, event):
-        """Handle the event when the user changes the choice 3 selection."""
-        self.choice_3_selection = self.choice_3.GetCurrentSelection()
+        """Handle the event when the user changes the monitor selection."""
+        self.choice_3_index = self.choice_3.GetCurrentSelection()
+        self.choice_3_selection = self.choice_3.GetString(self.choice_3_index)
         text = "".join(["New choice 3 selection: ", str(self.choice_3_selection)])
-        self.canvas.render(text, self.choice_3_selection)
+        self.canvas.render(text, self.current_cycles)
 
     def on_button_1(self, event):
-        """Handle the event when the user clicks button 1."""
+        """Handle the event when the user clicks button 1 (Continue)."""
         text = "Continue button pressed."
         self.current_cycles = self.spin_ctrl_1_value
-        self.canvas.render(text, self.spin_ctrl_1_value)
         self.continue_command()
+        self.canvas.render(text, self.spin_ctrl_1_value)
 
     def on_button_2(self, event):
-        """Handle the event when the user clicks button 2."""
+        """Handle the event when the user clicks button 2 (Run)."""
         text = "Run button pressed."
         self.current_cycles = self.spin_ctrl_1_value
-        self.canvas.render(text, self.spin_ctrl_1_value)
         self.run_command()
+        self.canvas.render(text, self.spin_ctrl_1_value)
         
     def on_button_3(self, event):
-        """Handle the event when the user clicks button 3."""
-        text = "Run button pressed."
-        self.canvas.render(text, self.spin_value)
-        self.run_command()
+        """Handle the event when the user clicks button 3 (Set)."""
+        text = "Set button pressed."
+        self.switch_command()
+        self.canvas.render(text, self.current_cycles)
         
     def on_button_4(self, event):
-        """Handle the event when the user clicks the run button."""
-        text = "Run button pressed."
-        self.canvas.render(text, self.spin_value)
-        self.run_command()
+        """Handle the event when the user clicks button 4 (Set)."""
+        text = "Set button pressed."
+        self.monitor_command()
+        self.canvas.render(text, self.current_cycles)
         
     def on_button_5(self, event):
-        """Handle the event when the user clicks the run button."""
-        text = "Run button pressed."
-        self.canvas.render(text, self.spin_value)
-        self.run_command()
+        """Handle the event when the user clicks button 5 (Zap)."""
+        text = "Zap button pressed."
+        self.zap_command()
+        self.canvas.render(text, self.current_cycles)
 
-    # def on_text_box(self, event):
-    #     """Handle the event when the user enters text."""
-    #     text_box_value = self.text_box.GetValue()
-    #     text = "".join(["New text box value: ", text_box_value])
-    #     self.canvas.render(text, self.spin_value)
-        
-    # def command_interface(self):
-    #     """Read the command entered and call the corresponding function."""
-    #     print("Logic Simulator: interactive command line user interface.\n"
-    #           "Enter 'h' for help.")
-    #     self.get_line()  # get the user entry
-    #     command = self.read_command()  # read the first character
-    #     while command != "q":
-    #         if command == "h":
-    #             self.help_command()
-    #         elif command == "s":
-    #             self.switch_command()
-    #         elif command == "m":
-    #             self.monitor_command()
-    #         elif command == "z":
-    #             self.zap_command()
-    #         elif command == "r":
-    #             self.run_command()
-    #         elif command == "c":
-    #             self.continue_command()
-    #         else:
-    #             print("Invalid command. Enter 'h' for help.")
-    #         self.get_line()  # get the user entry
-    #         command = self.read_command()  # read the first character
-    #
-    # def get_line(self):
-    #     """Print prompt for the user and update the user entry."""
-    #     self.cursor = 0
-    #     self.line = input("#: ")
-    #     while self.line == "":  # if the user enters a blank line
-    #         self.line = input("#: ")
-    #
-    # def read_command(self):
-    #     """Return the first non-whitespace character."""
-    #     self.skip_spaces()
-    #     return self.character
-    #
-    # def get_character(self):
-    #     """Move the cursor forward by one character in the user entry."""
-    #     if self.cursor < len(self.line):
-    #         self.character = self.line[self.cursor]
-    #         self.cursor += 1
-    #     else:  # end of the line
-    #         self.character = ""
-    #
-    # def skip_spaces(self):
-    #     """Skip whitespace until a non-whitespace character is reached."""
-    #     self.get_character()
-    #     while self.character.isspace():
-    #         self.get_character()
-    #
-    # def read_string(self):
-    #     """Return the next alphanumeric string."""
-    #     self.skip_spaces()
-    #     name_string = ""
-    #     if not self.character.isalpha():  # the string must start with a letter
-    #         print("Error! Expected a name.")
-    #         return None
-    #     while self.character.isalnum():
-    #         name_string = "".join([name_string, self.character])
-    #         self.get_character()
-    #     return name_string
-    #
-    # def read_name(self):
-    #     """Return the name ID of the current string if valid.
-    #
-    #     Return None if the current string is not a valid name string.
-    #     """
-    #     name_string = self.read_string()
-    #     if name_string is None:
-    #         return None
-    #     else:
-    #         name_id = self.names.query(name_string)
-    #     if name_id is None:
-    #         print("Error! Unknown name.")
-    #     return name_id
-    #
-    # def read_signal_name(self):
-    #     """Return the device and port IDs of the current signal name.
-    #
-    #     Return None if either is invalid.
-    #     """
-    #     device_id = self.read_name()
-    #     if device_id is None:
-    #         return None
-    #     elif self.character == ".":
-    #         port_id = self.read_name()
-    #         if port_id is None:
-    #             return None
-    #     else:
-    #         port_id = None
-    #     return [device_id, port_id]
-    #
-    # def read_number(self, lower_bound, upper_bound):
-    #     """Return the current number.
-    #
-    #     Return None if no number is provided or if it falls outside the valid
-    #     range.
-    #     """
-    #     self.skip_spaces()
-    #     number_string = ""
-    #     if not self.character.isdigit():
-    #         print("Error! Expected a number.")
-    #         return None
-    #     while self.character.isdigit():
-    #         number_string = "".join([number_string, self.character])
-    #         self.get_character()
-    #     number = int(number_string)
-    #
-    #     if upper_bound is not None:
-    #         if number > upper_bound:
-    #             print("Number out of range.")
-    #             return None
-    #
-    #     if lower_bound is not None:
-    #         if number < lower_bound:
-    #             print("Number out of range.")
-    #             return None
-    #
-    #     return number
-    #
-    # def help_command(self):
-    #     """Print a list of valid commands."""
-    #     print("User commands:")
-    #     print("r N       - run the simulation for N cycles")
-    #     print("c N       - continue the simulation for N cycles")
-    #     print("s X N     - set switch X to N (0 or 1)")
-    #     print("m X       - set a monitor on signal X")
-    #     print("z X       - zap the monitor on signal X")
-    #     print("h         - help (this command)")
-    #     print("q         - quit the program")
-    #
-    # def switch_command(self):
-    #     """Set the specified switch to the specified signal level."""
-    #     switch_id = self.read_name()
-    #     if switch_id is not None:
-    #         switch_state = self.read_number(0, 1)
-    #         if switch_state is not None:
-    #             if self.devices.set_switch(switch_id, switch_state):
-    #                 print("Successfully set switch.")
-    #             else:
-    #                 print("Error! Invalid switch.")
-    #
-    # def monitor_command(self):
-    #     """Set the specified monitor."""
-    #     monitor = self.read_signal_name()
-    #     if monitor is not None:
-    #         [device, port] = monitor
-    #         monitor_error = self.monitors.make_monitor(device, port,
-    #                                                    self.cycles_completed)
-    #         if monitor_error == self.monitors.NO_ERROR:
-    #             print("Successfully made monitor.")
-    #         else:
-    #             print("Error! Could not make monitor.")
-    #
-    # def zap_command(self):
-    #     """Remove the specified monitor."""
-    #     monitor = self.read_signal_name()
-    #     if monitor is not None:
-    #         [device, port] = monitor
-    #         if self.monitors.remove_monitor(device, port):
-    #             print("Successfully zapped monitor")
-    #         else:
-    #             print("Error! Could not zap monitor.")
-    #
+    def read_name(self, name_string):
+        """Return the name ID of the current string if valid.
+
+        Return None if the current string is not a valid name string.
+        """
+        if name_string is None:
+            return None
+        else:
+            name_id = self.names.query(name_string)
+        if name_id is None:
+            print("Error! Unknown name.")
+        return name_id
+
+    def read_signal_name(self, signal_name):
+        """Return the device and port IDs of the current signal name.
+
+        Return None if either is invalid.
+        """
+        if signal_name.isalnum():
+            device_id = self.read_name(signal_name)
+            port_id = None
+        elif ".QBAR" in signal_name:
+            device_id = self.read_name(signal_name[:-5])
+            port_id = self.read_name("QBAR")
+        else:
+            device_id = self.read_name(signal_name[:-2])
+            port_id = self.read_name("Q")
+        return [device_id, port_id]
+
+    def switch_command(self):
+        """Set the specified switch to the specified signal level."""
+        switch_id = self.read_name(self.choice_1_selection)
+        if switch_id is not None:
+            switch_state = self.choice_2_selection
+            if switch_state is not None:
+                if self.devices.set_switch(switch_id, switch_state):
+                    print("Successfully set switch.")
+                else:
+                    print("Error! Invalid switch.")
+
+    def monitor_command(self):
+        """Set the specified monitor."""
+        monitor = self.read_signal_name(self.choice_3_selection)
+        if monitor is not None:
+            [device, port] = monitor
+            monitor_error = self.monitors.make_monitor(device, port,
+                                                       self.cycles_completed)
+            if monitor_error == self.monitors.NO_ERROR:
+                print("Successfully made monitor.")
+            else:
+                print("Error! Already monitoring {}.".format(self.choice_3_selection))
+
+    def zap_command(self):
+        """Remove the specified monitor."""
+        monitor = self.read_signal_name(self.choice_3_selection)
+        if monitor is not None:
+            [device, port] = monitor
+            if self.monitors.remove_monitor(device, port):
+                print("Successfully zapped monitor")
+            else:
+                print("Error! No currently monitoring {}.".format(self.choice_3_selection))
+
     def run_network(self, cycles):
         """Run the network for the specified number of simulation cycles.
 
@@ -572,7 +482,7 @@ class Gui(wx.Frame):
             if self.network.execute_network():
                 self.monitors.record_signals()
             else:
-                # print("Error! Network oscillating.")
+                print("Error! Network oscillating.")
                 return False
         self.monitors.display_signals()
         return True
@@ -580,12 +490,11 @@ class Gui(wx.Frame):
     def run_command(self):
         """Run the simulation from scratch."""
         self.cycles_completed = 0
-        # cycles = self.read_number(0, None)
         cycles = self.spin_ctrl_1_value
 
         if cycles is not None:  # if the number of cycles provided is valid
             self.monitors.reset_monitors()
-            # print("".join(["Running for ", str(cycles), " cycles"]))
+            print("".join(["Running for ", str(cycles), " cycles"]))
             self.devices.cold_startup()
             if self.run_network(cycles):
                 self.cycles_completed += cycles
@@ -602,26 +511,26 @@ class Gui(wx.Frame):
                 print(" ".join(["Continuing for", str(cycles), "cycles.",
                                 "Total:", str(self.cycles_completed)]))
     
-    def display_signals(self):
-        """Display the signal trace(s) in the text console."""
-        # margin = self.get_margin()
-        for device_id, output_id in self.monitors_dictionary:
-            monitor_name = self.devices.get_signal_name(device_id, output_id)
-            name_length = len(monitor_name)
-            signal_list = self.monitors_dictionary[(device_id, output_id)]
-            # print(monitor_name + (margin - name_length) * " ", end=": ")
-#             for signal in signal_list:
-#                 if signal == self.devices.HIGH:
-#                     print("-", end="")
-#                 if signal == self.devices.LOW:
-#                     print("_", end="")
-#                 if signal == self.devices.RISING:
-#                     print("/", end="")
-#                 if signal == self.devices.FALLING:
-#                     print("\\", end="")
-#                 if signal == self.devices.BLANK:
-#                     print(" ", end="")
-#             print("\n", end="")
+    # def display_signals(self):
+    #     """Display the signal trace(s) in the text console."""
+    #     # margin = self.get_margin()
+    #     for device_id, output_id in self.monitors_dictionary:
+    #         monitor_name = self.devices.get_signal_name(device_id, output_id)
+    #         name_length = len(monitor_name)
+    #         signal_list = self.monitors_dictionary[(device_id, output_id)]
+    #         print(monitor_name + (margin - name_length) * " ", end=": ")
+    #         for signal in signal_list:
+    #             if signal == self.devices.HIGH:
+    #                 print("-", end="")
+    #             if signal == self.devices.LOW:
+    #                 print("_", end="")
+    #             if signal == self.devices.RISING:
+    #                 print("/", end="")
+    #             if signal == self.devices.FALLING:
+    #                 print("\\", end="")
+    #             if signal == self.devices.BLANK:
+    #                 print(" ", end="")
+    #         print("\n", end="")
     
 
 
