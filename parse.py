@@ -54,10 +54,11 @@ class Parser:
         self.does_not_exist_list = []
 
     def parse_network(self):
-        """Parse the circuit definition file."""
-        # For now just return True, so that userint and gui can run in the
-        # skeleton code. When complete, should return False when there are
-        # errors in the circuit definition file.
+        """Parse the circuit definition file. Calls sections DEVICES,
+        CONNECTIONS and MONITORS individually.
+
+        Returns True if definition file parses successfully without
+        errors, and False otherwise."""
 
         # List of all expected sections
         sections = ['DEVICES', 'CONNECTIONS', 'MONITORS']
@@ -122,7 +123,9 @@ class Parser:
         return True
 
     def parse_section(self, header_ID):
-        """Parse a section of the circuit definition file."""
+        """Parse a section (enclosed by square brackets) of the
+        circuit definition file, and build corresponding part
+        of the circuit."""
         # FIND symbol after HEADER that isn't a space
         self.symbol = self.scanner.get_symbol(["]", ""])
 
@@ -143,24 +146,18 @@ class Parser:
             while self.parse_DEVICES_section():
                 pass
 
-            print("\n END OF DEVICES \n")
-
         elif header_ID == 'CONNECTIONS':
             # parse for CONNECTIONS
             while self.parse_CONNECTIONS_section():
                 pass
-
-            print("\n END OF CONNECTIONS \n")
 
         elif header_ID == 'MONITORS':
             # parse for MONITORS
             while self.parse_MONITORS_section():
                 pass
 
-            print("\n END OF MONITORS \n")
-
     def parse_DEVICES_section(self):
-        """Parse the DEVICES section line by line."""
+        """Parse and build the DEVICES section line by line."""
         # First try to get a list of all devices on this line
         device_name_list = []
 
