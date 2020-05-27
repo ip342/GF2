@@ -48,8 +48,14 @@ class MyGLCanvas(wxcanvas.GLCanvas):
                                            operations.
     """
 
-    def __init__(self, parent, devices, monitors):
+    def __init__(self, parent, devices, monitors, names):
         """Initialise canvas properties and useful variables."""
+        
+        self.devices = devices
+        self.monitors = monitors
+        self.names = names
+        
+        
         super().__init__(parent, -1,
                          attribList=[wxcanvas.WX_GL_RGBA,
                                      wxcanvas.WX_GL_DOUBLEBUFFER,
@@ -87,7 +93,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         GL.glTranslated(self.pan_x, self.pan_y, 0.0)
         GL.glScaled(self.zoom, self.zoom, self.zoom)
 
-    def render(self, text, cycles=10):
+    def render(self, text):
         """Handle all drawing operations."""
         self.SetCurrent(self.context)
         if not self.init:
@@ -100,20 +106,44 @@ class MyGLCanvas(wxcanvas.GLCanvas):
 
         # Draw specified text at position (10, 10)
         self.render_text(text, 10, 10)
-
-        # Draw a sample signal trace
-        GL.glColor3f(0.0, 0.0, 1.0)  # signal trace is blue
-        GL.glBegin(GL.GL_LINE_STRIP)
-        for i in range(cycles):
-            x = (i * 20) + 10
-            x_next = (i * 20) + 30
-            if i % 2 == 0:
-                y = 75
+        
+        self.device_list = []
+        
+        self.device_id_list = self.devices.find_devices()
+        for device_id in self.device_id_list:
+            if self.devices.get_device(device_id).device_kind == self.devices.D_TYPE:
+                self.device_list.append("{}.Q".format(self.names.get_name_string(device_id)))
+                self.device_list.append("{}.QBAR".format(self.names.get_name_string(device_id)))
             else:
-                y = 100
-            GL.glVertex2f(x, y)
-            GL.glVertex2f(x_next, y)
-        GL.glEnd()
+                self.device_list.append(self.names.get_name_string(device_id))
+        
+        longest_name_len = len(max(self.device_list, key=len))
+        
+        # Draw signal traces
+        j = 0
+        for device_id, output_id in self.monitors.monitors_dictionary:
+            j += 1
+            monitor_name = self.devices.get_signal_name(device_id, output_id)
+            signal_list = self.monitors.monitors_dictionary[(device_id, output_id)]
+            self.render_text(monitor_name, 10, (50 * j) + 10, 24)
+            GL.glColor3f(0.0, 0.0, 1.0)  # signal trace is blue
+            GL.glBegin(GL.GL_LINE_STRIP)
+            for i in range(len(signal_list)):
+                x = (i * 20) + (longest_name_len * 12)
+                x_next = (i * 20) + (longest_name_len * 12) +20
+                if signal_list[i] == self.devices.HIGH:
+                    y = (50 * j) + 25
+                elif signal_list[i] == self.devices.LOW:
+                    y = (50 * j) + 0
+                elif signal_list[i] == self.devices.RISING:
+                    y = (50 * j) + 25
+                elif signal_list[i] == self.devices.FALLING:
+                    y = (50 * j) + 0
+                elif signal_list[i] == self.devices.BLANK:
+                    y = (50 * j) + 25
+                GL.glVertex2f(x, y)
+                GL.glVertex2f(x_next, y)
+            GL.glEnd()
 
         # We have been drawing to the back buffer, flush the graphics pipeline
         # and swap the back buffer to the front
@@ -179,11 +209,14 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         else:
             self.Refresh()  # triggers the paint event
 
-    def render_text(self, text, x_pos, y_pos):
+    def render_text(self, text, x_pos, y_pos, font=12):
         """Handle text drawing operations."""
         GL.glColor3f(0.0, 0.0, 0.0)  # text is black
         GL.glRasterPos2f(x_pos, y_pos)
-        font = GLUT.GLUT_BITMAP_HELVETICA_12
+        if font == 24:
+            font = GLUT.GLUT_BITMAP_TIMES_ROMAN_24
+        else:
+            font = GLUT.GLUT_BITMAP_HELVETICA_12
 
         for character in text:
             if character == '\n':
@@ -261,7 +294,7 @@ class Gui(wx.Frame):
         self.SetMenuBar(menuBar)
 
         # Canvas for drawing signals
-        self.canvas = MyGLCanvas(self, devices, monitors)
+        self.canvas = MyGLCanvas(self, devices, monitors, names)
 
         # Configure the widgets
         label_1 = wx.StaticText(self, wx.ID_ANY, "Cycles")
@@ -356,60 +389,60 @@ class Gui(wx.Frame):
         """Handle the event when the user changes the cycles spin control value."""
         self.spin_ctrl_1_value = self.spin_ctrl_1.GetValue()
         text = "".join(["New spin control 1 value: ", str(self.spin_ctrl_1_value)])
-        self.canvas.render(text, self.current_cycles)
+        self.canvas.render(text)
         
     def on_choice_1(self, event):
         """Handle the event when the user changes the switch selection."""
         self.choice_1_index = self.choice_1.GetCurrentSelection()
         self.choice_1_selection = self.choice_1.GetString(self.choice_1_index)
         text = "".join(["New choice 1 selection: ", str(self.choice_1_selection)])
-        self.canvas.render(text, self.current_cycles)
+        self.canvas.render(text)
     
     def on_choice_2(self, event):
         """Handle the event when the user changes the switch state selection."""
         self.choice_2_index = self.choice_2.GetCurrentSelection()
         self.choice_2_selection = self.choice_2.GetString(self.choice_2_index)
         text = "".join(["New choice 2 selection: ", str(self.choice_2_selection)])
-        self.canvas.render(text, self.current_cycles)
+        self.canvas.render(text)
         
     def on_choice_3(self, event):
         """Handle the event when the user changes the monitor selection."""
         self.choice_3_index = self.choice_3.GetCurrentSelection()
         self.choice_3_selection = self.choice_3.GetString(self.choice_3_index)
         text = "".join(["New choice 3 selection: ", str(self.choice_3_selection)])
-        self.canvas.render(text, self.current_cycles)
+        self.canvas.render(text)
 
     def on_button_1(self, event):
         """Handle the event when the user clicks button 1 (Continue)."""
         text = "Continue button pressed."
         self.current_cycles = self.spin_ctrl_1_value
         self.continue_command()
-        self.canvas.render(text, self.spin_ctrl_1_value)
+        self.canvas.render(text)
 
     def on_button_2(self, event):
         """Handle the event when the user clicks button 2 (Run)."""
         text = "Run button pressed."
         self.current_cycles = self.spin_ctrl_1_value
         self.run_command()
-        self.canvas.render(text, self.spin_ctrl_1_value)
+        self.canvas.render(text)
         
     def on_button_3(self, event):
         """Handle the event when the user clicks button 3 (Set)."""
         text = "Set button pressed."
         self.switch_command()
-        self.canvas.render(text, self.current_cycles)
+        self.canvas.render(text)
         
     def on_button_4(self, event):
         """Handle the event when the user clicks button 4 (Set)."""
         text = "Set button pressed."
         self.monitor_command()
-        self.canvas.render(text, self.current_cycles)
+        self.canvas.render(text)
         
     def on_button_5(self, event):
         """Handle the event when the user clicks button 5 (Zap)."""
         text = "Zap button pressed."
         self.zap_command()
-        self.canvas.render(text, self.current_cycles)
+        self.canvas.render(text)
 
     def read_name(self, name_string):
         """Return the name ID of the current string if valid.
@@ -484,7 +517,6 @@ class Gui(wx.Frame):
             else:
                 print("Error! Network oscillating.")
                 return False
-        self.monitors.display_signals()
         return True
    
     def run_command(self):
@@ -494,7 +526,7 @@ class Gui(wx.Frame):
 
         if cycles is not None:  # if the number of cycles provided is valid
             self.monitors.reset_monitors()
-            print("".join(["Running for ", str(cycles), " cycles"]))
+            # print("".join(["Running for ", str(cycles), " cycles"]))
             self.devices.cold_startup()
             if self.run_network(cycles):
                 self.cycles_completed += cycles
@@ -508,16 +540,18 @@ class Gui(wx.Frame):
                 print("Error! Nothing to continue. Run first.")
             elif self.run_network(cycles):
                 self.cycles_completed += cycles
-                print(" ".join(["Continuing for", str(cycles), "cycles.",
-                                "Total:", str(self.cycles_completed)]))
+                # print(" ".join(["Continuing for", str(cycles), "cycles.",
+                #                 "Total:", str(self.cycles_completed)]))
     
     # def display_signals(self):
     #     """Display the signal trace(s) in the text console."""
-    #     # margin = self.get_margin()
-    #     for device_id, output_id in self.monitors_dictionary:
+    #     margin = self.monitors.get_margin()
+    #     for device_id, output_id in self.monitors.monitors_dictionary:
     #         monitor_name = self.devices.get_signal_name(device_id, output_id)
     #         name_length = len(monitor_name)
-    #         signal_list = self.monitors_dictionary[(device_id, output_id)]
+    #         signal_list = self.monitors.monitors_dictionary[(device_id, output_id)]
+    #         print(signal_list)
+    #         print(monitor_name)
     #         print(monitor_name + (margin - name_length) * " ", end=": ")
     #         for signal in signal_list:
     #             if signal == self.devices.HIGH:
@@ -531,14 +565,15 @@ class Gui(wx.Frame):
     #             if signal == self.devices.BLANK:
     #                 print(" ", end="")
     #         print("\n", end="")
+    #     self.canvas.render(text)
     
 
 
-    def TemporaryThingSoICanUseClassAttributesInParser(self):
-        self.names = Names()
-        self.devices = Devices(self.names)
-        self.network = Network(self.names, self.devices)
-        self.monitors = Monitors(self.names, self.devices, self.network)
-        self.scanner = Scanner(self.input_text.GetValue(), self.names, True)
-        self.parser = Parser(self.names, self.devices, self.network, self.monitors, self.scanner)
+    # def TemporaryThingSoICanUseClassAttributesInParser(self):
+    #     self.names = Names()
+    #     self.devices = Devices(self.names)
+    #     self.network = Network(self.names, self.devices)
+    #     self.monitors = Monitors(self.names, self.devices, self.network)
+    #     self.scanner = Scanner(self.input_text.GetValue(), self.names, True)
+    #     self.parser = Parser(self.names, self.devices, self.network, self.monitors, self.scanner)
         
