@@ -24,7 +24,7 @@ def new_parser(path):
 def test_find_header():
     """Checks for the appropriate HEADING sections in the definition file"""
     # Find headers DEVICES, CONNECTIONS and MONITORS
-    parser = new_parser('parser_test_files/test_HEADERS.txt')
+    parser = new_parser('test_files/test_HEADERS.txt')
     parser.parse_network()
 
     HEADERS_found = \
@@ -35,19 +35,19 @@ def test_find_header():
 
 
 @pytest.mark.parametrize("inputs, trial", [
-    ("parser_test_files/test_DEVICES_section_1.txt", 1),    # SYN - "!"
-    ("parser_test_files/test_DEVICES_section_2.txt", 2),    # SEM - defined device twice
-    ("parser_test_files/test_DEVICES_section_3.txt", 3),    # SEM - invalid symbol (expected device)
-    ("parser_test_files/test_DEVICES_section_4.txt", 4),    # SEM - no name or = after comma before ]
-    ("parser_test_files/test_DEVICES_section_5.txt", 5),    # SEM - defined device twice for device after ,
-    ("parser_test_files/test_DEVICES_section_6.txt", 6),    # SYN - no device set after equals
-    ("parser_test_files/test_DEVICES_section_7.txt", 7),    # SYN - invalid device type
-    ("parser_test_files/test_DEVICES_section_8.txt", 8),    # SYN - specifying DTYPE input
-    ("parser_test_files/test_DEVICES_section_9.txt", 9),    # SEM - SWITCH only takes 0 or 1
-    ("parser_test_files/test_DEVICES_section_10.txt", 10),  # SEM - gate more than 16 inputs
-    ("parser_test_files/test_DEVICES_section_11.txt", 11),  # SYN - gate no inputs
-    ("parser_test_files/test_DEVICES_section_12.txt", 12),  # SYN - no ending ;
-    ("parser_test_files/test_DEVICES_section_13.txt", 13)   # SYN - no ending ; before ]
+    ("test_files/test_DEVICES_section_1.txt", 1),    # SYN - "!"
+    ("test_files/test_DEVICES_section_2.txt", 2),    # SEM - defined device twice
+    ("test_files/test_DEVICES_section_3.txt", 3),    # SEM - invalid symbol (expected device)
+    ("test_files/test_DEVICES_section_4.txt", 4),    # SEM - no name or = after comma before ]
+    ("test_files/test_DEVICES_section_5.txt", 5),    # SEM - defined device twice for device after ,
+    ("test_files/test_DEVICES_section_6.txt", 6),    # SYN - no device set after equals
+    ("test_files/test_DEVICES_section_7.txt", 7),    # SYN - invalid device type
+    ("test_files/test_DEVICES_section_8.txt", 8),    # SYN - specifying DTYPE input
+    ("test_files/test_DEVICES_section_9.txt", 9),    # SEM - SWITCH only takes 0 or 1
+    ("test_files/test_DEVICES_section_10.txt", 10),  # SEM - gate more than 16 inputs
+    ("test_files/test_DEVICES_section_11.txt", 11),  # SYN - gate no inputs
+    ("test_files/test_DEVICES_section_12.txt", 12),  # SYN - no ending ;
+    ("test_files/test_DEVICES_section_13.txt", 13)   # SYN - no ending ; before ]
 ])
 def test_DEVICES_errors(inputs, trial):
     """Tests for all the possible errors that can occur in DEVICES"""
@@ -75,30 +75,30 @@ def test_DEVICES_errors(inputs, trial):
 
 def test_DEVICES_section():
     """Test that the whole DEVICES parse_section runs"""
-    parser = new_parser('parser_test_files/test_DEVICES_section.txt')
+    parser = new_parser('test_files/test_DEVICES_section.txt')
 
     parser.parse_section('DEVICES')
     assert parser.scanner.error_count == 0
 
 
 @pytest.mark.parametrize("inputs, trial", [
-    ("parser_test_files/test_CON_section_1.txt", 1),    # SEM - device doesn't exist
-    ("parser_test_files/test_CON_section_2.txt", 2),    # SYN - no device name after word 'device'
-    ("parser_test_files/test_CON_section_3.txt", 3),    # SYN - no { after device name
-    ("parser_test_files/test_CON_section_4.txt", 4),    # SEM - not all inputs defined
-    ("parser_test_files/test_CON_section_5.txt", 5),    # SYN - no ; to end connection line
-    ("parser_test_files/test_CON_section_6.txt", 6),    # SEM - invalid port index
-    ("parser_test_files/test_CON_section_7.txt", 7),    # SEM - port already connected
-    ("parser_test_files/test_CON_section_8.txt", 8),    # SYN - invalid port name
-    ("parser_test_files/test_CON_section_9.txt", 9),    # SYN - no . after device name
-    ("parser_test_files/test_CON_section_10.txt", 10),  # SYN - con listed under wrong device
-    ("parser_test_files/test_CON_section_11.txt", 11),  # SYN - no device after ->
-    ("parser_test_files/test_CON_section_12.txt", 12),  # SYN - no -> between cons
-    ("parser_test_files/test_CON_section_13.txt", 13),  # SYN - expected . after DTYPE
-    ("parser_test_files/test_CON_section_14.txt", 14),  # SYN - invalid DTYPE output
-    ("parser_test_files/test_CON_section_15.txt", 15),  # SYN - connection must start with dev name
-    ("parser_test_files/test_CON_section_16.txt", 16),  # SYN - no } to end con subsection
-    ("parser_test_files/test_CON_section_17.txt", 17)   # SEM - connection for device already assigned
+    ("test_files/test_CON_section_1.txt", 1),    # SEM - device doesn't exist
+    ("test_files/test_CON_section_2.txt", 2),    # SYN - no device name after word 'device'
+    ("test_files/test_CON_section_3.txt", 3),    # SYN - no { after device name
+    ("test_files/test_CON_section_4.txt", 4),    # SEM - not all inputs defined
+    ("test_files/test_CON_section_5.txt", 5),    # SYN - no ; to end connection line
+    ("test_files/test_CON_section_6.txt", 6),    # SEM - invalid port index
+    ("test_files/test_CON_section_7.txt", 7),    # SEM - port already connected
+    ("test_files/test_CON_section_8.txt", 8),    # SYN - invalid port name
+    ("test_files/test_CON_section_9.txt", 9),    # SYN - no . after device name
+    ("test_files/test_CON_section_10.txt", 10),  # SYN - con listed under wrong device
+    ("test_files/test_CON_section_11.txt", 11),  # SYN - no device after ->
+    ("test_files/test_CON_section_12.txt", 12),  # SYN - no -> between cons
+    ("test_files/test_CON_section_13.txt", 13),  # SYN - expected . after DTYPE
+    ("test_files/test_CON_section_14.txt", 14),  # SYN - invalid DTYPE output
+    ("test_files/test_CON_section_15.txt", 15),  # SYN - connection must start with dev name
+    ("test_files/test_CON_section_16.txt", 16),  # SYN - no } to end con subsection
+    ("test_files/test_CON_section_17.txt", 17)   # SEM - connection for device already assigned
 ])
 def test_CON_errors(inputs, trial):
     """Tests for all the possible errors that can occur in CONNECTIONS"""
@@ -130,7 +130,7 @@ def test_CON_errors(inputs, trial):
 
 def test_CON_section():
     """Test that the whole connections parse_section runs"""
-    parser = new_parser('parser_test_files/test_CON_section.txt')
+    parser = new_parser('test_files/test_CON_section.txt')
 
     parser.parse_section('DEVICES')
     parser.parse_section('CONNECTIONS')
@@ -138,11 +138,11 @@ def test_CON_section():
 
 
 @pytest.mark.parametrize("inputs, trial", [
-    ("parser_test_files/test_MONITORS_section_1.txt", 1),    # SEM - device already set for monitoring
-    ("parser_test_files/test_MONITORS_section_2.txt", 2),    # SEM - not a valid device
-    ("parser_test_files/test_MONITORS_section_3.txt", 3),    # SYN - invalid DTYPE output
-    ("parser_test_files/test_MONITORS_section_4.txt", 4),    # SYM - no . following DTYPE
-    ("parser_test_files/test_MONITORS_section_5.txt", 5)     # SEM - invalid symbol
+    ("test_files/test_MONITORS_section_1.txt", 1),    # SEM - device already set for monitoring
+    ("test_files/test_MONITORS_section_2.txt", 2),    # SEM - not a valid device
+    ("test_files/test_MONITORS_section_3.txt", 3),    # SYN - invalid DTYPE output
+    ("test_files/test_MONITORS_section_4.txt", 4),    # SYM - no . following DTYPE
+    ("test_files/test_MONITORS_section_5.txt", 5)     # SEM - invalid symbol
 ])
 def test_MONITORS_errors(inputs, trial):
     """Tests for all the possible errors that can occur in MONITORS"""
@@ -165,7 +165,7 @@ def test_MONITORS_errors(inputs, trial):
 
 def test_MONITORS_all():
     """Test that the 'all' keyword works in monitors'"""
-    parser = new_parser('parser_test_files/test_MONITORS_all.txt')
+    parser = new_parser('test_files/test_MONITORS_all.txt')
 
     parser.parse_network()
     assert len(parser.monitors.monitors_dictionary) == 6
@@ -173,7 +173,7 @@ def test_MONITORS_all():
 
 def test_NETWORK():
     """Test that parse_network runs for a full definition file"""
-    parser = new_parser('parser_test_files/test_NETWORK.txt')
+    parser = new_parser('test_files/test_NETWORK.txt')
 
     parser.parse_network()
     assert parser.scanner.error_count == 0

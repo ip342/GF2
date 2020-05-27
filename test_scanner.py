@@ -18,21 +18,21 @@ def test_symbol():
 
 @pytest.fixture
 def test_scanner1():
-    test_file = 'test_scanner_text1.txt'
+    test_file = 'test_files/test_scanner_text1.txt'
     names = Names()
     scan = Scanner(test_file, names)
     return scan
 
 @pytest.fixture
 def test_scanner2():
-    test_file = 'test_scanner_text2.txt'
+    test_file = 'test_files/test_scanner_text2.txt'
     names = Names()
     scan = Scanner(test_file, names)
     return scan
 
 @pytest.fixture
 def test_scanner3():
-    test_file = 'test_scanner_text3.txt'
+    test_file = 'test_files/test_scanner_text3.txt'
     names = Names()
     scan = Scanner(test_file, names)
     return scan
