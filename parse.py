@@ -593,7 +593,7 @@ class Parser:
             else:
                 self.monitors.make_monitor(self.symbol.id, None)
 
-                # NEED TO ADD ERRORS SOMEWHERE HERE..
+                # USE self.monitors checks or keep with our own ones???
 
         # CHECK for COMMA
         elif self.symbol.type == self.scanner.COMMA:
