@@ -6,15 +6,18 @@ from names import *
 from scanner import *
 from errors import *
 
+
 @pytest.fixture
 def test_names():
     names = Names()
     return names
 
+
 @pytest.fixture
 def test_symbol():
     symbol = Symbol()
     return symbol
+
 
 @pytest.fixture
 def test_scanner1():
@@ -23,12 +26,14 @@ def test_scanner1():
     scan = Scanner(test_file, names)
     return scan
 
+
 @pytest.fixture
 def test_scanner2():
     test_file = 'test_files/test_scanner_text2.txt'
     names = Names()
     scan = Scanner(test_file, names)
     return scan
+
 
 @pytest.fixture
 def test_scanner3():
@@ -37,9 +42,11 @@ def test_scanner3():
     scan = Scanner(test_file, names)
     return scan
 
+
 @pytest.fixture
 def lines():
     return ['     d3 2342 inputs, ->', ' /l2534', ' 5..']
+
 
 @pytest.fixture
 def no_spaces():
@@ -90,7 +97,6 @@ def test_get_name(test_scanner1, test_scanner2, test_names):
     assert name[1] == " "
 
 
-
 def test_get_number(test_scanner1, test_names):
     """Test that the get_number function gives out a number and next
     character"""
@@ -109,7 +115,7 @@ def test_raise_comment_errors(test_scanner1, test_scanner2, test_names):
     with pytest.raises(CommentError):
         while test_scanner1.current_character != '':
             test_scanner1.get_symbol()
-    # No '#' at end of multi line comment 
+    # No '#' at end of multi line comment
     with pytest.raises(CommentError):
         while test_scanner2.current_character != '':
             test_scanner2.get_symbol()
