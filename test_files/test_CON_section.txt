@@ -1,4 +1,4 @@
-DEVICES [
+[
     A, H = XOR;
     B = OR 2;
     C, G = NAND 2;
@@ -9,7 +9,7 @@ DEVICES [
     CLK = CLOCK 4;
 ]
 
-CONNECTIONS [
+[
     device A {
         S1 -> A.I1;
         S2 -> A.I2;
@@ -45,8 +45,4 @@ CONNECTIONS [
         F.QBAR -> H.I1;
         S4 -> H.I2;
     }
-]
-
-MONITORS [
-   G, H;
 ]
