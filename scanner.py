@@ -75,15 +75,16 @@ class Scanner:
         self.header_list = ['DEVICES', 'CONNECTIONS', 'MONITORS']
 
         [self.DEVICES_ID, self.CONNECTIONS_ID, self.MONITORS_ID] = \
-        self.names.lookup(self.header_list)
+            self.names.lookup(self.header_list)
 
         self.keyword_list = ['cycle', 'cycles', 'input', 'inputs', 'device']
-        self.end_symbols = [self.SEMICOLON, self.CLOSE_CURLY, self.CLOSE_SQUARE, self.EOF]
+        self.end_symbols = [self.SEMICOLON, self.CLOSE_CURLY,
+                            self.CLOSE_SQUARE, self.EOF]
         self.end_characters = [';', '}', ']', '']
         self.monitor_all = ['all']
 
         [self.CYCLE, self.CYCLES, self.INPUT, self.INPUTS, self.DEVICE] = \
-        self.names.lookup(self.keyword_list)
+            self.names.lookup(self.keyword_list)
 
         self.current_character = ' '
         self.current_line = 0
@@ -97,20 +98,19 @@ class Scanner:
 
         # go to current non whitespace character
         self.skip_spaces()
-        
+
         # ignore multi line comments
         while self.current_character == '#':
             self.advance()
-
             while self.current_character != '#':
                 self.advance()
-                
                 if self.current_character == '':
                     self.display_error(
                         CommentError,
                         'Expected # at the end of multi-line comment', stop)
                     symbol.type = self.EOF
                     break
+
             self.advance()
             self.skip_spaces()
 
@@ -120,10 +120,13 @@ class Scanner:
             if self.current_character == '/':
                 while self.current_character != '\n':
                     self.advance()
+
             else:
                 self.display_error(
-                    CommentError, "Expected '/' after '/' to indicate comment", stop)
+                    CommentError, "Expected '/' after '/' to "
+                                  "indicate comment", stop)
                 self.error = True
+
             self.advance()
             self.skip_spaces()
 
@@ -132,13 +135,15 @@ class Scanner:
             name_string = self.get_name()[0]
             if name_string.upper() in self.header_list:
                 symbol.type = self.HEADER
+
                 symbol.id = self.names.query(name_string.upper())
             elif name_string.lower() in self.keyword_list:
                 symbol.type = self.KEYWORD
                 symbol.id = self.names.query(name_string.lower())
+
             elif name_string.lower() in self.monitor_all:
                 symbol.type = self.ALL
-                symbol.id = self.names.query(name_string.lower())
+
             else:
                 symbol.type = self.NAME
                 [symbol.id] = self.names.lookup([name_string])
@@ -175,7 +180,8 @@ class Scanner:
                 self.advance()
             else:
                 self.display_error(
-                    ArrowError, "Unexpected character, expected '>' after '-'", stop)
+                    ArrowError, "Unexpected character, expected "
+                                "'>' after '-'", stop)
                 self.error = True
 
         elif self.current_character == '>':
@@ -199,7 +205,7 @@ class Scanner:
         # end of file
         elif self.current_character == '':
             symbol.type = self.EOF
-            
+
         elif self.current_character == '':
             symbol.type = self.EOF
 
@@ -220,11 +226,11 @@ class Scanner:
 
     def advance(self):
         """ Advance to next character """
-        
+
         if self.current_character == '\n':
             self.current_line += 1
             self.current_character_number = 0
-            
+
         if self.current_character == '\t':
             while (self.current_character_number % 8) != 0:
                 self.current_character_number += 1
@@ -261,16 +267,18 @@ class Scanner:
                 return [number, self.current_character]
 
     def display_error(self, error_type, error_message='', stop=None):
+
+        """ Display errors that arise in format given in errors.py"""
+
         self.error_count += 1
 
-        # Only raise the error for filenames starting with 'test' 
+        # Only raise the error for filenames starting with 'test'
         if 'test' in sys.argv[0].lower():
             raise error_type
 
-
         Error(error_type, error_message, self.current_line,
-            self.file_as_list[self.current_line],
-            self.current_character_number)
+              self.file_as_list[self.current_line],
+              self.current_character_number)
 
         # Comment error special case
         if error_type == CommentError:
@@ -283,10 +291,10 @@ class Scanner:
             self.advance()
 
         elif self.current_character == '\n':
-                self.advance()
+            self.advance()
 
         elif self.current_character in self.end_characters:
-                self.advance()
+            self.advance()
 
         else:
 
@@ -298,8 +306,8 @@ class Scanner:
                         self.advance()
                         break
                 elif self.current_character == ';':
-                        # Advances past new line symbol
-                        self.advance()
-                        break 
+                    # Advances past new line symbol
+                    self.advance()
+                    break
                 elif self.current_character in self.end_characters:
-                        break
+                    break
