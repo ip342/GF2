@@ -141,7 +141,7 @@ class Scanner:
                 symbol.id = self.names.query(name_string.lower())
             else:
                 symbol.type = self.NAME
-                symbol.id = self.names.lookup([name_string])
+                [symbol.id] = self.names.lookup([name_string])
 
         # numbers
         elif self.current_character.isdigit():

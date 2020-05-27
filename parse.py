@@ -259,11 +259,14 @@ class Parser:
 
         device_id_list = self.devices.names.lookup(device_name_list)
 
-        if type(device_id_list) == int:
-            device_id_list = [device_id_list]
+        # if type(device_id_list) == int:
+        #     device_id_list = [device_id_list]
 
         # Make devices
         for device_id in device_id_list:
+            # if self.symbol.id in self.devices.gate_types or \
+            #         self.symbol.id in self.devices.device_types:
+            #     self.devices.make_device(device_id, self.symbol.id)
             if self.symbol.id == self.devices.D_TYPE:
                 self.devices.make_d_type(device_id)
 
@@ -354,7 +357,7 @@ class Parser:
                         # Add all the inputs to the device..
                         else:
                             for input_num in range(1, n + 1):
-                                input_id = self.devices.names.lookup(
+                                [input_id] = self.devices.names.lookup(
                                     ["I"+str(input_num)])
                                 self.devices.add_input(device_id, input_id)
                                 self.devices.add_output(device_id, None)
@@ -619,7 +622,7 @@ class Parser:
         return True
 
     def parse_Connections_lines(self):
-        """Parse the CONNECTION line in a CONNECTION subsection."""
+        """Parse a CONNECTION line in a CONNECTION subsection."""
         self.square_instead_of_curly = False
 
         if self.symbol.type == self.scanner.CLOSE_CURLY:

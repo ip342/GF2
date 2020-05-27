@@ -75,11 +75,14 @@ class Names:
             if name_string not in self.names:
                 self.names.append(name_string)
             name_id_list.append(self.names.index(name_string))
-
-        if len(name_string_list) == 1:
-            return name_id_list[0]
-        else:
-            return name_id_list
+        return name_id_list
+        # if 'test' in sys.argv[0].lower() and 'test_parse' not in sys.argv[0].lower():
+        #     return name_id_list
+        # else:
+        #     if len(name_string_list) == 1:
+        #         return name_id_list[0]
+        #     else:
+        #         return name_id_list
 
     def get_name_string(self, name_id):
         """Return the corresponding name string for name_id.

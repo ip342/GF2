@@ -32,8 +32,14 @@ class Error(Exception):
         if error_type in Semantic:
             error_class = 'SemanticError'
 
-        if error_type in Syntax:
+        elif error_type in Syntax:
             error_class = 'SyntaxError'
+
+        elif error_type == NetworkError:
+            error_class = 'NetworkError'
+
+        elif error_type == ConnectionError:
+            error_class = 'ConnectionError'
 
         print('*'*50 + '\n' + 'Line number ' + str(line_number + 1) + ', Character ' + str(character - 1) + '\n'
               + line + '\n' + (character - 2)*' ' + '^' + '\n'
@@ -50,4 +56,12 @@ class CommentError(Exception):
 
 
 class ArrowError(Exception):
+    pass
+
+
+class NetworkError(Exception):
+    pass
+
+
+class ConnectionError(Exception):
     pass
