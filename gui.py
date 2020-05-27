@@ -116,8 +116,11 @@ class MyGLCanvas(wxcanvas.GLCanvas):
                 self.device_list.append("{}.QBAR".format(self.names.get_name_string(device_id)))
             else:
                 self.device_list.append(self.names.get_name_string(device_id))
-        
-        longest_name_len = len(max(self.device_list, key=len))
+                
+        if len(self.device_list) == 0:
+            longest_name_len = 0
+        else:
+            longest_name_len = len(max(self.device_list, key=len))
         
         # Draw signal traces
         j = 0
@@ -225,6 +228,33 @@ class MyGLCanvas(wxcanvas.GLCanvas):
             else:
                 GLUT.glutBitmapCharacter(font, ord(character))
 
+class PopUpFrame(wx.Frame):
+    """Class used for pop up window with an error messages"""
+    
+    def __init__(self, parent, title, text):
+        wx.Frame.__init__(self, parent=parent, title=title)
+        
+        sizer_1 = wx.BoxSizer(wx.VERTICAL)
+        label_1 = wx.StaticText(self, wx.ID_ANY, text, style=wx.ALIGN_CENTER)
+        self.close_button = wx.Button(self, wx.ID_ANY, "Close")
+        
+        self.SetBackgroundColour(wx.Colour(72, 72, 72))
+        label_1.SetForegroundColour(wx.Colour(255, 255, 255))
+        
+        # self.Bind(wx.EVT_MENU, self.on_menu)
+        self.close_button.Bind(wx.EVT_BUTTON, self.on_close_button)
+        
+        sizer_1.Add((20, 20), 1, 0, 0)
+        sizer_1.Add(label_1, 1, wx.ALIGN_CENTER, 0)
+        sizer_1.Add(self.close_button, 1, wx.ALIGN_CENTER, 0)
+        
+        self.SetSizer(sizer_1)
+
+        self.Show()
+        
+    def on_close_button(self, event):
+        self.Show(False)
+        self.Destroy()
 
 class Gui(wx.Frame):
     """Configure the main window and all the widgets.
@@ -249,8 +279,10 @@ class Gui(wx.Frame):
     on_text_box(self, event): Event handler for when the user enters text.
     """
 
-    def __init__(self, title, path, names, devices, network, monitors):
+    def __init__(self, title, path, names, devices, network, monitors, start_up = False):
         
+        self.start_up = start_up
+
         """Initialise variables."""
         self.names = names
         self.devices = devices
@@ -265,6 +297,8 @@ class Gui(wx.Frame):
         self.current_cycles = 10
         self.switch_list = []
         self.device_list = []
+        self.pathname = None
+        self.load_new = False
 
         self.device_id_list = self.devices.find_devices()
         for device_id in self.device_id_list:
@@ -277,10 +311,18 @@ class Gui(wx.Frame):
         self.switch_id_list = self.devices.find_devices(self.devices.SWITCH)
         for switch in self.switch_id_list:
             self.switch_list.append(self.names.get_name_string(switch))
-            
-        self.choice_1_selection = self.switch_list[0]
+    
+        if len(self.switch_list) == 0:
+            self.choice_1_selection = ""
+            self.switch_list = [""]
+        else:
+            self.choice_1_selection = self.switch_list[0]
         self.choice_2_selection = 0
-        self.choice_3_selection = self.device_list[0]
+        if len(self.device_list) == 0:
+            self.choice_3_selection = ""
+            self.device_list = [""]
+        else:
+            self.choice_3_selection = self.device_list[0]
 
         """Initialise widgets and layout."""
         super().__init__(parent=None, title=title, size=(800, 600))
@@ -310,7 +352,8 @@ class Gui(wx.Frame):
         self.button_3 = wx.Button(self, wx.ID_ANY, "Set")
         self.button_4 = wx.Button(self, wx.ID_ANY, "Set")
         self.button_5 = wx.Button(self, wx.ID_ANY, "Zap")
-        
+        self.load_button = wx.Button(self, wx.ID_ANY, "Load")
+    
         # Configure the widget properties
         self.SetBackgroundColour(wx.Colour(72, 72, 72))
         label_1.SetForegroundColour(wx.Colour(255, 255, 255))
@@ -330,6 +373,8 @@ class Gui(wx.Frame):
         self.button_3.Bind(wx.EVT_BUTTON, self.on_button_3)
         self.button_4.Bind(wx.EVT_BUTTON, self.on_button_4)
         self.button_5.Bind(wx.EVT_BUTTON, self.on_button_5)
+        self.load_button.Bind(wx.EVT_BUTTON, self.on_load_button)
+    
 
         # Configure sizers for layout
         main_sizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -341,10 +386,11 @@ class Gui(wx.Frame):
         sizer_5 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_6 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_7 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_8 = wx.BoxSizer(wx.HORIZONTAL)
 
         main_sizer.Add(self.canvas, 5, wx.EXPAND | wx.ALL, 5)
         main_sizer.Add(side_sizer, 1, wx.ALL, 5)
-        
+    
         side_sizer.Add(sizer_1, 1, wx.ALL, 0)
         side_sizer.Add(sizer_2, 1, wx.ALL, 5)
         side_sizer.Add(sizer_3, 1, wx.ALL, 0)
@@ -352,26 +398,29 @@ class Gui(wx.Frame):
         side_sizer.Add(sizer_5, 1, wx.ALL, 0)
         side_sizer.Add(sizer_6, 1, wx.ALL, 10)
         side_sizer.Add(sizer_7, 1, wx.ALL, 0)
-        
+        side_sizer.Add(sizer_8, 1, wx.ALL, 10)
+    
         sizer_1.Add(label_3, 1, wx.ALL, 10)
-        
+    
         sizer_2.Add(label_1, 1, wx.ALL, 10)
         sizer_2.Add(self.spin_ctrl_1, 0, wx.ALL, 10)
-        
+    
         sizer_3.Add(self.button_1, 1, wx.ALL, 10)
         sizer_3.Add(self.button_2, 1, wx.ALL, 10)
-        
+    
         sizer_4.Add(label_2, 1, wx.ALL, 10)
         sizer_4.Add(self.choice_1, 1, wx.ALL, 10)
-        
+    
         sizer_5.Add(self.choice_2, 1, wx.ALL, 10)
         sizer_5.Add(self.button_3, 1, wx.ALL, 10)
-        
+    
         sizer_6.Add(label_4, 1, wx.ALL, 10)
         sizer_6.Add(self.choice_3, 1, wx.ALL, 10)
-        
+    
         sizer_7.Add(self.button_4, 1, wx.ALL, 10)
         sizer_7.Add(self.button_5, 1, wx.ALL, 10)
+    
+        sizer_8.Add(self.load_button, 1, wx.ALL, 0)
 
         self.SetSizeHints(600, 600)
         self.SetSizer(main_sizer)
@@ -414,35 +463,75 @@ class Gui(wx.Frame):
 
     def on_button_1(self, event):
         """Handle the event when the user clicks button 1 (Continue)."""
-        text = "Continue button pressed."
-        self.current_cycles = self.spin_ctrl_1_value
-        self.continue_command()
-        self.canvas.render(text)
+        if self.start_up == True:
+            text = "No definition file loaded."
+            frame = PopUpFrame(self, title="Error!", text=text)
+        else:
+            text = "Continue button pressed."
+            self.current_cycles = self.spin_ctrl_1_value
+            self.continue_command()
+            self.canvas.render(text)
 
     def on_button_2(self, event):
         """Handle the event when the user clicks button 2 (Run)."""
-        text = "Run button pressed."
-        self.current_cycles = self.spin_ctrl_1_value
-        self.run_command()
-        self.canvas.render(text)
+        if self.start_up == True:
+            text = "No definition file loaded."
+            frame = PopUpFrame(self, title="Error!", text=text)
+        else:
+            text = "Run button pressed."
+            self.current_cycles = self.spin_ctrl_1_value
+            self.run_command()
+            self.canvas.render(text)
         
     def on_button_3(self, event):
         """Handle the event when the user clicks button 3 (Set)."""
-        text = "Set button pressed."
-        self.switch_command()
-        self.canvas.render(text)
+        if self.start_up == True:
+            text = "No definition file loaded."
+            frame = PopUpFrame(self, title="Error!", text=text)
+        else:
+            text = "Set button pressed."
+            self.switch_command()
+            self.canvas.render(text)
         
     def on_button_4(self, event):
         """Handle the event when the user clicks button 4 (Set)."""
-        text = "Set button pressed."
-        self.monitor_command()
-        self.canvas.render(text)
+        if self.start_up == True:
+            text = "No definition file loaded."
+            frame = PopUpFrame(self, title="Error!", text=text)
+        else:    
+            text = "Set button pressed."
+            self.monitor_command()
+            self.canvas.render(text)
         
     def on_button_5(self, event):
         """Handle the event when the user clicks button 5 (Zap)."""
-        text = "Zap button pressed."
-        self.zap_command()
-        self.canvas.render(text)
+        if self.start_up == True:
+            text = "No definition file loaded."
+            frame = PopUpFrame(self, title="Error!", text=text)
+        else:
+            text = "Zap button pressed."
+            self.zap_command()
+            self.canvas.render(text)
+        
+    def on_load_button(self, event):
+        """Handle the event when the user clicks load button."""
+
+        with wx.FileDialog(self, "Open Definition file", wildcard="Definition files (*.txt)|*.txt",
+                           style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
+
+            if fileDialog.ShowModal() == wx.ID_CANCEL:
+                return 
+
+            self.pathname = fileDialog.GetPath()
+            # try:
+            #     with open(pathname, 'r') as file:
+            #         print('Here')
+            # except IOError:
+            #     wx.LogError("Cannot open file '%s'." % newfile)
+        self.load_new = True
+        self.Show(False)
+        self.Destroy()
+        
 
     def read_name(self, name_string):
         """Return the name ID of the current string if valid.
@@ -454,7 +543,7 @@ class Gui(wx.Frame):
         else:
             name_id = self.names.query(name_string)
         if name_id is None:
-            print("Error! Unknown name.")
+            pass
         return name_id
 
     def read_signal_name(self, signal_name):
@@ -480,9 +569,9 @@ class Gui(wx.Frame):
             switch_state = self.choice_2_selection
             if switch_state is not None:
                 if self.devices.set_switch(switch_id, switch_state):
-                    print("Successfully set switch.")
-                else:
-                    print("Error! Invalid switch.")
+                    text = "Switch {} set to {}.".format(self.choice_1_selection, switch_state)
+                    frame = PopUpFrame(self, title="Success!", text=text)
+                    
 
     def monitor_command(self):
         """Set the specified monitor."""
@@ -492,9 +581,11 @@ class Gui(wx.Frame):
             monitor_error = self.monitors.make_monitor(device, port,
                                                        self.cycles_completed)
             if monitor_error == self.monitors.NO_ERROR:
-                print("Successfully made monitor.")
+                pass
             else:
-                print("Error! Already monitoring {}.".format(self.choice_3_selection))
+                text = "Already monitoring {}.".format(self.choice_3_selection)
+                frame = PopUpFrame(self, title="Error!", text=text)
+                
 
     def zap_command(self):
         """Remove the specified monitor."""
@@ -502,9 +593,10 @@ class Gui(wx.Frame):
         if monitor is not None:
             [device, port] = monitor
             if self.monitors.remove_monitor(device, port):
-                print("Successfully zapped monitor")
+                pass
             else:
-                print("Error! No currently monitoring {}.".format(self.choice_3_selection))
+                text = "Not currently monitoring {}.".format(self.choice_3_selection)
+                frame = PopUpFrame(self, title="Error!", text=text)
 
     def run_network(self, cycles):
         """Run the network for the specified number of simulation cycles.
@@ -515,7 +607,8 @@ class Gui(wx.Frame):
             if self.network.execute_network():
                 self.monitors.record_signals()
             else:
-                print("Error! Network oscillating.")
+                text = "Network oscillating."
+                frame = PopUpFrame(self, title="Error!", text=text)
                 return False
         return True
    
@@ -526,7 +619,6 @@ class Gui(wx.Frame):
 
         if cycles is not None:  # if the number of cycles provided is valid
             self.monitors.reset_monitors()
-            # print("".join(["Running for ", str(cycles), " cycles"]))
             self.devices.cold_startup()
             if self.run_network(cycles):
                 self.cycles_completed += cycles
@@ -537,43 +629,8 @@ class Gui(wx.Frame):
         cycles = self.spin_ctrl_1_value
         if cycles is not None:  # if the number of cycles provided is valid
             if self.cycles_completed == 0:
-                print("Error! Nothing to continue. Run first.")
+                text = "Nothing to continue. Run first."
+                frame = PopUpFrame(self, title="Error!", text=text)
             elif self.run_network(cycles):
                 self.cycles_completed += cycles
-                # print(" ".join(["Continuing for", str(cycles), "cycles.",
-                #                 "Total:", str(self.cycles_completed)]))
-    
-    # def display_signals(self):
-    #     """Display the signal trace(s) in the text console."""
-    #     margin = self.monitors.get_margin()
-    #     for device_id, output_id in self.monitors.monitors_dictionary:
-    #         monitor_name = self.devices.get_signal_name(device_id, output_id)
-    #         name_length = len(monitor_name)
-    #         signal_list = self.monitors.monitors_dictionary[(device_id, output_id)]
-    #         print(signal_list)
-    #         print(monitor_name)
-    #         print(monitor_name + (margin - name_length) * " ", end=": ")
-    #         for signal in signal_list:
-    #             if signal == self.devices.HIGH:
-    #                 print("-", end="")
-    #             if signal == self.devices.LOW:
-    #                 print("_", end="")
-    #             if signal == self.devices.RISING:
-    #                 print("/", end="")
-    #             if signal == self.devices.FALLING:
-    #                 print("\\", end="")
-    #             if signal == self.devices.BLANK:
-    #                 print(" ", end="")
-    #         print("\n", end="")
-    #     self.canvas.render(text)
-    
-
-
-    # def TemporaryThingSoICanUseClassAttributesInParser(self):
-    #     self.names = Names()
-    #     self.devices = Devices(self.names)
-    #     self.network = Network(self.names, self.devices)
-    #     self.monitors = Monitors(self.names, self.devices, self.network)
-    #     self.scanner = Scanner(self.input_text.GetValue(), self.names, True)
-    #     self.parser = Parser(self.names, self.devices, self.network, self.monitors, self.scanner)
         

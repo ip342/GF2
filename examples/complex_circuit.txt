@@ -6,7 +6,7 @@ DEVICES [
     E = NOR 2;
     F = DTYPE;
     S1, S2, S3, S4 = SWITCH 0;
-    CLK = CLOCK 4;
+    CLK = CLOCK 1;
 ]
 
 CONNECTIONS [
