@@ -9,19 +9,23 @@ from errors import *
 
 @pytest.fixture
 def test_names():
+    """Return a new instance of the Names class."""
     names = Names()
     return names
 
 
 @pytest.fixture
 def test_symbol():
+    """Return a new instance of the Symbol class."""
     symbol = Symbol()
     return symbol
 
 
 @pytest.fixture
 def test_scanner1():
+    """Return a new instance of the Scanner class with test file 1 inputted."""
     test_file = 'test_files/test_scanner_text1.txt'
+
     names = Names()
     scan = Scanner(test_file, names)
     return scan
@@ -29,6 +33,7 @@ def test_scanner1():
 
 @pytest.fixture
 def test_scanner2():
+    """Return a new instance of the Scanner class with test file 2 inputted."""
     test_file = 'test_files/test_scanner_text2.txt'
     names = Names()
     scan = Scanner(test_file, names)
@@ -37,6 +42,8 @@ def test_scanner2():
 
 @pytest.fixture
 def test_scanner3():
+    """Return a new instance of the Scanner class with test file 3 inputted."""
+    test_file = 'test_scanner_text3.txt'
     test_file = 'test_files/test_scanner_text3.txt'
     names = Names()
     scan = Scanner(test_file, names)
@@ -45,11 +52,13 @@ def test_scanner3():
 
 @pytest.fixture
 def lines():
+    """Test file 1 in list format."""
     return ['     d3 2342 inputs, ->', ' /l2534', ' 5..']
 
 
 @pytest.fixture
 def no_spaces():
+    """Test file 1 formatted with no spaces."""
     return 'd32342inputs,->/l25345..'
 
 

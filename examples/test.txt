@@ -1,4 +1,6 @@
 DEVICES [
+    G1 = NAND 2;
+    SW1, SW2 = SWITCH 0;
     G1 = AND 2;
     D1 = DTYPE;
     SW1, SW2, SW3 = SWITCH 0;
@@ -6,9 +8,13 @@ DEVICES [
 
 CONNECTIONS [
     device G1 {
-        SW1 -> G1.I1;		
-        SW1 -> G1.I2;
+        SW1 -> G1.I1;
+        G2 -> G1.I2;
     }
+    device G2 {
+        SW2 -> G2.I1;
+        G1 -> G2.I2;
+     }
     device D1 {
         SW1 -> D1.DATA;
         SW2 -> D1.CLK;

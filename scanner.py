@@ -70,26 +70,27 @@ class Scanner:
                                  self.OPEN_SQUARE, self.CLOSE_SQUARE,
                                  self.SLASH, self.SEMICOLON, self.ARROW,
                                  self.DOT, self.OPEN_CURLY, self.CLOSE_CURLY,
-                                 self.HASH, self.ALL, self.EOF] = range(17)
+                                 self.ALL, self.EOF] = range(16)
 
+        # Creat symbol IDs for headers
         self.header_list = ['DEVICES', 'CONNECTIONS', 'MONITORS']
-
         [self.DEVICES_ID, self.CONNECTIONS_ID, self.MONITORS_ID] = \
             self.names.lookup(self.header_list)
 
+        # Create symbol IDs for keywords
         self.keyword_list = ['cycle', 'cycles', 'input', 'inputs', 'device']
-        self.end_symbols = [self.SEMICOLON, self.CLOSE_CURLY,
-                            self.CLOSE_SQUARE, self.EOF]
-        self.end_characters = [';', '}', ']', '']
-        self.monitor_all = ['all']
 
         [self.CYCLE, self.CYCLES, self.INPUT, self.INPUTS, self.DEVICE] = \
             self.names.lookup(self.keyword_list)
+
+        self.end_characters = [';', '}', ']', '']
+        self.monitor_all = ['all']
 
         self.current_character = ' '
         self.current_line = 0
         self.current_character_number = 0
         self.error_count = 0
+        self.error_list = []
         self.error = False
 
     def get_symbol(self, stop=None):
@@ -99,11 +100,14 @@ class Scanner:
         # go to current non whitespace character
         self.skip_spaces()
 
+
+        # First check if in comment
         # ignore multi line comments
         while self.current_character == '#':
             self.advance()
             while self.current_character != '#':
                 self.advance()
+
                 if self.current_character == '':
                     self.display_error(
                         CommentError,
@@ -129,6 +133,8 @@ class Scanner:
 
             self.advance()
             self.skip_spaces()
+
+        # Now check for symbol type
 
         # words
         if self.current_character.isalpha():
@@ -206,14 +212,10 @@ class Scanner:
         elif self.current_character == '':
             symbol.type = self.EOF
 
-        elif self.current_character == '':
-            symbol.type = self.EOF
-
         # invalid character
         else:
             self.advance()
             self.display_error(SyntaxError, 'Invalid character', stop)
-
             self.error = True
 
         return symbol
@@ -226,22 +228,26 @@ class Scanner:
 
     def advance(self):
         """ Advance to next character """
+  
+        # first check if on new line
 
         if self.current_character == '\n':
             self.current_line += 1
             self.current_character_number = 0
 
+        # check if on tab (only applies to certain text editors)
+
         if self.current_character == '\t':
             while (self.current_character_number % 8) != 0:
                 self.current_character_number += 1
 
+        # now read next character in definition file
         self.current_character = self.input_file.read(1)
         self.current_character_number += 1
 
         return self.current_character
 
     def get_name(self):
-
         """" When current character is a letter, return whole word """
 
         name = self.current_character
@@ -254,7 +260,6 @@ class Scanner:
                 return [name, self.current_character]
 
     def get_number(self):
-
         """ When current character is a number, return whole number """
 
         number = self.current_character
@@ -267,8 +272,11 @@ class Scanner:
                 return [number, self.current_character]
 
     def display_error(self, error_type, error_message='', stop=None):
+        """ Error function to be called every time an error is found.
+        Raises the error only in test mode, otherwise uses the Error class
+        in errors.py to print the error. Error recovery is handled by
+        advancing until specified stopping symbols. """
 
-        """ Display errors that arise in format given in errors.py"""
 
         self.error_count += 1
 
@@ -276,9 +284,11 @@ class Scanner:
         if 'test' in sys.argv[0].lower():
             raise error_type
 
-        Error(error_type, error_message, self.current_line,
-              self.file_as_list[self.current_line],
-              self.current_character_number)
+        self.errors = Error(error_type, error_message, self.current_line,
+                      self.file_as_list[self.current_line],
+                      self.current_character_number)
+  
+        self.error_list.append(self.errors.error_message)
 
         # Comment error special case
         if error_type == CommentError:
