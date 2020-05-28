@@ -42,12 +42,12 @@ class MyGLCanvas(wxcanvas.GLCanvas):
 
     def __init__(self, parent, devices, monitors, names):
         """Initialise canvas properties and useful variables."""
-        
+
         self.devices = devices
         self.monitors = monitors
         self.names = names
-        
-        
+
+
         super().__init__(parent, -1,
                          attribList=[wxcanvas.WX_GL_RGBA,
                                      wxcanvas.WX_GL_DOUBLEBUFFER,
@@ -83,7 +83,6 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         GL.glMatrixMode(GL.GL_MODELVIEW)
         GL.glLoadIdentity()
         GL.glTranslated(self.pan_x, self.pan_y, 0.0)
-        #GL.glScaled(self.zoom, self.zoom, self.zoom)
 
     def render(self, text):
         """Handle all drawing operations."""
@@ -99,11 +98,8 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         # Get canvas size
         size = self.GetClientSize()
 
-        # Draw specified text at position (10, 10)
-        self.render_text(text, 10, size.height - 10)
-        
         self.device_list = []
-        
+
         self.device_id_list = self.devices.find_devices()
         for device_id in self.device_id_list:
             if self.devices.get_device(device_id).device_kind == self.devices.D_TYPE:
@@ -111,12 +107,12 @@ class MyGLCanvas(wxcanvas.GLCanvas):
                 self.device_list.append("{}.QBAR".format(self.names.get_name_string(device_id)))
             else:
                 self.device_list.append(self.names.get_name_string(device_id))
-                
+
         if len(self.device_list) == 0:
             longest_name_len = 0
         else:
             longest_name_len = len(max(self.device_list, key=len))
-        
+
         # Draw signal traces
         j = 1
         for device_id, output_id in self.monitors.monitors_dictionary:
@@ -125,9 +121,9 @@ class MyGLCanvas(wxcanvas.GLCanvas):
             signal_list = self.monitors.monitors_dictionary[(device_id, output_id)]
             self.render_text(monitor_name, 10, (50 * j) - 18 , 24)
 
-            # seperator line between traces 
+            # seperator line between traces
             GL.glColor3f(0.870, 0.411, 0.129)
-            GL.glLineWidth(1) 
+            GL.glLineWidth(1)
             GL.glBegin(GL.GL_LINES)
             for i in range(len(signal_list)):
                 GL.glVertex2f(0, (50 * j))
@@ -140,6 +136,14 @@ class MyGLCanvas(wxcanvas.GLCanvas):
                 GL.glVertex2f(5000, (50 * j) - 50)
             GL.glEnd()
 
+            # vertical seperator lines
+            # GL.glLineWidth(0.5)
+            # for k in range()
+            #     GL.glBegin(GL.GL_LINES)
+            #     for i in range(len(signal_list)):
+            #         GL.glVertex2f((longest_name_len * 20), (50 * j))
+            #         GL.glVertex2f((longest_name_len * 20), (50 * j) - 50)
+            #     GL.glEnd()
 
             # signal trace
             GL.glColor3f(0.086, 0.356, 0.458)
@@ -158,12 +162,12 @@ class MyGLCanvas(wxcanvas.GLCanvas):
                 elif signal_list[i] == self.devices.FALLING:
                     y = base_y - 5
                 elif signal_list[i] == self.devices.BLANK:
-                    y = base_y 
+                    y = base_y
                 GL.glVertex2f(x, y)
                 GL.glVertex2f(x_next, y)
                 GL.glVertex2f(x_next, base_y)
                 GL.glVertex2f(x, base_y)
-                
+
             GL.glEnd()
 
         # We have been drawing to the back buffer, flush the graphics pipeline
@@ -213,18 +217,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
             text = "".join(["Mouse dragged to: ", str(event.GetX()),
                             ", ", str(event.GetY()), ". Pan is now: ",
                             str(self.pan_x), ", ", str(self.pan_y)])
-        # if event.GetWheelRotation() < 0:
-        #     self.zoom *= (1.0 + (
-        #         event.GetWheelRotation() / (20 * event.GetWheelDelta())))
-        #     self.init = False
-        #     text = "".join(["Negative mouse wheel rotation. Zoom is now: ",
-        #                     str(self.zoom)])
-        # if event.GetWheelRotation() > 0:
-        #     self.zoom /= (1.0 - (
-        #         event.GetWheelRotation() / (20 * event.GetWheelDelta())))
-        #     self.init = False
-        #     text = "".join(["Positive mouse wheel rotation. Zoom is now: ",
-        #                     str(self.zoom)])
+
         if text:
             self.render(text)
         else:
@@ -248,42 +241,43 @@ class MyGLCanvas(wxcanvas.GLCanvas):
 
 class PopUpFrame(wx.Frame):
     """Class used for pop up window with an error messages"""
-    
+
     def __init__(self, parent, title, text):
         wx.Frame.__init__(self, parent=parent, title=title)
-        
+
         sizer_1 = wx.BoxSizer(wx.VERTICAL)
         label_1 = wx.StaticText(self, wx.ID_ANY, text, style=wx.ALIGN_LEFT)
         self.close_button = wx.Button(self, wx.ID_ANY, "Close")
-        
-        self.SetBackgroundColour(wx.Colour(40, 40, 40))
+
+        self.SetBackgroundColour(wx.Colour(30, 30, 30))
         label_1.SetForegroundColour(wx.Colour(255, 255, 255))
 
         self.close_button.Bind(wx.EVT_BUTTON, self.on_close_button)
-        
+
         sizer_1.Add((20, 20), 1, 0, 0)
         sizer_1.Add(label_1, 1, wx.ALIGN_CENTRE, 20)
         sizer_1.Add(self.close_button, 1, wx.ALIGN_CENTER, 0)
-        
+
         self.SetSizer(sizer_1)
 
         self.Show()
-        
+
     def on_close_button(self, event):
         self.Show(False)
         self.Destroy()
-        
+
+
 class DefinitionErrors(wx.Frame):
     """Class used for pop up window with definition file error messages"""
-    
+
     def __init__(self, parent, title, text, tabs, overview):
         wx.Frame.__init__(self, parent=parent, title=title, size = (600, 580))
-        
+
         self.notebook_1 = wx.Notebook(self, wx.ID_ANY, style=wx.NB_RIGHT)
-        
+
         self.notebook_1_panes = []
         self.text_list = []
-        
+
         for i in range(len(text)):
              self.notebook_1_panes.append(wx.Panel(self.notebook_1, wx.ID_ANY))
              self.text_list.append(text[i])
@@ -294,70 +288,71 @@ class DefinitionErrors(wx.Frame):
         self.overview.SetFont(wx.Font(16, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, 0, ""))
 
         sizer_1 = wx.BoxSizer(wx.VERTICAL)
-        
+
         self.sizers = []
         self.labels = []
-        
+
         for i in range(len(text)):
             self.sizers.append(wx.BoxSizer(wx.VERTICAL))
             self.labels.append(wx.StaticText(self.notebook_1_panes[i], wx.ID_ANY, self.text_list[i]))
             self.labels[i].SetForegroundColour(wx.Colour(255, 255, 255))
             self.labels[i].SetFont(wx.Font(12, wx.FONTFAMILY_MODERN, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, 0, ""))
-            
-        self.SetBackgroundColour(wx.Colour(40, 40, 40))
-        
+
+        self.SetBackgroundColour(wx.Colour(30, 30, 30))
+
         self.sizers[0].Add(self.overview, 1, wx.ALIGN_LEFT, 0)
-        
+
         for i in range(len(text)):
             self.sizers[i].Add(self.labels[i], 1, wx.EXPAND, 0)
 
             self.notebook_1_panes[i].SetSizer(self.sizers[i])
 
             self.notebook_1.AddPage(self.notebook_1_panes[i], tabs[i])
-        
+
         self.sizers[-1].Add(self.close_button, 1, wx.ALIGN_CENTER, 10)
-        
+
         for i in range(len(self.sizers)):
             if i + 1 != len(self.sizers):
                 self.sizers[i].Add((20, 20), 1, wx.ALIGN_CENTER, 10)
 
         sizer_1.Add(self.notebook_1, 1, wx.ALL, 0)
-        
+
         self.close_button.Bind(wx.EVT_BUTTON, self.on_close_button)
 
-        self.SetSizeHints(600,580)
+        self.SetSizeHints(600, 580)
 
         self.SetSizer(sizer_1)
         self.Show()
-        
+
     def on_close_button(self, event):
         self.Show(False)
         self.Destroy()
 
+
 class PopUpFrame(wx.Frame):
     """Class used for pop up window with an error messages"""
-    
+
     def __init__(self, parent, title, text):
         wx.Frame.__init__(self, parent=parent, title=title)
-        
+
         sizer_1 = wx.BoxSizer(wx.VERTICAL)
         label_1 = wx.StaticText(self, wx.ID_ANY, text, style=wx.ALIGN_CENTER)
         self.close_button = wx.Button(self, wx.ID_ANY, "Close")
-        
+
         self.SetBackgroundColour(wx.Colour(40,40,40))
         label_1.SetForegroundColour(wx.Colour(255, 255, 255))
-        
+
         # self.Bind(wx.EVT_MENU, self.on_menu)
         self.close_button.Bind(wx.EVT_BUTTON, self.on_close_button)
-        
+
         sizer_1.Add((20, 20), 1, 0, 0)
         sizer_1.Add(label_1, 1, wx.ALIGN_CENTER, 0)
         sizer_1.Add(self.close_button, 1, wx.ALIGN_CENTER, 0)
-        
+
         self.SetSizer(sizer_1)
 
         self.Show()
-        
+
     def on_close_button(self, event):
         self.Show(False)
         self.Destroy()
@@ -412,11 +407,11 @@ class Gui(wx.Frame):
         self.switch_id_list = self.devices.find_devices(self.devices.SWITCH)
         for switch in self.switch_id_list:
             self.switch_list.append(self.names.get_name_string(switch))
-        
+
         for device_id, output_id in self.monitors.monitors_dictionary:
             monitor_name = self.devices.get_signal_name(device_id, output_id)
             self.monitor_names.append(monitor_name)
-    
+
         if len(self.switch_list) == 0:
             self.choice_1_selection = ""
             self.switch_list = [""]
@@ -444,7 +439,7 @@ class Gui(wx.Frame):
         self.canvas = MyGLCanvas(self, devices, monitors, names)
 
         # Panel for monitoring signals
-        self.panel = wx.Panel(self, size = (250, 600))
+        self.panel = wx.Panel(self, size=(250, 600))
         panel_sizer = wx.BoxSizer(wx.VERTICAL)
         all_button_sizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -456,22 +451,25 @@ class Gui(wx.Frame):
         panel_sizer.Add(monitors_label, 0, wx.CENTER|wx.TOP, 20)
 
         # Configure checkboxes for all devices in the circuit
-        self.cbList = wx.CheckListBox(self, -1, (20, 40), (200,400), choices = self.device_list, style = wx.ALIGN_RIGHT)
+        self.cbList = wx.CheckListBox(self, -1, (20, 40), (200, 400), choices=self.device_list, style=wx.ALIGN_RIGHT)
         self.cbList.SetBackgroundColour(wx.Colour(243, 201, 62))
 
         self.cbList.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "MS Shell Dlg 2")) 
 
         all_button_sizer.Add(self.all_button, 1, wx.ALL, 10)
 
-        panel_sizer.Add(self.cbList, 1, wx.EXPAND|wx.ALL, 20)
+        panel_sizer.Add(self.cbList, 1, wx.EXPAND | wx.ALL, 20)
         panel_sizer.Add(all_button_sizer, 1, wx.CENTRE | wx.BOTTOM, 10)
 
         for i in range(len(self.device_list)):
             if self.device_list[i] in self.monitor_names:
                 self.cbList.Check(i, check=True)
-        
+
         # bind checklistbox to checkbox event
         self.cbList.Bind(wx.EVT_CHECKLISTBOX, self.on_checkbox)
+        self.all_button.Bind(wx.EVT_BUTTON, self.on_all)
+
+        # Create panel
         self.panel.SetSizer(panel_sizer)
 
         # Configure right panel widgets
@@ -485,9 +483,9 @@ class Gui(wx.Frame):
         self.button_2 = wx.Button(self, wx.ID_ANY, "Run")
         self.button_3 = wx.Button(self, wx.ID_ANY, "Set")
         self.load_button = wx.Button(self, wx.ID_ANY, "Load")
-    
+
         # Configure the widget properties
-        self.SetBackgroundColour(wx.Colour(40,40,40))
+        self.SetBackgroundColour(wx.Colour(40, 40, 40))
         label_1.SetForegroundColour(wx.Colour(255, 255, 255))
         label_2.SetForegroundColour(wx.Colour(255, 255, 255))
         label_3.SetForegroundColour(wx.Colour(255, 255, 255))
@@ -513,25 +511,25 @@ class Gui(wx.Frame):
         top_right_sizer = wx.BoxSizer(wx.VERTICAL)
         bottom_right_sizer = wx.BoxSizer(wx.VERTICAL)
 
-        top_right_sizer.Add(sizer_2, 1, wx.EXPAND |wx.ALL, 5)
-        top_right_sizer.Add(sizer_3, 1, wx.EXPAND |wx.ALL, 0)
-        top_right_sizer.Add(sizer_4, 1, wx.EXPAND |wx.ALL, 10)
-        top_right_sizer.Add(sizer_5, 1,wx.EXPAND | wx.ALL, 0)
+        top_right_sizer.Add(sizer_2, 1, wx.EXPAND | wx.ALL, 5)
+        top_right_sizer.Add(sizer_3, 1, wx.EXPAND | wx.ALL, 0)
+        top_right_sizer.Add(sizer_4, 1, wx.EXPAND | wx.ALL, 10)
+        top_right_sizer.Add(sizer_5, 1, wx.EXPAND | wx.ALL, 0)
         bottom_right_sizer.Add(self.load_button, 1, wx.ALL, 10)
 
-        side_sizer.Add(label_3, 0, wx.CENTER|wx.TOP, 20)
+        side_sizer.Add(label_3, 0, wx.CENTER | wx.TOP, 20)
         side_sizer.Add(top_right_sizer, 1, wx.EXPAND | wx.ALL, 20)
         side_sizer.Add(bottom_right_sizer, 1, wx.CENTRE | wx.BOTTOM, 10)
-    
+
         sizer_2.Add(label_1, 1, wx.ALL, 10)
         sizer_2.Add(self.spin_ctrl_1, 0, wx.ALL, 10)
-    
+
         sizer_3.Add(self.button_1, 1, wx.ALL, 10)
         sizer_3.Add(self.button_2, 1, wx.ALL, 10)
-    
+
         sizer_4.Add(label_2, 1, wx.ALL, 10)
         sizer_4.Add(self.choice_1, 1, wx.ALL, 10)
-    
+
         sizer_5.Add(self.choice_2, 1, wx.ALL, 10)
         sizer_5.Add(self.button_3, 1, wx.ALL, 10)
 
@@ -539,10 +537,8 @@ class Gui(wx.Frame):
         main_sizer.Add(self.canvas, 5, wx.EXPAND | wx.ALL, 5)
         main_sizer.Add(side_sizer, 1, wx.ALL, 5)
 
-
         self.SetSizeHints(600, 600)
         self.SetSizer(main_sizer)
-        
 
     def on_menu(self, event):
         """Handle the event when the user selects a menu item."""
@@ -557,33 +553,37 @@ class Gui(wx.Frame):
         """Handle the event when the user checks a checkbox."""
         index = event.GetSelection()
         self.checked_name = self.cbList.GetString(index)
-        text = 'text'
+        text = 'Checkbox ticked'
         if self.cbList.IsChecked(index):
-            
             self.monitor_command()
             self.canvas.render(text)
 
         if not self.cbList.IsChecked(index):
             self.zap_command()
             self.canvas.render(text)
-            
+
     def on_all(self, event):
         """Handle the event when the user checks all."""
-        self.cbList.Check
+
+        for i in range(len(self.cbList.Items)):
+            if not self.cbList.IsChecked(i):
+                self.cbList.Check(i, True)
+                self.checked_name = self.cbList.GetString(i)
+                self.monitor_command()
 
     def on_spin_ctrl_1(self, event):
         """Handle the event when the user changes the cycles spin control value."""
         self.spin_ctrl_1_value = self.spin_ctrl_1.GetValue()
         text = "".join(["New spin control 1 value: ", str(self.spin_ctrl_1_value)])
         self.canvas.render(text)
-        
+
     def on_choice_1(self, event):
         """Handle the event when the user changes the switch selection."""
         self.choice_1_index = self.choice_1.GetCurrentSelection()
         self.choice_1_selection = self.choice_1.GetString(self.choice_1_index)
         text = "".join(["New choice 1 selection: ", str(self.choice_1_selection)])
         self.canvas.render(text)
-    
+
     def on_choice_2(self, event):
         """Handle the event when the user changes the switch state selection."""
         self.choice_2_index = self.choice_2.GetCurrentSelection()
@@ -591,10 +591,9 @@ class Gui(wx.Frame):
         text = "".join(["New choice 2 selection: ", str(self.choice_2_selection)])
         self.canvas.render(text)
 
-
     def on_button_1(self, event):
         """Handle the event when the user clicks button 1 (Continue)."""
-        if self.start_up == True:
+        if self.start_up is True:
             text = "No definition file loaded."
             frame = PopUpFrame(self, title="Error!", text=text)
         else:
@@ -605,7 +604,7 @@ class Gui(wx.Frame):
 
     def on_button_2(self, event):
         """Handle the event when the user clicks button 2 (Run)."""
-        if self.start_up == True:
+        if self.start_up is True:
             text = "No definition file loaded."
             frame = PopUpFrame(self, title="Error!", text=text)
         else:
@@ -616,7 +615,7 @@ class Gui(wx.Frame):
         
     def on_button_3(self, event):
         """Handle the event when the user clicks button 3 (Set)."""
-        if self.start_up == True:
+        if self.start_up is True:
             text = "No definition file loaded."
             frame = PopUpFrame(self, title="Error!", text=text)
         else:
@@ -624,7 +623,6 @@ class Gui(wx.Frame):
             self.switch_command()
             self.canvas.render(text)
 
-        
     def on_load_button(self, event):
         """Handle the event when the user clicks load button."""
 
@@ -632,12 +630,12 @@ class Gui(wx.Frame):
                            style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
 
             if fileDialog.ShowModal() == wx.ID_CANCEL:
-                return 
+                return
 
             self.pathname = fileDialog.GetPath()
-            
+
             self.filename = self.path_leaf(self.pathname)
-            
+
             names = Names()
             devices = Devices(names)
             network = Network(names, devices)
@@ -647,18 +645,18 @@ class Gui(wx.Frame):
             parser.parse_network()
             error_list = scanner.error_list
             num_errors = len(error_list)
-            
+
             pages = math.ceil(num_errors/4)
-            
+
             if num_errors != 0:
-                
+
                 text_list = []
                 tab_labels = []
-                
+
                 for i in range(pages-1):
-                    tab_labels.append("{}-{}".format(1 + i * 4,4 + i * 4))
+                    tab_labels.append("{}-{}".format(1 + i * 4, 4 + i * 4))
                     label = 4 + i * 4
-                
+
                 if num_errors == 1:
                     tab_labels.append("1")
                 elif num_errors <= 4:
@@ -666,14 +664,14 @@ class Gui(wx.Frame):
                 else:
                     if (label+1) == num_errors:
                         tab_labels.append("{}".format(num_errors))
-                    else:    
+                    else:
                         tab_labels.append("{}-{}".format(label+1,num_errors))
-                
+
                 if num_errors == 1:
                     overview = "\nDefinition file '{}' contains {} error.".format(self.filename, num_errors)
                 else:
                     overview = "\nDefinition file '{}' contains {} errors.".format(self.filename, num_errors)
-                
+
                 for i in range(pages):
                     if i == 0:
                         text = '\n' + '*'*76 + '\n'
@@ -685,11 +683,11 @@ class Gui(wx.Frame):
                         except IndexError:
                             text += ('\n'*8)
                     text_list.append(text)
-                
+
                 frame = DefinitionErrors(self, title="Error!", text=text_list, tabs=tab_labels, overview=overview)
-                
+
                 return
-    
+
         self.load_new = True
         self.Show(False)
         self.Destroy()
@@ -731,7 +729,7 @@ class Gui(wx.Frame):
                 if self.devices.set_switch(switch_id, switch_state):
                     text = "Switch {} set to {}.".format(self.choice_1_selection, switch_state)
                     frame = PopUpFrame(self, title="Success!", text=text)
-                    
+
 
     def monitor_command(self):
         """Set the specified monitor."""
@@ -745,7 +743,6 @@ class Gui(wx.Frame):
             else:
                 text = "Already monitoring {}.".format(self.checked_name)
                 frame = PopUpFrame(self, title="Error!", text=text)
-                
 
     def zap_command(self):
         """Remove the specified monitor."""
@@ -770,7 +767,7 @@ class Gui(wx.Frame):
                 frame = PopUpFrame(self, title="Error!", text=text)
                 return False
         return True
-   
+
     def run_command(self):
         """Run the simulation from scratch."""
         self.cycles_completed = 0
