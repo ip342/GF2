@@ -131,13 +131,13 @@ class MyGLCanvas(wxcanvas.GLCanvas):
             GL.glBegin(GL.GL_LINES)
             for i in range(len(signal_list)):
                 GL.glVertex2f(0, (50 * j))
-                GL.glVertex2f(size.width, (50 * j))
+                GL.glVertex2f(5000, (50 * j))
             GL.glEnd()
 
             GL.glBegin(GL.GL_LINES)
             for i in range(len(signal_list)):
                 GL.glVertex2f(0, (50 * j) - 50)
-                GL.glVertex2f(size.width, (50 * j) - 50)
+                GL.glVertex2f(5000, (50 * j) - 50)
             GL.glEnd()
 
 
@@ -256,7 +256,7 @@ class PopUpFrame(wx.Frame):
         label_1 = wx.StaticText(self, wx.ID_ANY, text, style=wx.ALIGN_LEFT)
         self.close_button = wx.Button(self, wx.ID_ANY, "Close")
         
-        self.SetBackgroundColour(wx.Colour(72, 72, 72))
+        self.SetBackgroundColour(wx.Colour(40, 40, 40))
         label_1.SetForegroundColour(wx.Colour(255, 255, 255))
 
         self.close_button.Bind(wx.EVT_BUTTON, self.on_close_button)
@@ -277,7 +277,7 @@ class DefinitionErrors(wx.Frame):
     """Class used for pop up window with definition file error messages"""
     
     def __init__(self, parent, title, text, tabs, overview):
-        wx.Frame.__init__(self, parent=parent, title=title, size = (600, 560))
+        wx.Frame.__init__(self, parent=parent, title=title, size = (600, 580))
         
         self.notebook_1 = wx.Notebook(self, wx.ID_ANY, style=wx.NB_RIGHT)
         
@@ -304,7 +304,7 @@ class DefinitionErrors(wx.Frame):
             self.labels[i].SetForegroundColour(wx.Colour(255, 255, 255))
             self.labels[i].SetFont(wx.Font(12, wx.FONTFAMILY_MODERN, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, 0, ""))
             
-        self.SetBackgroundColour(wx.Colour(72, 72, 72))
+        self.SetBackgroundColour(wx.Colour(40, 40, 40))
         
         self.sizers[0].Add(self.overview, 1, wx.ALIGN_LEFT, 0)
         
@@ -325,7 +325,7 @@ class DefinitionErrors(wx.Frame):
         
         self.close_button.Bind(wx.EVT_BUTTON, self.on_close_button)
 
-        self.SetSizeHints(600,560)
+        self.SetSizeHints(600,580)
 
         self.SetSizer(sizer_1)
         self.Show()
@@ -344,7 +344,7 @@ class PopUpFrame(wx.Frame):
         label_1 = wx.StaticText(self, wx.ID_ANY, text, style=wx.ALIGN_CENTER)
         self.close_button = wx.Button(self, wx.ID_ANY, "Close")
         
-        self.SetBackgroundColour(wx.Colour(0,0,0))
+        self.SetBackgroundColour(wx.Colour(40,40,40))
         label_1.SetForegroundColour(wx.Colour(255, 255, 255))
         
         # self.Bind(wx.EVT_MENU, self.on_menu)
@@ -446,9 +446,11 @@ class Gui(wx.Frame):
         # Panel for monitoring signals
         self.panel = wx.Panel(self, size = (250, 600))
         panel_sizer = wx.BoxSizer(wx.VERTICAL)
+        all_button_sizer = wx.BoxSizer(wx.VERTICAL)
 
         # Configure left panel widgets
-        monitors_label = wx.StaticText(self.panel, wx.ID_ANY, "Signals to Monitor")
+        monitors_label = wx.StaticText(self.panel, wx.ID_ANY, "SIGNALS TO MONITOR")
+        self.all_button = wx.Button(self, wx.ID_ANY, "ALL")
         monitors_label.SetForegroundColour(wx.Colour(255, 255, 255))
         monitors_label.SetFont(wx.Font(20, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, 0, ""))
         panel_sizer.Add(monitors_label, 0, wx.CENTER|wx.TOP, 20)
@@ -459,7 +461,10 @@ class Gui(wx.Frame):
 
         self.cbList.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "MS Shell Dlg 2")) 
 
-        panel_sizer.Add(self.cbList, 1, wx.EXPAND|wx.ALL, 10)
+        all_button_sizer.Add(self.all_button, 1, wx.ALL, 10)
+
+        panel_sizer.Add(self.cbList, 1, wx.EXPAND|wx.ALL, 20)
+        panel_sizer.Add(all_button_sizer, 1, wx.CENTRE | wx.BOTTOM, 10)
 
         for i in range(len(self.device_list)):
             if self.device_list[i] in self.monitor_names:
@@ -467,72 +472,56 @@ class Gui(wx.Frame):
         
         # bind checklistbox to checkbox event
         self.cbList.Bind(wx.EVT_CHECKLISTBOX, self.on_checkbox)
-
         self.panel.SetSizer(panel_sizer)
 
         # Configure right panel widgets
         label_1 = wx.StaticText(self, wx.ID_ANY, "Cycles")
         label_2 = wx.StaticText(self, wx.ID_ANY, "Switch")
         label_3 = wx.StaticText(self, wx.ID_ANY, "CONTROLS")
-        label_4 = wx.StaticText(self, wx.ID_ANY, "Monitor")
-        self.spin_ctrl_1 = wx.SpinCtrl(self, wx.ID_ANY, "10", min=0, max=100)
+        self.spin_ctrl_1 = wx.SpinCtrl(self, wx.ID_ANY, "10", min=0, max=40)
         self.choice_1 = wx.Choice(self, wx.ID_ANY, choices=self.switch_list)
         self.choice_2 = wx.Choice(self, wx.ID_ANY, choices=["0", "1"])
-        self.choice_3 = wx.Choice(self, wx.ID_ANY, choices=self.device_list)
         self.button_1 = wx.Button(self, wx.ID_ANY, "Continue")
         self.button_2 = wx.Button(self, wx.ID_ANY, "Run")
         self.button_3 = wx.Button(self, wx.ID_ANY, "Set")
-        self.button_4 = wx.Button(self, wx.ID_ANY, "Set")
-        self.button_5 = wx.Button(self, wx.ID_ANY, "Zap")
         self.load_button = wx.Button(self, wx.ID_ANY, "Load")
     
         # Configure the widget properties
-        self.SetBackgroundColour(wx.Colour(72, 72, 72))
+        self.SetBackgroundColour(wx.Colour(40,40,40))
         label_1.SetForegroundColour(wx.Colour(255, 255, 255))
         label_2.SetForegroundColour(wx.Colour(255, 255, 255))
         label_3.SetForegroundColour(wx.Colour(255, 255, 255))
         label_3.SetFont(wx.Font(20, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, 0, ""))
-        label_4.SetForegroundColour(wx.Colour(255, 255, 255))
 
         # Bind events to widgets
         self.Bind(wx.EVT_MENU, self.on_menu)
         self.spin_ctrl_1.Bind(wx.EVT_SPINCTRL, self.on_spin_ctrl_1)
         self.choice_1.Bind(wx.EVT_CHOICE, self.on_choice_1)
         self.choice_2.Bind(wx.EVT_CHOICE, self.on_choice_2)
-        self.choice_3.Bind(wx.EVT_CHOICE, self.on_choice_3)
         self.button_1.Bind(wx.EVT_BUTTON, self.on_button_1)
         self.button_2.Bind(wx.EVT_BUTTON, self.on_button_2)
         self.button_3.Bind(wx.EVT_BUTTON, self.on_button_3)
-        self.button_4.Bind(wx.EVT_BUTTON, self.on_button_4)
-        self.button_5.Bind(wx.EVT_BUTTON, self.on_button_5)
         self.load_button.Bind(wx.EVT_BUTTON, self.on_load_button)
 
         # Configure sizers for layout
         main_sizer = wx.BoxSizer(wx.HORIZONTAL)
         side_sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer_1 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_2 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_3 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_4 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_5 = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_6 = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_7 = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_8 = wx.BoxSizer(wx.HORIZONTAL)
+        top_right_sizer = wx.BoxSizer(wx.VERTICAL)
+        bottom_right_sizer = wx.BoxSizer(wx.VERTICAL)
 
-        main_sizer.Add(self.panel, 2, wx.EXPAND | wx.ALIGN_LEFT, 0)
-        main_sizer.Add(self.canvas, 5, wx.EXPAND | wx.ALL, 5)
-        main_sizer.Add(side_sizer, 1, wx.ALL, 5)
-    
-        side_sizer.Add(sizer_1, 1, wx.ALL, 0)
-        side_sizer.Add(sizer_2, 1, wx.ALL, 5)
-        side_sizer.Add(sizer_3, 1, wx.ALL, 0)
-        side_sizer.Add(sizer_4, 1, wx.ALL, 10)
-        side_sizer.Add(sizer_5, 1, wx.ALL, 0)
-        side_sizer.Add(sizer_6, 1, wx.ALL, 10)
-        side_sizer.Add(sizer_7, 1, wx.ALL, 0)
-        side_sizer.Add(sizer_8, 1, wx.ALL, 10)
-    
-        sizer_1.Add(label_3, 1, wx.ALL, 10)
+        top_right_sizer.Add(sizer_2, 1, wx.EXPAND |wx.ALL, 5)
+        top_right_sizer.Add(sizer_3, 1, wx.EXPAND |wx.ALL, 0)
+        top_right_sizer.Add(sizer_4, 1, wx.EXPAND |wx.ALL, 10)
+        top_right_sizer.Add(sizer_5, 1,wx.EXPAND | wx.ALL, 0)
+        bottom_right_sizer.Add(self.load_button, 1, wx.ALL, 10)
+
+        side_sizer.Add(label_3, 0, wx.CENTER|wx.TOP, 20)
+        side_sizer.Add(top_right_sizer, 1, wx.EXPAND | wx.ALL, 20)
+        side_sizer.Add(bottom_right_sizer, 1, wx.CENTRE | wx.BOTTOM, 10)
     
         sizer_2.Add(label_1, 1, wx.ALL, 10)
         sizer_2.Add(self.spin_ctrl_1, 0, wx.ALL, 10)
@@ -545,17 +534,15 @@ class Gui(wx.Frame):
     
         sizer_5.Add(self.choice_2, 1, wx.ALL, 10)
         sizer_5.Add(self.button_3, 1, wx.ALL, 10)
-    
-        sizer_6.Add(label_4, 1, wx.ALL, 10)
-        sizer_6.Add(self.choice_3, 1, wx.ALL, 10)
-    
-        sizer_7.Add(self.button_4, 1, wx.ALL, 10)
-        sizer_7.Add(self.button_5, 1, wx.ALL, 10)
-    
-        sizer_8.Add(self.load_button, 1, wx.ALL, 0)
+
+        main_sizer.Add(self.panel, 2, wx.ALIGN_LEFT| wx.EXPAND, 0)
+        main_sizer.Add(self.canvas, 5, wx.EXPAND | wx.ALL, 5)
+        main_sizer.Add(side_sizer, 1, wx.ALL, 5)
+
 
         self.SetSizeHints(600, 600)
         self.SetSizer(main_sizer)
+        
 
     def on_menu(self, event):
         """Handle the event when the user selects a menu item."""
@@ -579,6 +566,10 @@ class Gui(wx.Frame):
         if not self.cbList.IsChecked(index):
             self.zap_command()
             self.canvas.render(text)
+            
+    def on_all(self, event):
+        """Handle the event when the user checks all."""
+        self.cbList.Check
 
     def on_spin_ctrl_1(self, event):
         """Handle the event when the user changes the cycles spin control value."""
@@ -599,13 +590,7 @@ class Gui(wx.Frame):
         self.choice_2_selection = self.choice_2.GetString(self.choice_2_index)
         text = "".join(["New choice 2 selection: ", str(self.choice_2_selection)])
         self.canvas.render(text)
-        
-    def on_choice_3(self, event):
-        """Handle the event when the user changes the monitor selection."""
-        self.choice_3_index = self.choice_3.GetCurrentSelection()
-        self.choice_3_selection = self.choice_3.GetString(self.choice_3_index)
-        text = "".join(["New choice 3 selection: ", str(self.choice_3_selection)])
-        self.canvas.render(text)
+
 
     def on_button_1(self, event):
         """Handle the event when the user clicks button 1 (Continue)."""
@@ -638,26 +623,7 @@ class Gui(wx.Frame):
             text = "Set button pressed."
             self.switch_command()
             self.canvas.render(text)
-        
-    def on_button_4(self, event):
-        """Handle the event when the user clicks button 4 (Set)."""
-        if self.start_up == True:
-            text = "No definition file loaded."
-            frame = PopUpFrame(self, title="Error!", text=text)
-        else:    
-            text = "Set button pressed."
-            self.monitor_command()
-            self.canvas.render(text)
-        
-    def on_button_5(self, event):
-        """Handle the event when the user clicks button 5 (Zap)."""
-        if self.start_up == True:
-            text = "No definition file loaded."
-            frame = PopUpFrame(self, title="Error!", text=text)
-        else:
-            text = "Zap button pressed."
-            self.zap_command()
-            self.canvas.render(text)
+
         
     def on_load_button(self, event):
         """Handle the event when the user clicks load button."""
