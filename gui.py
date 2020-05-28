@@ -137,6 +137,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
                 GL.glVertex2f(5000, (50 * j))
                 GL.glEnd()
 
+                # vertical lines
                 GL.glBegin(GL.GL_LINES)
                 # for i in range(len(signal_list)):
                 GL.glVertex2f(0, (50 * j) - 50)
@@ -163,7 +164,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
 
                 # signal trace
                 GL.glColor3f(0.086, 0.356, 0.458)
-                GL.glLineWidth(3)
+                GL.glLineWidth(2)
                 # GL.glBegin(GL.GL_QUADS)
                 # for i in range(len(signal_list)):
                 #     x = (i * 20) + (longest_name_len * 20)
@@ -186,6 +187,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
 
                 GL.glBegin(GL.GL_LINES)
                 first_run = True
+                blank = False
                 for i in range(len(signal_list)):
                     GL.glColor3f(0.086, 0.356, 0.458)
                     x = (i * 20) + (longest_name_len * 20)
@@ -200,14 +202,16 @@ class MyGLCanvas(wxcanvas.GLCanvas):
                     elif signal_list[i] == self.devices.FALLING:
                         y = base_y - 5
                     elif signal_list[i] == self.devices.BLANK:
-                        GL.glColor3f(1, 1, 1)
-                        y = base_y - 5
+                        blank = True
                     if first_run is False:
                         GL.glVertex2f(x, y)
                         GL.glVertex2f(x, y)
                         GL.glVertex2f(x_next, y)
                         GL.glColor3f(0.086, 0.356, 0.458)
                         GL.glVertex2f(x_next, y)
+                    elif blank is True:
+                        blank = False
+                        pass
                     else:
                         GL.glVertex2f(x, y)
                         GL.glVertex2f(x_next, y)
