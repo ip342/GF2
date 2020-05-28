@@ -40,13 +40,13 @@ class MyGLCanvas(wxcanvas.GLCanvas):
                                            operations.
     """
 
-    def __init__(self, parent, devices, monitors, names):
+    def __init__(self, parent, devices, monitors, names, start_up):
         """Initialise canvas properties and useful variables."""
 
         self.devices = devices
         self.monitors = monitors
         self.names = names
-
+        self.start_up = start_up
 
         super().__init__(parent, -1,
                          attribList=[wxcanvas.WX_GL_RGBA,
@@ -100,75 +100,86 @@ class MyGLCanvas(wxcanvas.GLCanvas):
 
         self.device_list = []
 
-        self.device_id_list = self.devices.find_devices()
-        for device_id in self.device_id_list:
-            if self.devices.get_device(device_id).device_kind == self.devices.D_TYPE:
-                self.device_list.append("{}.Q".format(self.names.get_name_string(device_id)))
-                self.device_list.append("{}.QBAR".format(self.names.get_name_string(device_id)))
+        if self.start_up is False:
+            self.device_id_list = self.devices.find_devices()
+            for device_id in self.device_id_list:
+                if self.devices.get_device(device_id).device_kind == self.devices.D_TYPE:
+                    self.device_list.append("{}.Q".format(self.names.get_name_string(device_id)))
+                    self.device_list.append("{}.QBAR".format(self.names.get_name_string(device_id)))
+                else:
+                    self.device_list.append(self.names.get_name_string(device_id))
+                
+            if len(self.device_list) == 0:
+                longest_name_len = 0
             else:
-                self.device_list.append(self.names.get_name_string(device_id))
+                longest_name_len = len(max(self.device_list, key=len))
+        
+            # Draw signal traces
+            j = 1
+            for device_id, output_id in self.monitors.monitors_dictionary:
+                j += 1
+                monitor_name = self.devices.get_signal_name(device_id, output_id)
+                signal_list = self.monitors.monitors_dictionary[(device_id, output_id)]
+                self.render_text(monitor_name, 10, (50 * j) - 18 , 24)
 
-        if len(self.device_list) == 0:
-            longest_name_len = 0
-        else:
-            longest_name_len = len(max(self.device_list, key=len))
+                # seperator line between traces 
+                GL.glColor3f(0.870, 0.411, 0.129)
+                GL.glLineWidth(1) 
+                GL.glBegin(GL.GL_LINES)
+                for i in range(len(signal_list)):
+                    GL.glVertex2f(0, (50 * j))
+                    GL.glVertex2f(5000, (50 * j))
+                GL.glEnd()
 
-        # Draw signal traces
-        j = 1
-        for device_id, output_id in self.monitors.monitors_dictionary:
-            j += 1
-            monitor_name = self.devices.get_signal_name(device_id, output_id)
-            signal_list = self.monitors.monitors_dictionary[(device_id, output_id)]
-            self.render_text(monitor_name, 10, (50 * j) - 18 , 24)
+                GL.glBegin(GL.GL_LINES)
+                for i in range(len(signal_list)):
+                    GL.glVertex2f(0, (50 * j) - 50)
+                    GL.glVertex2f(5000, (50 * j) - 50)
+                GL.glEnd()
 
-            # seperator line between traces
-            GL.glColor3f(0.870, 0.411, 0.129)
-            GL.glLineWidth(1)
-            GL.glBegin(GL.GL_LINES)
-            for i in range(len(signal_list)):
-                GL.glVertex2f(0, (50 * j))
-                GL.glVertex2f(5000, (50 * j))
-            GL.glEnd()
 
-            GL.glBegin(GL.GL_LINES)
-            for i in range(len(signal_list)):
-                GL.glVertex2f(0, (50 * j) - 50)
-                GL.glVertex2f(5000, (50 * j) - 50)
-            GL.glEnd()
-
-            # vertical seperator lines
-            # GL.glLineWidth(0.5)
-            # for k in range()
-            #     GL.glBegin(GL.GL_LINES)
-            #     for i in range(len(signal_list)):
-            #         GL.glVertex2f((longest_name_len * 20), (50 * j))
-            #         GL.glVertex2f((longest_name_len * 20), (50 * j) - 50)
-            #     GL.glEnd()
-
-            # signal trace
-            GL.glColor3f(0.086, 0.356, 0.458)
-            GL.glLineWidth(3)
-            GL.glBegin(GL.GL_QUADS)
-            for i in range(len(signal_list)):
-                x = (i * 20) + (longest_name_len * 20)
-                x_next = (i * 20) + (longest_name_len * 20) + 20
-                base_y = (50*j) - 11
-                if signal_list[i] == self.devices.HIGH:
-                    y = base_y - 25
-                elif signal_list[i] == self.devices.LOW:
-                    y = base_y - 5
-                elif signal_list[i] == self.devices.RISING:
-                    y = base_y - 25
-                elif signal_list[i] == self.devices.FALLING:
-                    y = base_y - 5
-                elif signal_list[i] == self.devices.BLANK:
-                    y = base_y
-                GL.glVertex2f(x, y)
-                GL.glVertex2f(x_next, y)
-                GL.glVertex2f(x_next, base_y)
-                GL.glVertex2f(x, base_y)
-
-            GL.glEnd()
+                # signal trace
+                GL.glColor3f(0.086, 0.356, 0.458)
+                GL.glLineWidth(3)
+                # GL.glBegin(GL.GL_QUADS)
+                # for i in range(len(signal_list)):
+                #     x = (i * 20) + (longest_name_len * 20)
+                #     x_next = (i * 20) + (longest_name_len * 20) + 20
+                #     base_y = (50*j) - 11
+                #     if signal_list[i] == self.devices.HIGH:
+                #         y = base_y - 25
+                #     elif signal_list[i] == self.devices.LOW:
+                #         y = base_y - 5
+                #     elif signal_list[i] == self.devices.RISING:
+                #         y = base_y - 25
+                #     elif signal_list[i] == self.devices.FALLING:
+                #         y = base_y - 5
+                #     elif signal_list[i] == self.devices.BLANK:
+                #         y = base_y
+                #     GL.glVertex2f(x, y)
+                #     GL.glVertex2f(x_next, y)
+                #     GL.glVertex2f(x_next, base_y)
+                #     GL.glVertex2f(x, base_y)
+                    
+                GL.glBegin(GL.GL_LINE_STRIP)
+                for i in range(len(signal_list)):
+                    x = (i * 20) + (longest_name_len * 20)
+                    x_next = (i * 20) + (longest_name_len * 20) + 20
+                    base_y = (50*j) - 11
+                    if signal_list[i] == self.devices.HIGH:
+                        y = base_y - 25
+                    elif signal_list[i] == self.devices.LOW:
+                        y = base_y - 5
+                    elif signal_list[i] == self.devices.RISING:
+                        y = base_y - 25
+                    elif signal_list[i] == self.devices.FALLING:
+                        y = base_y - 5
+                    elif signal_list[i] == self.devices.BLANK:
+                        y = base_y
+                    GL.glVertex2f(x, y)
+                    GL.glVertex2f(x_next, y)
+                
+                GL.glEnd()
 
         # We have been drawing to the back buffer, flush the graphics pipeline
         # and swap the back buffer to the front
@@ -328,36 +339,6 @@ class DefinitionErrors(wx.Frame):
         self.Show(False)
         self.Destroy()
 
-
-class PopUpFrame(wx.Frame):
-    """Class used for pop up window with an error messages"""
-
-    def __init__(self, parent, title, text):
-        wx.Frame.__init__(self, parent=parent, title=title)
-
-        sizer_1 = wx.BoxSizer(wx.VERTICAL)
-        label_1 = wx.StaticText(self, wx.ID_ANY, text, style=wx.ALIGN_CENTER)
-        self.close_button = wx.Button(self, wx.ID_ANY, "Close")
-
-        self.SetBackgroundColour(wx.Colour(40,40,40))
-        label_1.SetForegroundColour(wx.Colour(255, 255, 255))
-
-        # self.Bind(wx.EVT_MENU, self.on_menu)
-        self.close_button.Bind(wx.EVT_BUTTON, self.on_close_button)
-
-        sizer_1.Add((20, 20), 1, 0, 0)
-        sizer_1.Add(label_1, 1, wx.ALIGN_CENTER, 0)
-        sizer_1.Add(self.close_button, 1, wx.ALIGN_CENTER, 0)
-
-        self.SetSizer(sizer_1)
-
-        self.Show()
-
-    def on_close_button(self, event):
-        self.Show(False)
-        self.Destroy()
-
-
 class Gui(wx.Frame):
     """Configure the main window and all the widgets.
     This class provides a graphical user interface for the Logic Simulator and
@@ -375,10 +356,14 @@ class Gui(wx.Frame):
     on_text_box(self, event): Event handler for when the user enters text.
     """
 
-    def __init__(self, title, path, names, devices, network, monitors, start_up = False):
-        self.start_up = start_up
-
+    def __init__(self, title, path, names, devices, network, monitors, filename, start_up = False):
+        
         """Initialise variables."""
+        self.start_up = start_up
+        self.pathname = path
+        self.filename = filename
+        self.current_pathname = self.pathname
+        self.current_filename = self.filename
         self.names = names
         self.devices = devices
         self.monitors = monitors
@@ -393,25 +378,25 @@ class Gui(wx.Frame):
         self.switch_list = []
         self.device_list = []
         self.monitor_names = []
-        self.pathname = None
         self.load_new = False
+        
+        if self.start_up is False:
+            self.device_id_list = self.devices.find_devices()
+            for device_id in self.device_id_list:
+                if self.devices.get_device(device_id).device_kind == self.devices.D_TYPE:
+                    self.device_list.append("{}.Q".format(self.names.get_name_string(device_id)))
+                    self.device_list.append("{}.QBAR".format(self.names.get_name_string(device_id)))
+                else:
+                    self.device_list.append(self.names.get_name_string(device_id))
 
-        self.device_id_list = self.devices.find_devices()
-        for device_id in self.device_id_list:
-            if self.devices.get_device(device_id).device_kind == self.devices.D_TYPE:
-                self.device_list.append("{}.Q".format(self.names.get_name_string(device_id)))
-                self.device_list.append("{}.QBAR".format(self.names.get_name_string(device_id)))
-            else:
-                self.device_list.append(self.names.get_name_string(device_id))
-
-        self.switch_id_list = self.devices.find_devices(self.devices.SWITCH)
-        for switch in self.switch_id_list:
-            self.switch_list.append(self.names.get_name_string(switch))
-
-        for device_id, output_id in self.monitors.monitors_dictionary:
-            monitor_name = self.devices.get_signal_name(device_id, output_id)
-            self.monitor_names.append(monitor_name)
-
+            self.switch_id_list = self.devices.find_devices(self.devices.SWITCH)
+            for switch in self.switch_id_list:
+                self.switch_list.append(self.names.get_name_string(switch))
+        
+            for device_id, output_id in self.monitors.monitors_dictionary:
+                monitor_name = self.devices.get_signal_name(device_id, output_id)
+                self.monitor_names.append(monitor_name)        
+    
         if len(self.switch_list) == 0:
             self.choice_1_selection = ""
             self.switch_list = [""]
@@ -436,7 +421,7 @@ class Gui(wx.Frame):
         self.SetMenuBar(menuBar)
 
         # Canvas for drawing signals
-        self.canvas = MyGLCanvas(self, devices, monitors, names)
+        self.canvas = MyGLCanvas(self, devices, monitors, names, self.start_up)
 
         # Panel for monitoring signals
         self.panel = wx.Panel(self, size=(250, 600))
@@ -482,8 +467,9 @@ class Gui(wx.Frame):
         self.button_1 = wx.Button(self, wx.ID_ANY, "Continue")
         self.button_2 = wx.Button(self, wx.ID_ANY, "Run")
         self.button_3 = wx.Button(self, wx.ID_ANY, "Set")
-        self.load_button = wx.Button(self, wx.ID_ANY, "Load")
-
+        self.load_button = wx.Button(self, wx.ID_ANY, "Load New")
+        self.reset_button = wx.Button(self, wx.ID_ANY, "Reset")
+    
         # Configure the widget properties
         self.SetBackgroundColour(wx.Colour(40, 40, 40))
         label_1.SetForegroundColour(wx.Colour(255, 255, 255))
@@ -500,6 +486,7 @@ class Gui(wx.Frame):
         self.button_2.Bind(wx.EVT_BUTTON, self.on_button_2)
         self.button_3.Bind(wx.EVT_BUTTON, self.on_button_3)
         self.load_button.Bind(wx.EVT_BUTTON, self.on_load_button)
+        self.reset_button.Bind(wx.EVT_BUTTON, self.on_reset_button)
 
         # Configure sizers for layout
         main_sizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -509,13 +496,14 @@ class Gui(wx.Frame):
         sizer_4 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_5 = wx.BoxSizer(wx.HORIZONTAL)
         top_right_sizer = wx.BoxSizer(wx.VERTICAL)
-        bottom_right_sizer = wx.BoxSizer(wx.VERTICAL)
+        bottom_right_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         top_right_sizer.Add(sizer_2, 1, wx.EXPAND | wx.ALL, 5)
         top_right_sizer.Add(sizer_3, 1, wx.EXPAND | wx.ALL, 0)
         top_right_sizer.Add(sizer_4, 1, wx.EXPAND | wx.ALL, 10)
         top_right_sizer.Add(sizer_5, 1, wx.EXPAND | wx.ALL, 0)
         bottom_right_sizer.Add(self.load_button, 1, wx.ALL, 10)
+        bottom_right_sizer.Add(self.reset_button, 1, wx.ALL, 10)
 
         side_sizer.Add(label_3, 0, wx.CENTER | wx.TOP, 20)
         side_sizer.Add(top_right_sizer, 1, wx.EXPAND | wx.ALL, 20)
@@ -687,10 +675,22 @@ class Gui(wx.Frame):
                 frame = DefinitionErrors(self, title="Error!", text=text_list, tabs=tab_labels, overview=overview)
 
                 return
-
+        
+        self.current_filename = self.filename
+        self.current_pathname = self.pathname
         self.load_new = True
         self.Show(False)
         self.Destroy()
+
+    def on_reset_button(self, event):
+        """Handle the event when the user clicks reset button."""
+        if self.start_up == True:
+            text = "No definition file loaded."
+            frame = PopUpFrame(self, title="Error!", text=text)
+        else:
+            self.load_new = True
+            self.Show(False)
+            self.Destroy()
 
     def read_name(self, name_string):
         """Return the name ID of the current string if valid.
@@ -793,3 +793,74 @@ class Gui(wx.Frame):
     def path_leaf(self, path):
         head, tail = ntpath.split(path)
         return tail or ntpath.basename(head)
+
+    def startup_load(self):
+        """Handle the loading of a definition file at startup."""
+
+        with wx.FileDialog(self, "Open Definition file", wildcard="Definition files (*.txt)|*.txt",
+                           style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
+
+            if fileDialog.ShowModal() == wx.ID_CANCEL:
+                return 
+
+            self.pathname = fileDialog.GetPath()
+            
+            self.filename = self.path_leaf(self.pathname)
+            
+            names = Names()
+            devices = Devices(names)
+            network = Network(names, devices)
+            monitors = Monitors(names, devices, network)
+            scanner = Scanner(self.pathname, names)
+            parser = Parser(names, devices, network, monitors, scanner)
+            parser.parse_network()
+            error_list = scanner.error_list
+            num_errors = len(error_list)
+            
+            pages = math.ceil(num_errors/4)
+            
+            if num_errors != 0:
+                
+                text_list = []
+                tab_labels = []
+                
+                for i in range(pages-1):
+                    tab_labels.append("{}-{}".format(1 + i * 4,4 + i * 4))
+                    label = 4 + i * 4
+                
+                if num_errors == 1:
+                    tab_labels.append("1")
+                elif num_errors <= 4:
+                    tab_labels.append("1-{}".format(num_errors))
+                else:
+                    if (label+1) == num_errors:
+                        tab_labels.append("{}".format(num_errors))
+                    else:    
+                        tab_labels.append("{}-{}".format(label+1,num_errors))
+                
+                if num_errors == 1:
+                    overview = "\nDefinition file '{}' contains {} error.".format(self.filename, num_errors)
+                else:
+                    overview = "\nDefinition file '{}' contains {} errors.".format(self.filename, num_errors)
+                
+                for i in range(pages):
+                    if i == 0:
+                        text = '\n' + '*'*76 + '\n'
+                    else:
+                        text = "".format(self.filename, num_errors)
+                    for j in range(4):
+                        try:
+                            text += (error_list[j + i * 4] + "\n")
+                        except IndexError:
+                            text += ('\n'*8)
+                    text_list.append(text)
+                
+                frame = DefinitionErrors(self, title="Error!", text=text_list, tabs=tab_labels, overview=overview)
+                
+                return
+    
+        self.current_filename = self.filename
+        self.current_pathname = self.pathname
+        self.load_new = True
+        self.Show(False)
+        self.Destroy()

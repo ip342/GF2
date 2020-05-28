@@ -59,24 +59,24 @@ def main(arg_list):
                 userint.command_interface()
 
     if not options:  # no option given, use the graphical user interface
-
-        path = "examples/start_up.txt"
-        names = Names()
-        devices = Devices(names)
-        network = Network(names, devices)
-        monitors = Monitors(names, devices, network)
-        scanner = Scanner(path, names)
-        parser = Parser(names, devices, network, monitors, scanner)
-        if parser.parse_network():
-            # Initialise an instance of the gui.Gui() class
-            app = wx.App()
-            gui = Gui("Logic Simulator", path, names, devices, network,
-                      monitors, True)
-            gui.Show(True)
-            app.MainLoop()
+        
+        
+        path = None
+        names = None
+        devices = None
+        network = None
+        monitors = None
+        filename = None 
+        app = wx.App()
+        gui = Gui("Logic Simulator", path, names, devices, network,
+                  monitors, filename, True)
+        gui.Show(True)
+        gui.startup_load()
+        app.MainLoop()
         
         while gui.load_new == True:
-            path = gui.pathname
+            path = gui.current_pathname
+            filename = gui.current_filename
             names = Names()
             devices = Devices(names)
             network = Network(names, devices)
@@ -85,8 +85,8 @@ def main(arg_list):
             parser = Parser(names, devices, network, monitors, scanner)
             if parser.parse_network():
                 # Initialise an instance of the gui.Gui() class
-                gui = Gui("Logic Simulator", path, names, devices, network,
-                          monitors)
+                gui = Gui("Logic Simulator - {}".format(filename), path, names, devices, network,
+                          monitors, filename)
                 gui.Show(True)
                 app.MainLoop()
 
