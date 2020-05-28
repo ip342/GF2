@@ -43,8 +43,8 @@ class Error(Exception):
         elif error_type == ConnectionError:
             error_class = 'ConnectionError'
 
-        print('*'*50 + '\n' + 'Line number ' + str(line_number + 1) + ',
-              Character ' + str(character - 1) + '\n'
+        print('*'*50 + '\n' + 'Line number ' + str(line_number + 1) + 
+              ', Character ' + str(character - 1) + '\n'
               + line + '\n' + (character - 2)*' ' + '^' + '\n'
               + error_class + ': ' + str(message))
 
