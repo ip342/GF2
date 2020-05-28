@@ -1,12 +1,12 @@
 DEVICES [
     A, H = XOR;
     B = OR 2;
-    B, G = NAND 2;
+    C, G = NAND 2;
     D = AND 3;
     E = NOR 2;
     F = DTYPE;
     S1, S2, S3, S4 = SWITCH 0;
-    CLK = CLOCK 4;
+    CLK = CLOCK 1;
 ]
 
 CONNECTIONS [
@@ -28,7 +28,7 @@ CONNECTIONS [
         C -> D.I3;
     }
     device E {
-        C -> D.I1;
+        C -> E.I1;
         B -> E.I2;
     }
     device F {

@@ -8,7 +8,8 @@ Gui - configures the main window and all the widgets.
 """
 import wx
 import wx.glcanvas as wxcanvas
-import wx.lib.scrolledpanel
+import ntpath
+import math
 from OpenGL import GL, GLUT
 
 from names import Names
@@ -245,6 +246,93 @@ class MyGLCanvas(wxcanvas.GLCanvas):
             else:
                 GLUT.glutBitmapCharacter(font, ord(character))
 
+class PopUpFrame(wx.Frame):
+    """Class used for pop up window with an error messages"""
+    
+    def __init__(self, parent, title, text):
+        wx.Frame.__init__(self, parent=parent, title=title)
+        
+        sizer_1 = wx.BoxSizer(wx.VERTICAL)
+        label_1 = wx.StaticText(self, wx.ID_ANY, text, style=wx.ALIGN_LEFT)
+        self.close_button = wx.Button(self, wx.ID_ANY, "Close")
+        
+        self.SetBackgroundColour(wx.Colour(72, 72, 72))
+        label_1.SetForegroundColour(wx.Colour(255, 255, 255))
+
+        self.close_button.Bind(wx.EVT_BUTTON, self.on_close_button)
+        
+        sizer_1.Add((20, 20), 1, 0, 0)
+        sizer_1.Add(label_1, 1, wx.ALIGN_CENTRE, 20)
+        sizer_1.Add(self.close_button, 1, wx.ALIGN_CENTER, 0)
+        
+        self.SetSizer(sizer_1)
+
+        self.Show()
+        
+    def on_close_button(self, event):
+        self.Show(False)
+        self.Destroy()
+        
+class DefinitionErrors(wx.Frame):
+    """Class used for pop up window with definition file error messages"""
+    
+    def __init__(self, parent, title, text, tabs, overview):
+        wx.Frame.__init__(self, parent=parent, title=title, size = (600, 560))
+        
+        self.notebook_1 = wx.Notebook(self, wx.ID_ANY, style=wx.NB_RIGHT)
+        
+        self.notebook_1_panes = []
+        self.text_list = []
+        
+        for i in range(len(text)):
+             self.notebook_1_panes.append(wx.Panel(self.notebook_1, wx.ID_ANY))
+             self.text_list.append(text[i])
+
+        self.close_button = wx.Button(self.notebook_1_panes[-1], wx.ID_ANY, "Close")
+        self.overview = wx.StaticText(self.notebook_1_panes[0], wx.ALIGN_LEFT, overview)
+        self.overview.SetForegroundColour(wx.Colour(255, 255, 255))
+        self.overview.SetFont(wx.Font(16, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, 0, ""))
+
+        sizer_1 = wx.BoxSizer(wx.VERTICAL)
+        
+        self.sizers = []
+        self.labels = []
+        
+        for i in range(len(text)):
+            self.sizers.append(wx.BoxSizer(wx.VERTICAL))
+            self.labels.append(wx.StaticText(self.notebook_1_panes[i], wx.ID_ANY, self.text_list[i]))
+            self.labels[i].SetForegroundColour(wx.Colour(255, 255, 255))
+            self.labels[i].SetFont(wx.Font(12, wx.FONTFAMILY_MODERN, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, 0, ""))
+            
+        self.SetBackgroundColour(wx.Colour(72, 72, 72))
+        
+        self.sizers[0].Add(self.overview, 1, wx.ALIGN_LEFT, 0)
+        
+        for i in range(len(text)):
+            self.sizers[i].Add(self.labels[i], 1, wx.EXPAND, 0)
+
+            self.notebook_1_panes[i].SetSizer(self.sizers[i])
+
+            self.notebook_1.AddPage(self.notebook_1_panes[i], tabs[i])
+        
+        self.sizers[-1].Add(self.close_button, 1, wx.ALIGN_CENTER, 10)
+        
+        for i in range(len(self.sizers)):
+            if i + 1 != len(self.sizers):
+                self.sizers[i].Add((20, 20), 1, wx.ALIGN_CENTER, 10)
+
+        sizer_1.Add(self.notebook_1, 1, wx.ALL, 0)
+        
+        self.close_button.Bind(wx.EVT_BUTTON, self.on_close_button)
+
+        self.SetSizeHints(600,560)
+
+        self.SetSizer(sizer_1)
+        self.Show()
+        
+    def on_close_button(self, event):
+        self.Show(False)
+        self.Destroy()
 
 class PopUpFrame(wx.Frame):
     """Class used for pop up window with an error messages"""
@@ -293,7 +381,6 @@ class Gui(wx.Frame):
     """
 
     def __init__(self, title, path, names, devices, network, monitors, start_up = False):
-        
         self.start_up = start_up
 
         """Initialise variables."""
@@ -400,7 +487,7 @@ class Gui(wx.Frame):
         self.load_button = wx.Button(self, wx.ID_ANY, "Load")
     
         # Configure the widget properties
-        self.SetBackgroundColour(wx.Colour(0,0,0))
+        self.SetBackgroundColour(wx.Colour(72, 72, 72))
         label_1.SetForegroundColour(wx.Colour(255, 255, 255))
         label_2.SetForegroundColour(wx.Colour(255, 255, 255))
         label_3.SetForegroundColour(wx.Colour(255, 255, 255))
@@ -419,7 +506,6 @@ class Gui(wx.Frame):
         self.button_4.Bind(wx.EVT_BUTTON, self.on_button_4)
         self.button_5.Bind(wx.EVT_BUTTON, self.on_button_5)
         self.load_button.Bind(wx.EVT_BUTTON, self.on_load_button)
-    
 
         # Configure sizers for layout
         main_sizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -432,7 +518,6 @@ class Gui(wx.Frame):
         sizer_6 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_7 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_8 = wx.BoxSizer(wx.HORIZONTAL)
-
 
         main_sizer.Add(self.panel, 2, wx.EXPAND | wx.ALIGN_LEFT, 0)
         main_sizer.Add(self.canvas, 5, wx.EXPAND | wx.ALL, 5)
@@ -494,8 +579,6 @@ class Gui(wx.Frame):
         if not self.cbList.IsChecked(index):
             self.zap_command()
             self.canvas.render(text)
-
-        # self.checked_strings = self.cbList.GetCheckedStrings()
 
     def on_spin_ctrl_1(self, event):
         """Handle the event when the user changes the cycles spin control value."""
@@ -586,18 +669,68 @@ class Gui(wx.Frame):
                 return 
 
             self.pathname = fileDialog.GetPath()
-            # try:
-            #     with open(pathname, 'r') as file:
-            #         print('Here')
-            # except IOError:
-            #     wx.LogError("Cannot open file '%s'." % newfile)
+            
+            self.filename = self.path_leaf(self.pathname)
+            
+            names = Names()
+            devices = Devices(names)
+            network = Network(names, devices)
+            monitors = Monitors(names, devices, network)
+            scanner = Scanner(self.pathname, names)
+            parser = Parser(names, devices, network, monitors, scanner)
+            parser.parse_network()
+            error_list = scanner.error_list
+            num_errors = len(error_list)
+            
+            pages = math.ceil(num_errors/4)
+            
+            if num_errors != 0:
+                
+                text_list = []
+                tab_labels = []
+                
+                for i in range(pages-1):
+                    tab_labels.append("{}-{}".format(1 + i * 4,4 + i * 4))
+                    label = 4 + i * 4
+                
+                if num_errors == 1:
+                    tab_labels.append("1")
+                elif num_errors <= 4:
+                    tab_labels.append("1-{}".format(num_errors))
+                else:
+                    if (label+1) == num_errors:
+                        tab_labels.append("{}".format(num_errors))
+                    else:    
+                        tab_labels.append("{}-{}".format(label+1,num_errors))
+                
+                if num_errors == 1:
+                    overview = "\nDefinition file '{}' contains {} error.".format(self.filename, num_errors)
+                else:
+                    overview = "\nDefinition file '{}' contains {} errors.".format(self.filename, num_errors)
+                
+                for i in range(pages):
+                    if i == 0:
+                        text = '\n' + '*'*76 + '\n'
+                    else:
+                        text = "".format(self.filename, num_errors)
+                    for j in range(4):
+                        try:
+                            text += (error_list[j + i * 4] + "\n")
+                        except IndexError:
+                            text += ('\n'*8)
+                    text_list.append(text)
+                
+                frame = DefinitionErrors(self, title="Error!", text=text_list, tabs=tab_labels, overview=overview)
+                
+                return
+    
         self.load_new = True
         self.Show(False)
         self.Destroy()
-        
 
     def read_name(self, name_string):
         """Return the name ID of the current string if valid.
+
         Return None if the current string is not a valid name string.
         """
         if name_string is None:
@@ -693,3 +826,7 @@ class Gui(wx.Frame):
                 frame = PopUpFrame(self, title="Error!", text=text)
             elif self.run_network(cycles):
                 self.cycles_completed += cycles
+
+    def path_leaf(self, path):
+        head, tail = ntpath.split(path)
+        return tail or ntpath.basename(head)

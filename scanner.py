@@ -89,6 +89,7 @@ class Scanner:
         self.current_line = 0
         self.current_character_number = 0
         self.error_count = 0
+        self.error_list = []
         self.error = False
 
     def get_symbol(self, stop=None):
@@ -275,9 +276,12 @@ class Scanner:
         if 'test' in sys.argv[0].lower():
             raise error_type
 
-        Error(error_type, error_message, self.current_line,
-              self.file_as_list[self.current_line],
-              self.current_character_number)
+
+        self.errors = Error(error_type, error_message, self.current_line,
+                      self.file_as_list[self.current_line],
+                      self.current_character_number)
+  
+        self.error_list.append(self.errors.error_message)
 
         # Comment error special case
         if error_type == CommentError:
