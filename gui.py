@@ -769,11 +769,14 @@ class Gui(wx.Frame):
         switch_id = self.read_name(self.choice_1_selection)
         if switch_id is not None:
             switch_state = self.choice_2_selection
-            if switch_state is not None:
-                if self.devices.set_switch(switch_id, switch_state):
-                    text = "Switch {} set to {}.".format(
-                        self.choice_1_selection, switch_state)
-                    frame = PopUpFrame(self, title="Success!", text=text)
+            if switch_state == "1":
+                print("High")
+                self.devices.set_switch(switch_id, self.devices.HIGH)
+            else:
+                self.devices.set_switch(switch_id, self.devices.LOW)       
+            text = "Switch {} set to {}.".format(
+                   self.choice_1_selection, switch_state)
+            frame = PopUpFrame(self, title="Success!", text=text)
 
     def monitor_command(self):
         """Set the specified monitor."""
