@@ -140,28 +140,8 @@ class MyGLCanvas(wxcanvas.GLCanvas):
 
                 # signal trace
                 GL.glColor3f(0.086, 0.356, 0.458)
-                GL.glLineWidth(3)
-                GL.glBegin(GL.GL_QUADS)
-                for i in range(len(signal_list)):
-                    x = (i * 20) + (longest_name_len * 20)
-                    x_next = (i * 20) + (longest_name_len * 20) + 20
-                    base_y = (50*j) - 11
-                    if signal_list[i] == self.devices.HIGH:
-                        y = base_y - 25
-                    elif signal_list[i] == self.devices.LOW:
-                        y = base_y - 5
-                    elif signal_list[i] == self.devices.RISING:
-                        y = base_y - 25
-                    elif signal_list[i] == self.devices.FALLING:
-                        y = base_y - 5
-                    elif signal_list[i] == self.devices.BLANK:
-                        y = base_y
-                    GL.glVertex2f(x, y)
-                    GL.glVertex2f(x_next, y)
-                    GL.glVertex2f(x_next, base_y)
-                    GL.glVertex2f(x, base_y)
-                    
-                # GL.glBegin(GL.GL_LINE_STRIP)
+                GL.glLineWidth(2)
+                # GL.glBegin(GL.GL_QUADS)
                 # for i in range(len(signal_list)):
                 #     x = (i * 20) + (longest_name_len * 20)
                 #     x_next = (i * 20) + (longest_name_len * 20) + 20
@@ -178,6 +158,26 @@ class MyGLCanvas(wxcanvas.GLCanvas):
                 #         y = base_y
                 #     GL.glVertex2f(x, y)
                 #     GL.glVertex2f(x_next, y)
+                #     GL.glVertex2f(x_next, base_y)
+                #     GL.glVertex2f(x, base_y)
+                    
+                GL.glBegin(GL.GL_LINE_STRIP)
+                for i in range(len(signal_list)):
+                    x = (i * 20) + (longest_name_len * 20)
+                    x_next = (i * 20) + (longest_name_len * 20) + 20
+                    base_y = (50*j) - 11
+                    if signal_list[i] == self.devices.HIGH:
+                        y = base_y - 25
+                    elif signal_list[i] == self.devices.LOW:
+                        y = base_y - 5
+                    elif signal_list[i] == self.devices.RISING:
+                        y = base_y - 25
+                    elif signal_list[i] == self.devices.FALLING:
+                        y = base_y - 5
+                    elif signal_list[i] == self.devices.BLANK:
+                        y = base_y
+                    GL.glVertex2f(x, y)
+                    GL.glVertex2f(x_next, y)
                 
                 GL.glEnd()
 
@@ -254,22 +254,23 @@ class PopUpFrame(wx.Frame):
     """Class used for pop up window with an error messages"""
 
     def __init__(self, parent, title, text):
-        wx.Frame.__init__(self, parent=parent, title=title)
+        wx.Frame.__init__(self, parent=parent, title=title, size = (400, 300))
 
         sizer_1 = wx.BoxSizer(wx.VERTICAL)
         label_1 = wx.StaticText(self, wx.ID_ANY, text, style=wx.ALIGN_LEFT)
         self.close_button = wx.Button(self, wx.ID_ANY, "Close")
 
-        self.SetBackgroundColour(wx.Colour(30, 30, 30))
+        self.SetBackgroundColour(wx.Colour(40, 40, 40))
         label_1.SetForegroundColour(wx.Colour(255, 255, 255))
 
         self.close_button.Bind(wx.EVT_BUTTON, self.on_close_button)
 
         sizer_1.Add((20, 20), 1, 0, 0)
         sizer_1.Add(label_1, 1, wx.ALIGN_CENTRE, 20)
-        sizer_1.Add(self.close_button, 1, wx.ALIGN_CENTER, 0)
+        sizer_1.Add(self.close_button, 1, wx.ALIGN_CENTER | wx.BOTTOM, 20)
 
         self.SetSizer(sizer_1)
+        self.SetSizeHints(400, 300, maxW = 400, maxH = 300)
 
         self.Show()
 
@@ -282,7 +283,7 @@ class DefinitionErrors(wx.Frame):
     """Class used for pop up window with definition file error messages"""
 
     def __init__(self, parent, title, text, tabs, overview):
-        wx.Frame.__init__(self, parent=parent, title=title, size = (600, 580))
+        wx.Frame.__init__(self, parent=parent, title=title, size = (850, 650))
 
         self.notebook_1 = wx.Notebook(self, wx.ID_ANY, style=wx.NB_RIGHT)
 
@@ -309,7 +310,8 @@ class DefinitionErrors(wx.Frame):
             self.labels[i].SetForegroundColour(wx.Colour(255, 255, 255))
             self.labels[i].SetFont(wx.Font(12, wx.FONTFAMILY_MODERN, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, 0, ""))
 
-        self.SetBackgroundColour(wx.Colour(30, 30, 30))
+        self.SetOwnBackgroundColour(wx.Colour(40, 40, 40))
+        self.notebook_1.SetBackgroundColour(wx.Colour(40, 40, 40))
 
         self.sizers[0].Add(self.overview, 1, wx.ALIGN_LEFT, 0)
 
@@ -320,7 +322,7 @@ class DefinitionErrors(wx.Frame):
 
             self.notebook_1.AddPage(self.notebook_1_panes[i], tabs[i])
 
-        self.sizers[-1].Add(self.close_button, 1, wx.ALIGN_CENTER, 10)
+        self.sizers[-1].Add(self.close_button, 1, wx.ALIGN_CENTER| wx.BOTTOM, 20)
 
         for i in range(len(self.sizers)):
             if i + 1 != len(self.sizers):
@@ -330,7 +332,7 @@ class DefinitionErrors(wx.Frame):
 
         self.close_button.Bind(wx.EVT_BUTTON, self.on_close_button)
 
-        self.SetSizeHints(600, 580)
+        self.SetSizeHints(850, 650, maxW = 850, maxH = 650)
 
         self.SetSizer(sizer_1)
         self.Show()
@@ -410,7 +412,7 @@ class Gui(wx.Frame):
             self.choice_3_selection = self.device_list[0]
 
         """Initialise widgets and layout."""
-        super().__init__(parent=None, title=title, size=(1000, 600))
+        super().__init__(parent=None, title=title, size=(1500, 650))
 
         # Configure the file menu
         fileMenu = wx.Menu()
@@ -424,27 +426,29 @@ class Gui(wx.Frame):
         self.canvas = MyGLCanvas(self, devices, monitors, names, self.start_up)
 
         # Panel for monitoring signals
-        self.panel = wx.Panel(self, size=(250, 600))
+        # self.panel = wx.Panel(self, size=(250, 600))
         panel_sizer = wx.BoxSizer(wx.VERTICAL)
-        all_button_sizer = wx.BoxSizer(wx.VERTICAL)
+        all_button_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # Configure left panel widgets
-        monitors_label = wx.StaticText(self.panel, wx.ID_ANY, "SIGNALS TO MONITOR")
+        monitors_label = wx.StaticText(self, wx.ID_ANY, "SIGNALS TO MONITOR")
         self.all_button = wx.Button(self, wx.ID_ANY, "ALL")
-        monitors_label.SetForegroundColour(wx.Colour(255, 255, 255))
-        monitors_label.SetFont(wx.Font(20, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, 0, ""))
+        monitors_label.SetForegroundColour(wx.Colour(243, 201, 62))
+        monitors_label.SetFont(wx.Font(17, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, 0, ""))
         panel_sizer.Add(monitors_label, 0, wx.CENTER|wx.TOP, 20)
 
         # Configure checkboxes for all devices in the circuit
         self.cbList = wx.CheckListBox(self, -1, (20, 40), (200, 400), choices=self.device_list, style=wx.ALIGN_RIGHT)
-        self.cbList.SetBackgroundColour(wx.Colour(243, 201, 62))
+        # self.cbList.SetBackgroundColour(wx.Colour(243, 201, 62))
+        
+        # self.cbList.SetForegroundColour(wx.Colour(243, 201, 62))
 
-        self.cbList.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "MS Shell Dlg 2")) 
+        self.cbList.SetFont(wx.Font(14, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "MS Shell Dlg 2")) 
 
         all_button_sizer.Add(self.all_button, 1, wx.EXPAND | wx.ALL, 10)
 
         panel_sizer.Add(self.cbList, 1, wx.EXPAND | wx.ALL, 20)
-        panel_sizer.Add(all_button_sizer, 1, wx.CENTRE | wx.BOTTOM, 10)
+        panel_sizer.Add(all_button_sizer, 1, wx.CENTER | wx.BOTTOM, 20)
 
         for i in range(len(self.device_list)):
             if self.device_list[i] in self.monitor_names:
@@ -455,7 +459,7 @@ class Gui(wx.Frame):
         self.all_button.Bind(wx.EVT_BUTTON, self.on_all)
 
         # Create panel
-        self.panel.SetSizer(panel_sizer)
+        # self.panel.SetSizer(panel_sizer)
 
         # Configure right panel widgets
         label_1 = wx.StaticText(self, wx.ID_ANY, "Cycles")
@@ -474,8 +478,8 @@ class Gui(wx.Frame):
         self.SetBackgroundColour(wx.Colour(40, 40, 40))
         label_1.SetForegroundColour(wx.Colour(255, 255, 255))
         label_2.SetForegroundColour(wx.Colour(255, 255, 255))
-        label_3.SetForegroundColour(wx.Colour(255, 255, 255))
-        label_3.SetFont(wx.Font(20, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, 0, ""))
+        label_3.SetForegroundColour(wx.Colour(243, 201, 62))
+        label_3.SetFont(wx.Font(17, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, 0, ""))
 
         # Bind events to widgets
         self.Bind(wx.EVT_MENU, self.on_menu)
@@ -521,11 +525,11 @@ class Gui(wx.Frame):
         sizer_5.Add(self.choice_2, 1, wx.ALL, 10)
         sizer_5.Add(self.button_3, 1, wx.ALL, 10)
 
-        main_sizer.Add(self.panel, 2, wx.ALIGN_LEFT| wx.EXPAND, 0)
+        main_sizer.Add(panel_sizer, 2, wx.ALIGN_LEFT| wx.EXPAND, 0)
         main_sizer.Add(self.canvas, 5, wx.EXPAND | wx.ALL, 5)
         main_sizer.Add(side_sizer, 1, wx.ALL, 5)
 
-        self.SetSizeHints(600, 600)
+        self.SetSizeHints(600, 650)
         self.SetSizer(main_sizer)
 
     def on_menu(self, event):
