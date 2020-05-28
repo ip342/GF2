@@ -79,6 +79,7 @@ class Scanner:
 
         # Create symbol IDs for keywords
         self.keyword_list = ['cycle', 'cycles', 'input', 'inputs', 'device']
+
         [self.CYCLE, self.CYCLES, self.INPUT, self.INPUTS, self.DEVICE] = \
             self.names.lookup(self.keyword_list)
 
@@ -99,12 +100,11 @@ class Scanner:
         # go to current non whitespace character
         self.skip_spaces()
 
-        # First check if in comment
 
+        # First check if in comment
         # ignore multi line comments
         while self.current_character == '#':
             self.advance()
-
             while self.current_character != '#':
                 self.advance()
 
@@ -114,6 +114,7 @@ class Scanner:
                         'Expected # at the end of multi-line comment', stop)
                     symbol.type = self.EOF
                     break
+
             self.advance()
             self.skip_spaces()
 
@@ -123,11 +124,13 @@ class Scanner:
             if self.current_character == '/':
                 while self.current_character != '\n':
                     self.advance()
+
             else:
                 self.display_error(
-                    CommentError,
-                    "Expected '/' after '/' to indicate comment", stop)
+                    CommentError, "Expected '/' after '/' to "
+                                  "indicate comment", stop)
                 self.error = True
+
             self.advance()
             self.skip_spaces()
 
@@ -138,16 +141,18 @@ class Scanner:
             name_string = self.get_name()[0]
             if name_string.upper() in self.header_list:
                 symbol.type = self.HEADER
+
                 symbol.id = self.names.query(name_string.upper())
             elif name_string.lower() in self.keyword_list:
                 symbol.type = self.KEYWORD
                 symbol.id = self.names.query(name_string.lower())
+
             elif name_string.lower() in self.monitor_all:
                 symbol.type = self.ALL
-                symbol.id = self.names.query(name_string.lower())
+
             else:
                 symbol.type = self.NAME
-                symbol.id = self.names.lookup([name_string])
+                [symbol.id] = self.names.lookup([name_string])
 
         # numbers
         elif self.current_character.isdigit():
@@ -181,8 +186,8 @@ class Scanner:
                 self.advance()
             else:
                 self.display_error(
-                    ArrowError,
-                    "Unexpected character, expected '>' after '-'", stop)
+                    ArrowError, "Unexpected character, expected "
+                                "'>' after '-'", stop)
                 self.error = True
 
         elif self.current_character == '>':
@@ -223,13 +228,15 @@ class Scanner:
 
     def advance(self):
         """ Advance to next character """
+  
+        # first check if on new line
 
-        # first check if on newline
         if self.current_character == '\n':
             self.current_line += 1
             self.current_character_number = 0
 
         # check if on tab (only applies to certain text editors)
+
         if self.current_character == '\t':
             while (self.current_character_number % 8) != 0:
                 self.current_character_number += 1
@@ -270,12 +277,12 @@ class Scanner:
         in errors.py to print the error. Error recovery is handled by
         advancing until specified stopping symbols. """
 
+
         self.error_count += 1
 
         # Only raise the error for filenames starting with 'test'
         if 'test' in sys.argv[0].lower():
             raise error_type
-
 
         self.errors = Error(error_type, error_message, self.current_line,
                       self.file_as_list[self.current_line],

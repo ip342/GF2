@@ -1,0 +1,10 @@
+[
+    A, H = XOR;
+    B = OR 2;
+    C, G = NAND 2;
+    D = AND 3;
+    E = NOR 2;
+    F = DTYPE;
+    S1, S2, S3, S4 = SWITCH 0;
+    CLK = CLOCK 4;
+]

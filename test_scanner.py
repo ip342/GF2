@@ -24,7 +24,8 @@ def test_symbol():
 @pytest.fixture
 def test_scanner1():
     """Return a new instance of the Scanner class with test file 1 inputted."""
-    test_file = 'test_scanner_text1.txt'
+    test_file = 'test_files/test_scanner_text1.txt'
+
     names = Names()
     scan = Scanner(test_file, names)
     return scan
@@ -33,7 +34,7 @@ def test_scanner1():
 @pytest.fixture
 def test_scanner2():
     """Return a new instance of the Scanner class with test file 2 inputted."""
-    test_file = 'test_scanner_text2.txt'
+    test_file = 'test_files/test_scanner_text2.txt'
     names = Names()
     scan = Scanner(test_file, names)
     return scan
@@ -43,6 +44,7 @@ def test_scanner2():
 def test_scanner3():
     """Return a new instance of the Scanner class with test file 3 inputted."""
     test_file = 'test_scanner_text3.txt'
+    test_file = 'test_files/test_scanner_text3.txt'
     names = Names()
     scan = Scanner(test_file, names)
     return scan

@@ -1,0 +1,7 @@
+[
+    A = AND 2;
+    S1, S2 = SWITCH 0;
+]
+device A {
+    S1 -> ;
+}
