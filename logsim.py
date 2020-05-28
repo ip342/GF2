@@ -61,7 +61,6 @@ def main(arg_list):
     if not options:  # no option given, use the graphical user interface
 
         path = "examples/start_up.txt"
-        print(path)
         names = Names()
         devices = Devices(names)
         network = Network(names, devices)

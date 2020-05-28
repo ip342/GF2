@@ -35,10 +35,10 @@ class Error(Exception):
         if error_type in Syntax:
             error_class = 'SyntaxError'
 
-        print('*'*50 + '\n' + 'Line number ' + str(line_number + 1) + ', Character ' + str(character - 1) + '\n'
-              + line + '\n' + (character - 2)*' ' + '^' + '\n'
-              + error_class +': ' + str(message))
-
+        self.error_message = ('\n' + 'Line number ' + str(line_number + 1) + ', Character ' + str(character - 1) + '\n'
+                             + line + '\n' + (character - 2)*' ' + '^' + '\n'
+                             + error_class +': ' + str(message) + '\n\n' + '*'*76)
+        
 
 # Specific error classes for accurate pytests
 class SemanticError(Exception):

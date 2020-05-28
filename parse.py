@@ -102,14 +102,6 @@ class Parser:
                 for section in sections:
                     if section not in sections_found:
                         self.scanner.display_error(SyntaxError, '%s section missing' % section)
-
-                # Print total number of errors
-                if self.scanner.error_count != 0:
-                    if self.scanner.error_count == 1:
-                        print('*'*50 + '\n' + 'Definition file contains %s error' %self.scanner.error_count)
-                    else:
-                        print('*'*50 + '\n' + 'Definition file contains %s errors' %self.scanner.error_count)
-
                 break
                 
             elif self.symbol.type == self.scanner.NAME:
@@ -149,23 +141,17 @@ class Parser:
             while self.parse_DEVICES_section():
                 pass
 
-            print("\n END OF DEVICES \n")
-
         elif header_ID == 'CONNECTIONS':
 
             # parse for CONNECTIONS
             while self.parse_CONNECTIONS_section():
                 pass
 
-            print("\n END OF CONNECTIONS \n")
-
         elif header_ID == 'MONITORS':
 
             # parse for MONITORS
             while self.parse_MONITORS_section():
                 pass
-
-            print("\n END OF MONITORS \n")
 
     def parse_DEVICES_section(self):
 
@@ -469,7 +455,7 @@ class Parser:
             
             if device_names_to_check != []:
                 self.scanner.display_error(
-                    SemanticError, "The following device(s) do not have connections defined: %s" % undefined_connections)
+                    SemanticError, "The following device(s) do not have connections defined: \n%s" % undefined_connections)
 
             return False
 
@@ -765,15 +751,15 @@ class Parser:
         end_con_name = self.names.get_name_string(self.symbol.id)
         if end_con is None:
             if end_con_name not in self.does_not_exist_list:
-                self.does_not_exist_list.append(con_device_name)
+                self.does_not_exist_list.append(end_con_name)
                 self.scanner.display_error(
                     SemanticError, "Device '{}' does not exist."
                                    .format(end_con_name))
                 return True
-        if end_con != self.con_device:
+        elif end_con != self.con_device:
             self.scanner.display_error(
                 SyntaxError, "This connection has been listsed under the "
-                             "incorrect device subsection.")
+                             "incorrect device \nsubsection.")
             return True
         self.symbol = self.scanner.get_symbol()
         
