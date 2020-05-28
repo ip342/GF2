@@ -132,20 +132,38 @@ class MyGLCanvas(wxcanvas.GLCanvas):
                 GL.glColor3f(0.870, 0.411, 0.129)
                 GL.glLineWidth(1)
                 GL.glBegin(GL.GL_LINES)
-                for i in range(len(signal_list)):
-                    GL.glVertex2f(0, (50 * j))
-                    GL.glVertex2f(5000, (50 * j))
+                # for i in range(len(signal_list)):
+                GL.glVertex2f(0, (50 * j))
+                GL.glVertex2f(5000, (50 * j))
                 GL.glEnd()
 
                 GL.glBegin(GL.GL_LINES)
+                # for i in range(len(signal_list)):
+                GL.glVertex2f(0, (50 * j) - 50)
+                GL.glVertex2f(5000, (50 * j) - 50)
+                GL.glEnd()
+
                 for i in range(len(signal_list)):
-                    GL.glVertex2f(0, (50 * j) - 50)
-                    GL.glVertex2f(5000, (50 * j) - 50)
+                    if i % 5 == 0 and j == 2:
+                        if i == 0 or i == 5:
+                            x = (i * 20) + (longest_name_len * 20) - 2.5
+                        else:
+                            x = (i * 20) + (longest_name_len * 20) - 5
+                        self.render_text(str(i), x, (50 * j) - 60, 24)
+
+                GL.glBegin(GL.GL_LINES)
+                GL.glColor3f(0.870, 0.411, 0.129)
+                for i in range(len(signal_list)):
+                    if i % 5 == 0:
+                        x = (i * 20) + (longest_name_len * 20)
+                        GL.glVertex2f(x, (50 * j))
+                        GL.glVertex2f(x, (50 * j) - 55)
+
                 GL.glEnd()
 
                 # signal trace
                 GL.glColor3f(0.086, 0.356, 0.458)
-                GL.glLineWidth(2)
+                GL.glLineWidth(3)
                 # GL.glBegin(GL.GL_QUADS)
                 # for i in range(len(signal_list)):
                 #     x = (i * 20) + (longest_name_len * 20)
@@ -166,8 +184,10 @@ class MyGLCanvas(wxcanvas.GLCanvas):
                 #     GL.glVertex2f(x_next, base_y)
                 #     GL.glVertex2f(x, base_y)
 
-                GL.glBegin(GL.GL_LINE_STRIP)
+                GL.glBegin(GL.GL_LINES)
+                first_run = True
                 for i in range(len(signal_list)):
+                    GL.glColor3f(0.086, 0.356, 0.458)
                     x = (i * 20) + (longest_name_len * 20)
                     x_next = (i * 20) + (longest_name_len * 20) + 20
                     base_y = (50*j) - 11
@@ -180,9 +200,20 @@ class MyGLCanvas(wxcanvas.GLCanvas):
                     elif signal_list[i] == self.devices.FALLING:
                         y = base_y - 5
                     elif signal_list[i] == self.devices.BLANK:
-                        y = base_y
-                    GL.glVertex2f(x, y)
-                    GL.glVertex2f(x_next, y)
+                        GL.glColor3f(1, 1, 1)
+                        y = base_y - 5
+                    if first_run is False:
+                        GL.glVertex2f(x, y)
+                        GL.glVertex2f(x, y)
+                        GL.glVertex2f(x_next, y)
+                        GL.glColor3f(0.086, 0.356, 0.458)
+                        GL.glVertex2f(x_next, y)
+                    else:
+                        GL.glVertex2f(x, y)
+                        GL.glVertex2f(x_next, y)
+                        GL.glColor3f(0.086, 0.356, 0.458)
+                        GL.glVertex2f(x_next, y)
+                        first_run = False
 
                 GL.glEnd()
 
@@ -587,11 +618,13 @@ class Gui(wx.Frame):
     def on_all(self, event):
         """Handle the event when the user checks all."""
 
+        text = 'All ticked'
         for i in range(len(self.cbList.Items)):
             if not self.cbList.IsChecked(i):
                 self.cbList.Check(i, True)
                 self.checked_name = self.cbList.GetString(i)
                 self.monitor_command()
+        self.canvas.render(text)
 
     def on_spin_ctrl_1(self, event):
         """Handle the event when the user changes the
@@ -773,7 +806,7 @@ class Gui(wx.Frame):
                 print("High")
                 self.devices.set_switch(switch_id, self.devices.HIGH)
             else:
-                self.devices.set_switch(switch_id, self.devices.LOW)       
+                self.devices.set_switch(switch_id, self.devices.LOW)
             text = "Switch {} set to {}.".format(
                    self.choice_1_selection, switch_state)
             frame = PopUpFrame(self, title="Success!", text=text)
