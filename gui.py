@@ -141,27 +141,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
                 # signal trace
                 GL.glColor3f(0.086, 0.356, 0.458)
                 GL.glLineWidth(3)
-                # GL.glBegin(GL.GL_QUADS)
-                # for i in range(len(signal_list)):
-                #     x = (i * 20) + (longest_name_len * 20)
-                #     x_next = (i * 20) + (longest_name_len * 20) + 20
-                #     base_y = (50*j) - 11
-                #     if signal_list[i] == self.devices.HIGH:
-                #         y = base_y - 25
-                #     elif signal_list[i] == self.devices.LOW:
-                #         y = base_y - 5
-                #     elif signal_list[i] == self.devices.RISING:
-                #         y = base_y - 25
-                #     elif signal_list[i] == self.devices.FALLING:
-                #         y = base_y - 5
-                #     elif signal_list[i] == self.devices.BLANK:
-                #         y = base_y
-                #     GL.glVertex2f(x, y)
-                #     GL.glVertex2f(x_next, y)
-                #     GL.glVertex2f(x_next, base_y)
-                #     GL.glVertex2f(x, base_y)
-                    
-                GL.glBegin(GL.GL_LINE_STRIP)
+                GL.glBegin(GL.GL_QUADS)
                 for i in range(len(signal_list)):
                     x = (i * 20) + (longest_name_len * 20)
                     x_next = (i * 20) + (longest_name_len * 20) + 20
@@ -178,6 +158,26 @@ class MyGLCanvas(wxcanvas.GLCanvas):
                         y = base_y
                     GL.glVertex2f(x, y)
                     GL.glVertex2f(x_next, y)
+                    GL.glVertex2f(x_next, base_y)
+                    GL.glVertex2f(x, base_y)
+                    
+                # GL.glBegin(GL.GL_LINE_STRIP)
+                # for i in range(len(signal_list)):
+                #     x = (i * 20) + (longest_name_len * 20)
+                #     x_next = (i * 20) + (longest_name_len * 20) + 20
+                #     base_y = (50*j) - 11
+                #     if signal_list[i] == self.devices.HIGH:
+                #         y = base_y - 25
+                #     elif signal_list[i] == self.devices.LOW:
+                #         y = base_y - 5
+                #     elif signal_list[i] == self.devices.RISING:
+                #         y = base_y - 25
+                #     elif signal_list[i] == self.devices.FALLING:
+                #         y = base_y - 5
+                #     elif signal_list[i] == self.devices.BLANK:
+                #         y = base_y
+                #     GL.glVertex2f(x, y)
+                #     GL.glVertex2f(x_next, y)
                 
                 GL.glEnd()
 
