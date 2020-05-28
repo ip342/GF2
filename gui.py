@@ -117,26 +117,26 @@ class MyGLCanvas(wxcanvas.GLCanvas):
             longest_name_len = len(max(self.device_list, key=len))
         
         # Draw signal traces
-        j = 0
+        j = 1
         for device_id, output_id in self.monitors.monitors_dictionary:
             j += 1
             monitor_name = self.devices.get_signal_name(device_id, output_id)
             signal_list = self.monitors.monitors_dictionary[(device_id, output_id)]
-            self.render_text(monitor_name, 10, (50 * j) - 7, 24)
+            self.render_text(monitor_name, 10, (50 * j) - 18 , 24)
 
             # seperator line between traces 
             GL.glColor3f(0.870, 0.411, 0.129)
             GL.glLineWidth(1) 
             GL.glBegin(GL.GL_LINES)
             for i in range(len(signal_list)):
-                GL.glVertex2f(0, (50 * j) + 10)
-                GL.glVertex2f(size.width, (50 * j) + 10)
+                GL.glVertex2f(0, (50 * j))
+                GL.glVertex2f(size.width, (50 * j))
             GL.glEnd()
 
             GL.glBegin(GL.GL_LINES)
             for i in range(len(signal_list)):
-                GL.glVertex2f(0, (50 * j) - 40)
-                GL.glVertex2f(size.width, (50 * j) - 40)
+                GL.glVertex2f(0, (50 * j) - 50)
+                GL.glVertex2f(size.width, (50 * j) - 50)
             GL.glEnd()
 
 
@@ -147,17 +147,17 @@ class MyGLCanvas(wxcanvas.GLCanvas):
             for i in range(len(signal_list)):
                 x = (i * 20) + (longest_name_len * 20)
                 x_next = (i * 20) + (longest_name_len * 20) + 20
-                base_y = 50*j
+                base_y = (50*j) - 11
                 if signal_list[i] == self.devices.HIGH:
-                    y = (50 * j) - 25
+                    y = base_y - 25
                 elif signal_list[i] == self.devices.LOW:
-                    y = (50 * j) - 5
+                    y = base_y - 5
                 elif signal_list[i] == self.devices.RISING:
-                    y = (50 * j) - 25
+                    y = base_y - 25
                 elif signal_list[i] == self.devices.FALLING:
-                    y = (50 * j) - 5
+                    y = base_y - 5
                 elif signal_list[i] == self.devices.BLANK:
-                    y = (50 * j) - 25
+                    y = base_y 
                 GL.glVertex2f(x, y)
                 GL.glVertex2f(x_next, y)
                 GL.glVertex2f(x_next, base_y)
@@ -357,30 +357,29 @@ class Gui(wx.Frame):
         self.canvas = MyGLCanvas(self, devices, monitors, names)
 
         # Panel for monitoring signals
-        self.panel = wx.lib.scrolledpanel.ScrolledPanel(self)
-        self.panel.SetupScrolling()
+        self.panel = wx.Panel(self, size = (250, 600))
         panel_sizer = wx.BoxSizer(wx.VERTICAL)
 
         # Configure left panel widgets
         monitors_label = wx.StaticText(self.panel, wx.ID_ANY, "Signals to Monitor")
         monitors_label.SetForegroundColour(wx.Colour(255, 255, 255))
-        panel_sizer.Add(monitors_label, 1, wx.ALIGN_CENTER | wx.TOP, 20)
+        monitors_label.SetFont(wx.Font(20, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, 0, ""))
+        panel_sizer.Add(monitors_label, 0, wx.CENTER|wx.TOP, 20)
 
         # Configure checkboxes for all devices in the circuit
-        j=30
-        cb_dict = {}
+        self.cbList = wx.CheckListBox(self, -1, (20, 40), (200,400), choices = self.device_list, style = wx.ALIGN_RIGHT)
+        self.cbList.SetBackgroundColour(wx.Colour(243, 201, 62))
+
+        self.cbList.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "MS Shell Dlg 2")) 
+
+        panel_sizer.Add(self.cbList, 1, wx.EXPAND|wx.ALL, 10)
+
         for i in range(len(self.device_list)):
-            j += 40 
-            cb = wx.CheckBox(self.panel, label=self.device_list[i], pos=(20, j), size=(100,40))
-            cb.SetBackgroundColour(wx.Colour(243, 201, 62))
-            panel_sizer.Add(cb, 0, wx.EXPAND | wx.ALL, 20)
-
             if self.device_list[i] in self.monitor_names:
-                cb.SetValue(True)
-
-            # Bind checkbox event to left panel widgets 
-            cb.Bind(wx.EVT_CHECKBOX, self.on_checkbox)
-            cb_dict.update({cb:device_list[i])
+                self.cbList.Check(i, check=True)
+        
+        # bind checklistbox to checkbox event
+        self.cbList.Bind(wx.EVT_CHECKLISTBOX, self.on_checkbox)
 
         self.panel.SetSizer(panel_sizer)
 
@@ -484,11 +483,19 @@ class Gui(wx.Frame):
 
     def on_checkbox(self, event):
         """Handle the event when the user checks a checkbox."""
-        sender = event.GetEventObject()
-        isChecked = sender.GetValue()
+        index = event.GetSelection()
+        self.checked_name = self.cbList.GetString(index)
+        text = 'text'
+        if self.cbList.IsChecked(index):
+            
+            self.monitor_command()
+            self.canvas.render(text)
 
-        if isChecked:
-            self.
+        if not self.cbList.IsChecked(index):
+            self.zap_command()
+            self.canvas.render(text)
+
+        # self.checked_strings = self.cbList.GetCheckedStrings()
 
     def on_spin_ctrl_1(self, event):
         """Handle the event when the user changes the cycles spin control value."""
@@ -629,7 +636,7 @@ class Gui(wx.Frame):
 
     def monitor_command(self):
         """Set the specified monitor."""
-        monitor = self.read_signal_name(self.choice_3_selection)
+        monitor = self.read_signal_name(self.checked_name)
         if monitor is not None:
             [device, port] = monitor
             monitor_error = self.monitors.make_monitor(device, port,
@@ -637,19 +644,19 @@ class Gui(wx.Frame):
             if monitor_error == self.monitors.NO_ERROR:
                 pass
             else:
-                text = "Already monitoring {}.".format(self.choice_3_selection)
+                text = "Already monitoring {}.".format(self.checked_name)
                 frame = PopUpFrame(self, title="Error!", text=text)
                 
 
     def zap_command(self):
         """Remove the specified monitor."""
-        monitor = self.read_signal_name(self.choice_3_selection)
+        monitor = self.read_signal_name(self.checked_name)
         if monitor is not None:
             [device, port] = monitor
             if self.monitors.remove_monitor(device, port):
                 pass
             else:
-                text = "Not currently monitoring {}.".format(self.choice_3_selection)
+                text = "Not currently monitoring {}.".format(self.checked_name)
                 frame = PopUpFrame(self, title="Error!", text=text)
 
     def run_network(self, cycles):
