@@ -333,7 +333,6 @@ class Parser:
                     elif self.devices.get_device(device_id).device_kind \
                             == self.devices.SIGGEN:
                         n = self.symbol.id
-                        print(n)
 
                         # Check if specified waveform is binary
                         for i in n:
@@ -465,8 +464,8 @@ class Parser:
             if con_device_name in self.all_cons_list:
                 self.scanner.display_error(
                     ConnectionError, "Connections for device '{}' already "
-                                   "assigned.".format(con_device_name),
-                                   ["}", "]", ""])
+                                     "assigned.".format(con_device_name),
+                                     ["}", "]", ""])
                 return True
 
             if self.con_device is None:

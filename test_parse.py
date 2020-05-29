@@ -10,7 +10,6 @@ from monitors import Monitors
 from errors import *
 
 
-@pytest.fixture
 def new_parser(path):
     """Return a new instance of the Parser class."""
     new_names = Names()

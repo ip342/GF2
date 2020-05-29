@@ -300,7 +300,7 @@ class Devices:
                 # Initialise it to a random point in its cycle.
 
                 # Get random position in waveform
-                device.clock_counter = random.randrange(len(device.waveform))
+                device.clock_counter = 0
 
                 # Initialise in that position
                 siggen_signal = int(device.waveform[device.clock_counter])
