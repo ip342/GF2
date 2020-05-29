@@ -250,14 +250,8 @@ class Parser:
 
         device_id_list = self.devices.names.lookup(device_name_list)
 
-        # if type(device_id_list) == int:
-        #     device_id_list = [device_id_list]
-
         # Make devices
         for device_id in device_id_list:
-            # if self.symbol.id in self.devices.gate_types or \
-            #         self.symbol.id in self.devices.device_types:
-            #     self.devices.make_device(device_id, self.symbol.id)
             if self.symbol.id == self.devices.D_TYPE:
                 self.devices.make_d_type(device_id)
 
@@ -422,7 +416,7 @@ class Parser:
         if self.symbol.type == self.scanner.EOF:
             return False
 
-        elif self.symbol.id != self.scanner.DEVICE:  # Revist this
+        elif self.symbol.id != self.scanner.DEVICE:
             self.scanner.display_error(
                 SyntaxError, "List of connections must start "
                              "with the word 'device'.", ["}", "]", ""])
@@ -448,12 +442,13 @@ class Parser:
 
             if self.con_device is None:
                 if con_device_name not in self.does_not_exist_list:
-                    
+
                     # Prevent showing follow on errors if device does not exist
                     self.does_not_exist_list.append(con_device_name)
                     self.scanner.display_error(
                         SemanticError, "Device '{}' does not exist."
-                                       .format(con_device_name), ["}","]",""])
+                                       .format(con_device_name),
+                                       ["}", "]", ""])
                     return True
 
             self.all_cons_list.append(con_device_name)
@@ -483,7 +478,7 @@ class Parser:
 
         if self.con_device is None:
             pass
-        
+
         elif counter != len(self.con_device.inputs):
 
             self.scanner.display_error(
