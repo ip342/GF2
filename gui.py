@@ -149,7 +149,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
                 GL.glEnd()
 
                 # vertical lines
-                for i in range(len(signal_list)):
+                for i in range(len(signal_list) + 1):
                     if i % 5 == 0 and j == 2:
                         if i == 0 or i == 5:
                             x = (i * 20) + (longest_name_len * 20) - 2.5
@@ -159,7 +159,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
 
                 GL.glBegin(GL.GL_LINES)
                 GL.glColor3f(0.870, 0.411, 0.129)
-                for i in range(len(signal_list)):
+                for i in range(len(signal_list) + 1):
                     if i % 5 == 0:
                         x = (i * 20) + (longest_name_len * 20)
                         GL.glVertex2f(x, (50 * j))
@@ -344,7 +344,7 @@ class PopUpFrame(wx.Frame):
 
     def __init__(self, parent, title, text):
         """Initialise variables."""
-        wx.Frame.__init__(self, parent=parent, title=title, size=(400, 300))
+        wx.Frame.__init__(self, parent=parent, title=title)
 
         sizer_1 = wx.BoxSizer(wx.VERTICAL)
         label_1 = wx.StaticText(self, wx.ID_ANY, text, style=wx.ALIGN_LEFT)
@@ -360,7 +360,7 @@ class PopUpFrame(wx.Frame):
         sizer_1.Add(self.close_button, 1, wx.ALIGN_CENTER | wx.BOTTOM, 20)
 
         self.SetSizer(sizer_1)
-        self.SetSizeHints(400, 300, maxW=400, maxH=300)
+        # self.SetSizeHints(400, 300, maxW=400, maxH=300)
 
         self.Show()
 
@@ -375,7 +375,7 @@ class DefinitionErrors(wx.Frame):
 
     def __init__(self, parent, title, text, tabs, overview):
         """Initialise variables."""
-        wx.Frame.__init__(self, parent=parent, title=title, size=(850, 650))
+        wx.Frame.__init__(self, parent=parent, title=title, size=(600, 560))
 
         self.notebook_1 = wx.Notebook(self, wx.ID_ANY, style=wx.NB_RIGHT)
 
@@ -432,7 +432,7 @@ class DefinitionErrors(wx.Frame):
 
         self.close_button.Bind(wx.EVT_BUTTON, self.on_close_button)
 
-        self.SetSizeHints(850, 650, maxW=850, maxH=650)
+        self.SetSizeHints(600, 560, maxW=600, maxH=560)
 
         self.SetSizer(sizer_1)
         self.Show()
@@ -673,13 +673,17 @@ class Gui(wx.Frame):
 
     def on_all(self, event):
         """Handle the event when the user checks all."""
-        text = 'All ticked'
-        for i in range(len(self.cbList.Items)):
-            if not self.cbList.IsChecked(i):
-                self.cbList.Check(i, True)
-                self.checked_name = self.cbList.GetString(i)
-                self.monitor_command()
-        self.canvas.render(text)
+        if self.start_up is True:
+            text = "No definition file loaded."
+            frame = PopUpFrame(self, title="Error!", text=text)
+        else:
+            text = 'All ticked'
+            for i in range(len(self.cbList.Items)):
+                if not self.cbList.IsChecked(i):
+                    self.cbList.Check(i, True)
+                    self.checked_name = self.cbList.GetString(i)
+                    self.monitor_command()
+            self.canvas.render(text)
 
     def on_spin_ctrl_1(self, event):
         """Handle the event when the user changes the cycles value."""
@@ -739,7 +743,7 @@ class Gui(wx.Frame):
     def on_load_button(self, event):
         """Handle the event when the user clicks load button."""
         with wx.FileDialog(
-            self, "Open Definition file",
+            self, "Open definition file",
             wildcard="Definition files (*.txt)|*.txt",
                 style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
 
@@ -931,7 +935,7 @@ class Gui(wx.Frame):
     def startup_load(self):
         """Handle the loading of a definition file at startup."""
         with wx.FileDialog(
-            self, "Open Definition file",
+            self, "Open definition file",
             wildcard="Definition files (*.txt)|*.txt",
                 style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
 
