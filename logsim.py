@@ -54,9 +54,16 @@ def main(arg_list):
             scanner = Scanner(path, names)
             parser = Parser(names, devices, network, monitors, scanner)
             if parser.parse_network():
+                error_list = scanner.error_list
+                for error in error_list:
+                    print(error)
                 # Initialise an instance of the userint.UserInterface() class
                 userint = UserInterface(names, devices, network, monitors)
-                userint.command_interface()
+                userint.command_interface()  
+            else:
+                error_list = scanner.error_list
+                for error in error_list:
+                    print(error)
 
     if not options:  # no option given, use the graphical user interface
 
