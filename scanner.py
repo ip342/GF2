@@ -100,7 +100,6 @@ class Scanner:
         # go to current non whitespace character
         self.skip_spaces()
 
-
         # First check if in comment
         # ignore multi line comments
         while self.current_character == '#':

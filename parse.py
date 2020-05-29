@@ -94,7 +94,7 @@ class Parser:
                     if section not in sections_found:
 
                         self.scanner.display_error(
-                            SyntaxError, '%s section missing' % section)
+                            NetworkError, '%s section missing' % section)
 
                 break
 
@@ -464,7 +464,7 @@ class Parser:
 
             if con_device_name in self.all_cons_list:
                 self.scanner.display_error(
-                    SemanticError, "Connections for device '{}' already "
+                    ConnectionError, "Connections for device '{}' already "
                                    "assigned.".format(con_device_name),
                                    ["}", "]", ""])
                 return True
@@ -667,7 +667,7 @@ class Parser:
         # CHECK for start connection
         elif self.symbol.type != self.scanner.NAME:
             self.scanner.display_error(
-                SyntaxError, "Connection must start with a device name.")
+                ConnectionError, "Connection must start with a device name.")
             return True
         start_con = self.devices.get_device(self.symbol.id)
         start_con_name = self.names.get_name_string(self.symbol.id)
@@ -717,8 +717,8 @@ class Parser:
 
         if self.symbol.type != self.scanner.ARROW:
             self.scanner.display_error(
-                SyntaxError, "Expected '->' inbetween "
-                             "start and end connections.")
+                ConnectionError, "Expected '->' inbetween "
+                                 "start and end connections.")
             return True
 
         # CHECK for end connection
@@ -748,8 +748,8 @@ class Parser:
 
         elif end_con != self.con_device:
             self.scanner.display_error(
-                SyntaxError, "This connection has been listsed under the "
-                             "incorrect device \nsubsection.")
+                ConnectionError, "This connection has been listsed under the "
+                                 "incorrect device \nsubsection.")
 
             return True
 
@@ -783,7 +783,7 @@ class Parser:
                          end_con.device_id, end_con_port_id)
             if con_status == self.network.INPUT_CONNECTED:
                 self.scanner.display_error(
-                    SemanticError, "{}.{} is already connected.".format(
+                    ConnectionError, "{}.{} is already connected.".format(
                                    end_con_name,
                                    self.devices.names.get_name_string
                                    (end_con_port_id)))
