@@ -332,11 +332,11 @@ class Parser:
 
                     elif self.devices.get_device(device_id).device_kind \
                             == self.devices.SIGGEN:
-
-                        # LEADING ZEROES ARE BROKEN (PYTHON)
+                        n = self.symbol.id
+                        print(n)
 
                         # Check if specified waveform is binary
-                        for i in str(n):
+                        for i in n:
                             if i in '10':
                                 waveform_binary = True
                             else:
@@ -347,7 +347,7 @@ class Parser:
                             # Set siggen waveform
                             siggen_device = self.devices.get_device(device_id)
                             # Convert to string to allow for list comprehension
-                            siggen_device.waveform = str(n)
+                            siggen_device.waveform = n
 
                         else:
                             self.scanner.display_error(
