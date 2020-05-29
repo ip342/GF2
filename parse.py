@@ -332,10 +332,26 @@ class Parser:
 
                     elif self.devices.get_device(device_id).device_kind \
                             == self.devices.SIGGEN:
-                        # Set siggen waveform
-                        siggen_device = self.devices.get_device(device_id)
-                        # Convert to string to allow for list comprehension
-                        siggen_device.waveform = str(n)
+
+                        # Check if specified waveform is binary
+                        for i in str(n):
+                            if i in '10':
+                                waveform_binary = True
+                            else:
+                                waveform_binary = False
+                                break
+
+                        if waveform_binary:
+                            # Set siggen waveform
+                            siggen_device = self.devices.get_device(device_id)
+                            # Convert to string to allow for list comprehension
+                            siggen_device.waveform = str(n)
+
+                        else:
+                            self.scanner.display_error(
+                                SemanticError, "Siggen can only take "
+                                               "binary waveforms.")
+                            return True
 
                     elif self.devices.get_device(device_id) is None:
                         self.scanner.display_error(
@@ -360,7 +376,7 @@ class Parser:
 
             else:
                 self.scanner.display_error(
-                    SyntaxError, "Number of inputs have not been specified.")
+                    SyntaxError, "Device parameter has not been specified.")
                 return True
 
         if self.devices.get_device(device_id).device_kind \
@@ -818,7 +834,7 @@ class Parser:
                     self.devices.get_device(check_id).device_kind
                 if check_device_kind != self.devices.SWITCH and \
                         check_device_kind != self.devices.CLOCK and\
-                            check_device_kind != self.devices.SIGGEN:
+                        check_device_kind != self.devices.SIGGEN:
                     check_name = self.names.get_name_string(check_id)
                     device_names_to_check.append(check_name)
 
