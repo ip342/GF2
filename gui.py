@@ -1,4 +1,5 @@
 """Implement the graphical user interface for the Logic Simulator.
+
 Used in the Logic Simulator project to enable the user to run the simulation
 or adjust the network properties.
 Classes:
@@ -22,6 +23,7 @@ from parse import Parser
 
 class MyGLCanvas(wxcanvas.GLCanvas):
     """Handle all drawing operations.
+
     This class contains functions for drawing onto the canvas. It
     also contains handlers for events relating to the canvas.
     Parameters
@@ -42,7 +44,6 @@ class MyGLCanvas(wxcanvas.GLCanvas):
 
     def __init__(self, parent, devices, monitors, names, start_up):
         """Initialise canvas properties and useful variables."""
-
         self.devices = devices
         self.monitors = monitors
         self.names = names
@@ -292,9 +293,10 @@ class MyGLCanvas(wxcanvas.GLCanvas):
 
 
 class PopUpFrame(wx.Frame):
-    """Class used for pop up window with an error messages"""
+    """Class used for pop up window with an error/success messages."""
 
     def __init__(self, parent, title, text):
+        """Initialise variables."""
         wx.Frame.__init__(self, parent=parent, title=title, size=(400, 300))
 
         sizer_1 = wx.BoxSizer(wx.VERTICAL)
@@ -316,14 +318,16 @@ class PopUpFrame(wx.Frame):
         self.Show()
 
     def on_close_button(self, event):
+        """Handle the event when the user clicks the close button."""
         self.Show(False)
         self.Destroy()
 
 
 class DefinitionErrors(wx.Frame):
-    """Class used for pop up window with definition file error messages"""
+    """Class used for pop up window with definition file error messages."""
 
     def __init__(self, parent, title, text, tabs, overview):
+        """Initialise variables."""
         wx.Frame.__init__(self, parent=parent, title=title, size=(850, 650))
 
         self.notebook_1 = wx.Notebook(self, wx.ID_ANY, style=wx.NB_RIGHT)
@@ -387,12 +391,14 @@ class DefinitionErrors(wx.Frame):
         self.Show()
 
     def on_close_button(self, event):
+        """Handle the event when the user clicks the close button."""
         self.Show(False)
         self.Destroy()
 
 
 class Gui(wx.Frame):
     """Configure the main window and all the widgets.
+
     This class provides a graphical user interface for the Logic Simulator and
     enables the user to change the circuit properties and run simulations.
     Parameters
@@ -410,7 +416,6 @@ class Gui(wx.Frame):
 
     def __init__(self, title, path, names, devices, network,
                  monitors, filename, start_up=False):
-
         """Initialise variables."""
         self.start_up = start_up
         self.pathname = path
@@ -621,7 +626,6 @@ class Gui(wx.Frame):
 
     def on_all(self, event):
         """Handle the event when the user checks all."""
-
         text = 'All ticked'
         for i in range(len(self.cbList.Items)):
             if not self.cbList.IsChecked(i):
@@ -631,8 +635,7 @@ class Gui(wx.Frame):
         self.canvas.render(text)
 
     def on_spin_ctrl_1(self, event):
-        """Handle the event when the user changes the
-        cycles spin control value."""
+        """Handle the event when the user changes the cycles value."""
         self.spin_ctrl_1_value = self.spin_ctrl_1.GetValue()
         text = "".join(["New spin control 1 value: ", str(
             self.spin_ctrl_1_value)])
@@ -647,8 +650,7 @@ class Gui(wx.Frame):
         self.canvas.render(text)
 
     def on_choice_2(self, event):
-        """Handle the event when the user changes the
-        switch state selection."""
+        """Handle the event when the user changes the switch selection."""
         self.choice_2_index = self.choice_2.GetCurrentSelection()
         self.choice_2_selection = self.choice_2.GetString(self.choice_2_index)
         text = "".join(["New choice 2 selection: ", str(
@@ -689,7 +691,6 @@ class Gui(wx.Frame):
 
     def on_load_button(self, event):
         """Handle the event when the user clicks load button."""
-
         with wx.FileDialog(
             self, "Open Definition file",
             wildcard="Definition files (*.txt)|*.txt",
@@ -788,6 +789,7 @@ class Gui(wx.Frame):
 
     def read_signal_name(self, signal_name):
         """Return the device and port IDs of the current signal name.
+
         Return None if either is invalid.
         """
         if signal_name.isalnum():
@@ -841,6 +843,7 @@ class Gui(wx.Frame):
 
     def run_network(self, cycles):
         """Run the network for the specified number of simulation cycles.
+
         Return True if successful.
         """
         for _ in range(cycles):
@@ -875,12 +878,12 @@ class Gui(wx.Frame):
                 self.cycles_completed += cycles
 
     def path_leaf(self, path):
+        """Get the filename from a path."""
         head, tail = ntpath.split(path)
         return tail or ntpath.basename(head)
 
     def startup_load(self):
         """Handle the loading of a definition file at startup."""
-
         with wx.FileDialog(
             self, "Open Definition file",
             wildcard="Definition files (*.txt)|*.txt",
