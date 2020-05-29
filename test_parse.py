@@ -107,27 +107,27 @@ def test_DEVICES_section():
     ("test_files/test_CON_section_5.txt", 5),
     # SEM - invalid port index
     ("test_files/test_CON_section_6.txt", 6),
-    # SEM - port already connected
+    # CON - port already connected
     ("test_files/test_CON_section_7.txt", 7),
     # SYN - invalid port name
     ("test_files/test_CON_section_8.txt", 8),
     # SYN - no . after device name
     ("test_files/test_CON_section_9.txt", 9),
-    # SYN - con listed under wrong device
+    # CON - con listed under wrong device
     ("test_files/test_CON_section_10.txt", 10),
     # SYN - no device after ->
     ("test_files/test_CON_section_11.txt", 11),
-    # SYN - no -> between cons
+    # CON - no -> between cons
     ("test_files/test_CON_section_12.txt", 12),
     # SYN - expected . after DTYPE
     ("test_files/test_CON_section_13.txt", 13),
     # SYN - invalid DTYPE output
     ("test_files/test_CON_section_14.txt", 14),
-    # SYN - connection must start with dev name
+    # CON - connection must start with dev name
     ("test_files/test_CON_section_15.txt", 15),
     # SYN - no } to end con subsection
     ("test_files/test_CON_section_16.txt", 16),
-    # SEM - connection for device already assigned
+    # CON - connection for device already assigned
     ("test_files/test_CON_section_17.txt", 17)
 ])
 def test_CON_errors(inputs, trial):
@@ -135,8 +135,9 @@ def test_CON_errors(inputs, trial):
     # Testing individual CON calls for errors
     parser = new_parser(inputs)
 
-    syntax = [2, 3, 5, 8, 9, 10, 11, 12, 13, 14, 15]
-    semantic = [1, 4, 6, 7]
+    connections = [7, 10, 12, 15]
+    syntax = [2, 3, 5, 8, 9, 11, 13, 14]
+    semantic = [1, 4, 6]
 
     # Parse devices section first!
     parser.parse_section('DEVICES')
@@ -149,12 +150,16 @@ def test_CON_errors(inputs, trial):
         with pytest.raises(SemanticError):
             parser.parse_CONNECTIONS_section()
 
+    elif trial in connections:
+        with pytest.raises(ConnectionError):
+            parser.parse_CONNECTIONS_section()
+
     elif trial == 16:
         with pytest.raises(SyntaxError):
             parser.parse_section('CONNECTIONS')
 
     elif trial == 17:
-        with pytest.raises(SemanticError):
+        with pytest.raises(ConnectionError):
             parser.parse_section('CONNECTIONS')
 
 
