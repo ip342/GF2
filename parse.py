@@ -13,7 +13,6 @@ from errors import *
 
 
 class Parser:
-
     """Parse the definition file and build the logic network.
 
     The parser deals with error handling. It analyses the syntactic and
@@ -37,7 +36,6 @@ class Parser:
 
     def __init__(self, names, devices, network, monitors, scanner):
         """Initialise constants."""
-
         self.names = names
         self.devices = devices
         self.network = network
@@ -54,13 +52,12 @@ class Parser:
         self.does_not_exist_list = []
 
     def parse_network(self):
-        """Parse the circuit definition file. Calls sections DEVICES,
-        CONNECTIONS and MONITORS individually.
+        """Parse the circuit definition file.
 
-        Returns True if definition file parses successfully without
-        errors, and False otherwise."""
-
-        # List of all expected sections
+        Calls sections DEVICES, CONNECTIONS and MONITORS
+        individually. Returns True if definition file parses successfully
+        without errors, and False otherwise.
+        """
         sections = ['DEVICES', 'CONNECTIONS', 'MONITORS']
         sections_found = []
 
@@ -114,9 +111,12 @@ class Parser:
         return True
 
     def parse_section(self, header_ID):
-        """Parse a section (enclosed by square brackets) of the
-        circuit definition file, and build corresponding part
-        of the circuit."""
+        """Parse a section.
+
+        Parse a section of the circuit definition file enclosed by
+        square brackets, and build corresponding part of the
+        circuit.
+        """
         # FIND symbol after HEADER that isn't a space
         self.symbol = self.scanner.get_symbol(["]", ""])
 
@@ -802,8 +802,11 @@ class Parser:
         return True
 
     def list_of_connected_devices(self):
-        """Generates a list of devices that need to have
-        connections defined in the CONNECTIONS section."""
+        """Generate a list of devices.
+
+        Devices need to have connections defined in the CONNECTIONS
+        section.
+        """
         device_names_to_check = []
         # CHECK all DEVICES have CONNECTIONS defined
 
@@ -821,7 +824,7 @@ class Parser:
         return device_names_to_check
 
     def list_of_connected_devices_objects(self):
-        """Generates a list of made device objects."""
+        """Generate a list of made device objects."""
         device_object_list = []
 
         device_ids = self.names.lookup(self.all_devices_list)

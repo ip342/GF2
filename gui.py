@@ -1,4 +1,5 @@
 """Implement the graphical user interface for the Logic Simulator.
+
 Used in the Logic Simulator project to enable the user to run the simulation
 or adjust the network properties.
 Classes:
@@ -22,6 +23,7 @@ from parse import Parser
 
 class MyGLCanvas(wxcanvas.GLCanvas):
     """Handle all drawing operations.
+
     This class contains functions for drawing onto the canvas. It
     also contains handlers for events relating to the canvas.
     Parameters
@@ -42,11 +44,12 @@ class MyGLCanvas(wxcanvas.GLCanvas):
 
     def __init__(self, parent, devices, monitors, names, start_up):
         """Initialise canvas properties and useful variables."""
-
         self.devices = devices
         self.monitors = monitors
         self.names = names
         self.start_up = start_up
+        self.last_vertical = 0
+        self.last_horizontal = 0
 
         super().__init__(parent, -1,
                          attribList=[wxcanvas.WX_GL_RGBA,
@@ -69,6 +72,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         self.Bind(wx.EVT_PAINT, self.on_paint)
         self.Bind(wx.EVT_SIZE, self.on_size)
         self.Bind(wx.EVT_MOUSE_EVENTS, self.on_mouse)
+        self.Bind(wx.EVT_KEY_DOWN, self.on_keydown)
 
     def init_gl(self):
         """Configure and initialise the OpenGL context."""
@@ -132,15 +136,36 @@ class MyGLCanvas(wxcanvas.GLCanvas):
                 GL.glColor3f(0.870, 0.411, 0.129)
                 GL.glLineWidth(1)
                 GL.glBegin(GL.GL_LINES)
-                for i in range(len(signal_list)):
-                    GL.glVertex2f(0, (50 * j))
-                    GL.glVertex2f(5000, (50 * j))
+                # for i in range(len(signal_list)):
+                GL.glVertex2f(0, (50 * j))
+                GL.glVertex2f(10000, (50 * j))
                 GL.glEnd()
 
                 GL.glBegin(GL.GL_LINES)
+                # for i in range(len(signal_list)):
+                GL.glVertex2f(0, (50 * j) - 50)
+                GL.glVertex2f(self.last_vertical+10000, (50 * j) - 50)
+                self.last_horizontal = (50 * j) - 50
+                GL.glEnd()
+
+                # vertical lines
                 for i in range(len(signal_list)):
-                    GL.glVertex2f(0, (50 * j) - 50)
-                    GL.glVertex2f(5000, (50 * j) - 50)
+                    if i % 5 == 0 and j == 2:
+                        if i == 0 or i == 5:
+                            x = (i * 20) + (longest_name_len * 20) - 2.5
+                        else:
+                            x = (i * 20) + (longest_name_len * 20) - 5
+                        self.render_text(str(i), x, (50 * j) - 60, 24)
+
+                GL.glBegin(GL.GL_LINES)
+                GL.glColor3f(0.870, 0.411, 0.129)
+                for i in range(len(signal_list)):
+                    if i % 5 == 0:
+                        x = (i * 20) + (longest_name_len * 20)
+                        GL.glVertex2f(x, (50 * j))
+                        GL.glVertex2f(x, (50 * j) - 55)
+                        self.last_vertical = x
+
                 GL.glEnd()
 
                 # signal trace
@@ -166,8 +191,11 @@ class MyGLCanvas(wxcanvas.GLCanvas):
                 #     GL.glVertex2f(x_next, base_y)
                 #     GL.glVertex2f(x, base_y)
 
-                GL.glBegin(GL.GL_LINE_STRIP)
+                GL.glBegin(GL.GL_LINES)
+                first_run = True
+                blank = False
                 for i in range(len(signal_list)):
+                    GL.glColor3f(0.086, 0.356, 0.458)
                     x = (i * 20) + (longest_name_len * 20)
                     x_next = (i * 20) + (longest_name_len * 20) + 20
                     base_y = (50*j) - 11
@@ -180,9 +208,22 @@ class MyGLCanvas(wxcanvas.GLCanvas):
                     elif signal_list[i] == self.devices.FALLING:
                         y = base_y - 5
                     elif signal_list[i] == self.devices.BLANK:
-                        y = base_y
-                    GL.glVertex2f(x, y)
-                    GL.glVertex2f(x_next, y)
+                        blank = True
+                    if first_run is False:
+                        GL.glVertex2f(x, y)
+                        GL.glVertex2f(x, y)
+                        GL.glVertex2f(x_next, y)
+                        GL.glColor3f(0.086, 0.356, 0.458)
+                        GL.glVertex2f(x_next, y)
+                    elif blank is True:
+                        blank = False
+                        pass
+                    else:
+                        GL.glVertex2f(x, y)
+                        GL.glVertex2f(x_next, y)
+                        GL.glColor3f(0.086, 0.356, 0.458)
+                        GL.glVertex2f(x_next, y)
+                        first_run = False
 
                 GL.glEnd()
 
@@ -234,10 +275,9 @@ class MyGLCanvas(wxcanvas.GLCanvas):
                             ", ", str(event.GetY()), ". Pan is now: ",
                             str(self.pan_x), ", ", str(self.pan_y)])
 
-        if text:
-            self.render(text)
-        else:
-            self.Refresh()  # triggers the paint event
+        self.Refresh()  # triggers the paint event
+
+        self.SetCurrent(self.context)
 
     def render_text(self, text, x_pos, y_pos, font=12):
         """Handle text drawing operations."""
@@ -255,11 +295,55 @@ class MyGLCanvas(wxcanvas.GLCanvas):
             else:
                 GLUT.glutBitmapCharacter(font, ord(character))
 
+    def on_keydown(self, event):
+        """Handle keydown events."""
+        text = ""
+        keycode = event.GetKeyCode()
+        size = self.GetClientSize()
+
+        if keycode == wx.WXK_RIGHT:
+            if self.pan_x <= - self.last_vertical + size.width - 100:
+                pass
+            else:
+                self.pan_x -= 50
+            self.init = False
+            text = "Right Arrow Key"
+
+        if keycode == wx.WXK_LEFT:
+
+            if self.pan_x >= 0:
+                pass
+            else:
+                self.pan_x += 50
+            self.init = False
+            text = "Left Arrow Key"
+
+        if keycode == wx.WXK_UP:
+
+            if self.pan_y >= 0:
+                pass
+            else:
+                self.pan_y += 50
+            self.init = False
+            text = "Up Arrow Key"
+
+        if keycode == wx.WXK_DOWN:
+
+            if self.pan_y <= - self.last_horizontal + size.height - 50:
+                pass
+            else:
+                self.pan_y -= 50
+            self.init = False
+            text = "Down Arrow Key"
+
+        self.Refresh()  # triggers the paint event
+
 
 class PopUpFrame(wx.Frame):
-    """Class used for pop up window with an error messages"""
+    """Class used for pop up window with an error/success messages."""
 
     def __init__(self, parent, title, text):
+        """Initialise variables."""
         wx.Frame.__init__(self, parent=parent, title=title, size=(400, 300))
 
         sizer_1 = wx.BoxSizer(wx.VERTICAL)
@@ -281,14 +365,16 @@ class PopUpFrame(wx.Frame):
         self.Show()
 
     def on_close_button(self, event):
+        """Handle the event when the user clicks the close button."""
         self.Show(False)
         self.Destroy()
 
 
 class DefinitionErrors(wx.Frame):
-    """Class used for pop up window with definition file error messages"""
+    """Class used for pop up window with definition file error messages."""
 
     def __init__(self, parent, title, text, tabs, overview):
+        """Initialise variables."""
         wx.Frame.__init__(self, parent=parent, title=title, size=(850, 650))
 
         self.notebook_1 = wx.Notebook(self, wx.ID_ANY, style=wx.NB_RIGHT)
@@ -352,12 +438,14 @@ class DefinitionErrors(wx.Frame):
         self.Show()
 
     def on_close_button(self, event):
+        """Handle the event when the user clicks the close button."""
         self.Show(False)
         self.Destroy()
 
 
 class Gui(wx.Frame):
     """Configure the main window and all the widgets.
+
     This class provides a graphical user interface for the Logic Simulator and
     enables the user to change the circuit properties and run simulations.
     Parameters
@@ -375,7 +463,6 @@ class Gui(wx.Frame):
 
     def __init__(self, title, path, names, devices, network,
                  monitors, filename, start_up=False):
-
         """Initialise variables."""
         self.start_up = start_up
         self.pathname = path
@@ -586,16 +673,16 @@ class Gui(wx.Frame):
 
     def on_all(self, event):
         """Handle the event when the user checks all."""
-
+        text = 'All ticked'
         for i in range(len(self.cbList.Items)):
             if not self.cbList.IsChecked(i):
                 self.cbList.Check(i, True)
                 self.checked_name = self.cbList.GetString(i)
                 self.monitor_command()
+        self.canvas.render(text)
 
     def on_spin_ctrl_1(self, event):
-        """Handle the event when the user changes the
-        cycles spin control value."""
+        """Handle the event when the user changes the cycles value."""
         self.spin_ctrl_1_value = self.spin_ctrl_1.GetValue()
         text = "".join(["New spin control 1 value: ", str(
             self.spin_ctrl_1_value)])
@@ -610,8 +697,7 @@ class Gui(wx.Frame):
         self.canvas.render(text)
 
     def on_choice_2(self, event):
-        """Handle the event when the user changes the
-        switch state selection."""
+        """Handle the event when the user changes the switch selection."""
         self.choice_2_index = self.choice_2.GetCurrentSelection()
         self.choice_2_selection = self.choice_2.GetString(self.choice_2_index)
         text = "".join(["New choice 2 selection: ", str(
@@ -652,7 +738,6 @@ class Gui(wx.Frame):
 
     def on_load_button(self, event):
         """Handle the event when the user clicks load button."""
-
         with wx.FileDialog(
             self, "Open Definition file",
             wildcard="Definition files (*.txt)|*.txt",
@@ -751,6 +836,7 @@ class Gui(wx.Frame):
 
     def read_signal_name(self, signal_name):
         """Return the device and port IDs of the current signal name.
+
         Return None if either is invalid.
         """
         if signal_name.isalnum():
@@ -769,11 +855,14 @@ class Gui(wx.Frame):
         switch_id = self.read_name(self.choice_1_selection)
         if switch_id is not None:
             switch_state = self.choice_2_selection
-            if switch_state is not None:
-                if self.devices.set_switch(switch_id, switch_state):
-                    text = "Switch {} set to {}.".format(
-                        self.choice_1_selection, switch_state)
-                    frame = PopUpFrame(self, title="Success!", text=text)
+            if switch_state == "1":
+                print("High")
+                self.devices.set_switch(switch_id, self.devices.HIGH)
+            else:
+                self.devices.set_switch(switch_id, self.devices.LOW)
+            text = "Switch {} set to {}.".format(
+                   self.choice_1_selection, switch_state)
+            frame = PopUpFrame(self, title="Success!", text=text)
 
     def monitor_command(self):
         """Set the specified monitor."""
@@ -801,6 +890,7 @@ class Gui(wx.Frame):
 
     def run_network(self, cycles):
         """Run the network for the specified number of simulation cycles.
+
         Return True if successful.
         """
         for _ in range(cycles):
@@ -835,12 +925,12 @@ class Gui(wx.Frame):
                 self.cycles_completed += cycles
 
     def path_leaf(self, path):
+        """Get the filename from a path."""
         head, tail = ntpath.split(path)
         return tail or ntpath.basename(head)
 
     def startup_load(self):
         """Handle the loading of a definition file at startup."""
-
         with wx.FileDialog(
             self, "Open Definition file",
             wildcard="Definition files (*.txt)|*.txt",

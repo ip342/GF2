@@ -1,10 +1,11 @@
 DEVICES [
-    A, H = XOR;
-    B = OR 2;
+    A = OR 2;
+    B = AND 2;
     C, G = NAND 2;
     D = AND 3;
     E = NOR 2;
     F = DTYPE;
+    H = XOR;
     S1, S2, S3, S4 = SWITCH 0;
     CLK = CLOCK 1;
 ]
@@ -48,5 +49,6 @@ CONNECTIONS [
 ]
 
 MONITORS [
-   G, H;
+    // Monitor outputs G and H
+    G, H;
 ]
