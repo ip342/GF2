@@ -48,6 +48,8 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         self.monitors = monitors
         self.names = names
         self.start_up = start_up
+        self.last_vertical = 0
+        self.last_horizontal = 0
 
         super().__init__(parent, -1,
                          attribList=[wxcanvas.WX_GL_RGBA,
@@ -70,6 +72,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         self.Bind(wx.EVT_PAINT, self.on_paint)
         self.Bind(wx.EVT_SIZE, self.on_size)
         self.Bind(wx.EVT_MOUSE_EVENTS, self.on_mouse)
+        self.Bind(wx.EVT_KEY_DOWN, self.on_keydown)
 
     def init_gl(self):
         """Configure and initialise the OpenGL context."""
@@ -135,16 +138,17 @@ class MyGLCanvas(wxcanvas.GLCanvas):
                 GL.glBegin(GL.GL_LINES)
                 # for i in range(len(signal_list)):
                 GL.glVertex2f(0, (50 * j))
-                GL.glVertex2f(5000, (50 * j))
+                GL.glVertex2f(10000, (50 * j))
                 GL.glEnd()
 
-                # vertical lines
                 GL.glBegin(GL.GL_LINES)
                 # for i in range(len(signal_list)):
                 GL.glVertex2f(0, (50 * j) - 50)
-                GL.glVertex2f(5000, (50 * j) - 50)
+                GL.glVertex2f(self.last_vertical+10000, (50 * j) - 50)
+                self.last_horizontal = (50 * j) - 50
                 GL.glEnd()
 
+                # vertical lines
                 for i in range(len(signal_list)):
                     if i % 5 == 0 and j == 2:
                         if i == 0 or i == 5:
@@ -160,6 +164,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
                         x = (i * 20) + (longest_name_len * 20)
                         GL.glVertex2f(x, (50 * j))
                         GL.glVertex2f(x, (50 * j) - 55)
+                        self.last_vertical = x
 
                 GL.glEnd()
 
@@ -270,10 +275,9 @@ class MyGLCanvas(wxcanvas.GLCanvas):
                             ", ", str(event.GetY()), ". Pan is now: ",
                             str(self.pan_x), ", ", str(self.pan_y)])
 
-        if text:
-            self.render(text)
-        else:
-            self.Refresh()  # triggers the paint event
+        self.Refresh()  # triggers the paint event
+
+        self.SetCurrent(self.context)
 
     def render_text(self, text, x_pos, y_pos, font=12):
         """Handle text drawing operations."""
@@ -290,6 +294,49 @@ class MyGLCanvas(wxcanvas.GLCanvas):
                 GL.glRasterPos2f(x_pos, y_pos)
             else:
                 GLUT.glutBitmapCharacter(font, ord(character))
+
+    def on_keydown(self, event):
+        """Handle keydown events."""
+        text = ""
+        keycode = event.GetKeyCode()
+        size = self.GetClientSize()
+
+        if keycode == wx.WXK_RIGHT:
+            if self.pan_x <= - self.last_vertical + size.width - 100:
+                pass
+            else:
+                self.pan_x -= 50
+            self.init = False
+            text = "Right Arrow Key"
+
+        if keycode == wx.WXK_LEFT:
+
+            if self.pan_x >= 0:
+                pass
+            else:
+                self.pan_x += 50
+            self.init = False
+            text = "Left Arrow Key"
+
+        if keycode == wx.WXK_UP:
+
+            if self.pan_y >= 0:
+                pass
+            else:
+                self.pan_y += 50
+            self.init = False
+            text = "Up Arrow Key"
+
+        if keycode == wx.WXK_DOWN:
+
+            if self.pan_y <= - self.last_horizontal + size.height - 50:
+                pass
+            else:
+                self.pan_y -= 50
+            self.init = False
+            text = "Down Arrow Key"
+
+        self.Refresh()  # triggers the paint event
 
 
 class PopUpFrame(wx.Frame):
