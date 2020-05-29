@@ -270,6 +270,10 @@ class Parser:
                 # Make it 1 for now
                 self.devices.make_clock(device_id, 1)
 
+            elif self.symbol.id == self.devices.SIGGEN:
+                # Make it 1 for now
+                self.devices.make_siggen(device_id, "1")
+
             elif self.symbol.id == self.devices.SWITCH:
                 # Same as above, set switch off for now
                 self.devices.make_switch(device_id, 0)
@@ -325,6 +329,13 @@ class Parser:
                         # Set clock cycle..
                         clock_device = self.devices.get_device(device_id)
                         clock_device.clock_half_period = n
+
+                    elif self.devices.get_device(device_id).device_kind \
+                            == self.devices.SIGGEN:
+                        # Set siggen waveform
+                        siggen_device = self.devices.get_device(device_id)
+                        # Convert to string to allow for list comprehension
+                        siggen_device.waveform = str(n)
 
                     elif self.devices.get_device(device_id) is None:
                         self.scanner.display_error(

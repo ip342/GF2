@@ -54,6 +54,9 @@ class Network:
     execute_clock(self, device_id): Simulates a clock and updates its output
                                     signal value.
 
+    execute_siggen(self, device_id): Simulates a siggen and updates its output
+                                     signal value.
+
     update_clocks(self): If it is time to do so, sets clock signals to RISING
                          or FALLING.
 
@@ -330,6 +333,22 @@ class Network:
         else:
             return False
 
+    def execute_siggen(self, device_id):
+        """Simulate a siggen and update its output value
+
+        Return True if successful"""
+        device = self.devices.get_device(device_id)
+
+        # Update to next value in waveform, periodic
+        device.clock_counter = (device.clock_counter + 1) \
+            % len(device.waveform)
+
+        output_signal = int(device.waveform[device.clock_counter])
+        # Output name None
+        device.outputs[None] = output_signal
+
+        return True
+
     def update_clocks(self):
         """If it is time to do so, set clock signals to RISING or FALLING."""
         clock_devices = self.devices.find_devices(self.devices.CLOCK)
@@ -353,6 +372,7 @@ class Network:
         clock_devices = self.devices.find_devices(self.devices.CLOCK)
         switch_devices = self.devices.find_devices(self.devices.SWITCH)
         d_type_devices = self.devices.find_devices(self.devices.D_TYPE)
+        siggen_devices = self.devices.find_devices(self.devices.SIGGEN)
         and_devices = self.devices.find_devices(self.devices.AND)
         or_devices = self.devices.find_devices(self.devices.OR)
         nand_devices = self.devices.find_devices(self.devices.NAND)
@@ -381,6 +401,9 @@ class Network:
                     return False
             for device_id in clock_devices:  # complete clock executions
                 if not self.execute_clock(device_id):
+                    return False
+            for device_id in siggen_devices:  # complete siggen executions
+                if not self.execute_siggen(device_id):
                     return False
             for device_id in and_devices:  # execute AND gate devices
                 if not self.execute_gate(device_id, self.devices.HIGH,
