@@ -817,7 +817,8 @@ class Parser:
                 check_device_kind = \
                     self.devices.get_device(check_id).device_kind
                 if check_device_kind != self.devices.SWITCH and \
-                        check_device_kind != self.devices.CLOCK:
+                        check_device_kind != self.devices.CLOCK and\
+                            check_device_kind != self.devices.SIGGEN:
                     check_name = self.names.get_name_string(check_id)
                     device_names_to_check.append(check_name)
 
