@@ -333,6 +333,8 @@ class Parser:
                     elif self.devices.get_device(device_id).device_kind \
                             == self.devices.SIGGEN:
 
+                        # LEADING ZEROES ARE BROKEN (PYTHON)
+
                         # Check if specified waveform is binary
                         for i in str(n):
                             if i in '10':
