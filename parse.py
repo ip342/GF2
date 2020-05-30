@@ -299,6 +299,10 @@ class Parser:
                 # Make it 1 for now
                 self.devices.make_siggen(device_id, "1")
 
+            elif self.symbol.id == self.devices.RC:
+                # Make it 1 for now
+                self.devices.make_rc(device_id, 1)
+
             elif self.symbol.id == self.devices.SWITCH:
                 # Same as above, set switch off for now
                 self.devices.make_switch(device_id, 0)
@@ -354,6 +358,12 @@ class Parser:
                         # Set clock cycle..
                         clock_device = self.devices.get_device(device_id)
                         clock_device.clock_half_period = n
+
+                    elif self.devices.get_device(device_id).device_kind \
+                            == self.devices.RC:
+                        # Set RC duration before low
+                        rc_device = self.devices.get_device(device_id)
+                        rc_device.duration = n
 
                     elif self.devices.get_device(device_id).device_kind \
                             == self.devices.SIGGEN:
@@ -860,7 +870,8 @@ class Parser:
                     self.devices.get_device(check_id).device_kind
                 if check_device_kind != self.devices.SWITCH and \
                         check_device_kind != self.devices.CLOCK and\
-                        check_device_kind != self.devices.SIGGEN:
+                        check_device_kind != self.devices.SIGGEN and\
+                        check_device_kind != self.devices.RC:
                     check_name = self.names.get_name_string(check_id)
                     device_names_to_check.append(check_name)
 

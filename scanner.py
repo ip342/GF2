@@ -227,7 +227,7 @@ class Scanner:
 
     def advance(self):
         """ Advance to next character """
-  
+
         # first check if on new line
 
         if self.current_character == '\n':
@@ -276,7 +276,6 @@ class Scanner:
         in errors.py to print the error. Error recovery is handled by
         advancing until specified stopping symbols. """
 
-
         self.error_count += 1
 
         # Only raise the error for filenames starting with 'test'
@@ -284,9 +283,9 @@ class Scanner:
             raise error_type
 
         self.errors = Error(error_type, error_message, self.current_line,
-                      self.file_as_list[self.current_line],
-                      self.current_character_number)
-  
+                            self.file_as_list[self.current_line],
+                            self.current_character_number)
+
         self.error_list.append(self.errors.error_message)
 
         # Comment error special case

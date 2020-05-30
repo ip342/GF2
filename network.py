@@ -349,6 +349,20 @@ class Network:
 
         return True
 
+    def execute_rc(self, device_id):
+        """Simulate RC and update its output value
+
+        Return True if successful"""
+        device = self.devices.get_device(device_id)
+
+        if device.clock_counter == device.duration:
+            device.outputs[None] = 0
+
+        else:
+            device.clock_counter += 1
+
+        return True
+
     def update_clocks(self):
         """If it is time to do so, set clock signals to RISING or FALLING."""
         clock_devices = self.devices.find_devices(self.devices.CLOCK)
@@ -373,6 +387,7 @@ class Network:
         switch_devices = self.devices.find_devices(self.devices.SWITCH)
         d_type_devices = self.devices.find_devices(self.devices.D_TYPE)
         siggen_devices = self.devices.find_devices(self.devices.SIGGEN)
+        rc_devices = self.devices.find_devices(self.devices.RC)
         and_devices = self.devices.find_devices(self.devices.AND)
         or_devices = self.devices.find_devices(self.devices.OR)
         nand_devices = self.devices.find_devices(self.devices.NAND)
@@ -404,6 +419,9 @@ class Network:
                     return False
             for device_id in siggen_devices:  # complete siggen executions
                 if not self.execute_siggen(device_id):
+                    return False
+            for device_id in rc_devices:
+                if not self.execute_rc(device_id):
                     return False
             for device_id in and_devices:  # execute AND gate devices
                 if not self.execute_gate(device_id, self.devices.HIGH,

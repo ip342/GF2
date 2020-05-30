@@ -42,6 +42,7 @@ class Device:
         self.switch_state = None
         self.dtype_memory = None
         self.waveform = None
+        self.duration = None
 
 
 class Devices:
@@ -109,7 +110,7 @@ class Devices:
         self.devices_list = []
 
         gate_strings = ["AND", "OR", "NAND", "NOR", "XOR"]
-        device_strings = ["CLOCK", "SWITCH", "DTYPE", "SIGGEN"]
+        device_strings = ["CLOCK", "SWITCH", "DTYPE", "RC", "SIGGEN"]
         dtype_inputs = ["CLK", "SET", "CLEAR", "DATA"]
         dtype_outputs = ["Q", "QBAR"]
 
@@ -122,7 +123,7 @@ class Devices:
         self.gate_types = [self.AND, self.OR, self.NAND, self.NOR,
                            self.XOR] = self.names.lookup(gate_strings)
         self.device_types = [self.CLOCK, self.SWITCH,
-                             self.D_TYPE,
+                             self.D_TYPE, self.RC,
                              self.SIGGEN] = self.names.lookup(device_strings)
         self.dtype_input_ids = [self.CLK_ID, self.SET_ID, self.CLEAR_ID,
                                 self.DATA_ID] = self.names.lookup(dtype_inputs)
@@ -264,6 +265,20 @@ class Devices:
         for output_id in self.dtype_output_ids:
             self.add_output(device_id, output_id)
         self.cold_startup()  # D-type initialised to a random state
+
+    def make_rc(self, device_id, duration):
+        """Make a RC device that: On power-up, output starts high but
+        falls low after n simulation cycles, where n is specified in
+        the definition file."""
+
+        self.add_device(device_id, self.RC)
+        # Output high
+        self.add_output(device_id, None, 1)
+
+        device = self.get_device(device_id)
+        device.duration = duration
+        # Make use of this to count cycle
+        device.clock_counter = 0
 
     def make_siggen(self, device_id, waveform):
         """Make a siggen device.This is similar to a clock, except it
