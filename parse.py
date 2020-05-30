@@ -80,7 +80,7 @@ class Parser:
                     else:
                         self.DEVICES_found = True
                         self.parse_section('DEVICES')
-                        sections_found.append('DEVICES')
+                    sections_found.append('DEVICES')
 
                 elif self.symbol.id == self.scanner.CONNECTIONS_ID:
                     if self.CONNECTIONS_found:
@@ -90,12 +90,12 @@ class Parser:
                     if self.DEVICES_found:
                         self.CONNECTIONS_found = True
                         self.parse_section('CONNECTIONS')
-                        sections_found.append('CONNECTIONS')
 
                     else:
                         self.scanner.display_error(
                             NetworkError, "Cannot define CONNECTIONS "
                             "before DEVICES.")
+                    sections_found.append('CONNECTIONS')
 
                 elif self.symbol.id == self.scanner.MONITORS_ID:
                     if self.MONITORS_found:
@@ -105,12 +105,12 @@ class Parser:
                     if self.CONNECTIONS_found:
                         self.MONITORS_found = True
                         self.parse_section('MONITORS')
-                        sections_found.append('MONITORS')
 
                     else:
                         self.scanner.display_error(
                             NetworkError, "Cannot define MONITORS "
                             "before CONNECTIONS.")
+                    sections_found.append('MONITORS')
 
             # Or it's the end of the file
             elif self.symbol.type == self.scanner.EOF:

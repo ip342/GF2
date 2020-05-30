@@ -34,6 +34,26 @@ def test_find_header():
 
 
 @pytest.mark.parametrize("inputs, trial", [
+    # DEVICES moved to the end
+    ("test_files/test_HEADERS_1.txt", 1),
+    # DEVICES defined again after monitors
+    ("test_files/test_HEADERS_2.txt", 2),
+    # Duplicate MONITORS
+    ("test_files/test_HEADERS_3.txt", 3),
+    # CONNECTIONS missing
+    ("test_files/test_HEADERS_4.txt", 4),
+    # Duplicate all sections
+    ("test_files/test_HEADERS_5.txt", 5),
+])
+def test_header_orders(inputs, trial):
+    """Checks for HEADER ordering and HEADER duplication errors"""
+    parser = new_parser(inputs)
+
+    with pytest.raises(NetworkError):
+        parser.parse_network()
+
+
+@pytest.mark.parametrize("inputs, trial", [
     # SYN - "!"
     ("test_files/test_DEVICES_section_1.txt", 1),
     # SEM - defined device twice
