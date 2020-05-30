@@ -57,6 +57,9 @@ class Network:
     execute_siggen(self, device_id): Simulates a siggen and updates its output
                                      signal value.
 
+    execute_rc(self, device_id): Simulates an RC device and updates its output
+                                 signal value to low after specified duration.
+
     update_clocks(self): If it is time to do so, sets clock signals to RISING
                          or FALLING.
 

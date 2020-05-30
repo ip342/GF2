@@ -96,6 +96,9 @@ class Devices:
     make_siggen(self, device_id, waveform): Makes a siggen device with
                                             specified waveform
 
+    make_rc(self, device_id, duration): Makes an RC device with
+                                        specified duration before turning LOW
+
     cold_startup(self): Simulates cold start-up of D-types and clocks.
 
     make_device(self, device_id, device_kind, device_property=None): Creates
