@@ -325,7 +325,7 @@ class Devices:
                 self.add_output(device.device_id, None, siggen_signal)
 
     def make_device(self, device_id, device_kind, device_property=None):
-        """Create the specified device.
+        """Create the specified device. Note doesn't support SIGGEN and RC.
 
         Return self.NO_ERROR if successful. Return corresponding error if not.
         """
