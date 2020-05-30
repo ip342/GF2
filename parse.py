@@ -73,19 +73,44 @@ class Parser:
             if self.symbol.type == self.scanner.HEADER:
                 # parse if HEADER is DEVICES, CONNECTIONS or MONITORS
                 if self.symbol.id == self.scanner.DEVICES_ID:
-                    self.DEVICES_found = True
-                    self.parse_section('DEVICES')
-                    sections_found.append('DEVICES')
+                    if self.DEVICES_found:
+                        self.scanner.display_error(
+                            NetworkError, "DEVICES already defined.")
+
+                    else:
+                        self.DEVICES_found = True
+                        self.parse_section('DEVICES')
+                        sections_found.append('DEVICES')
 
                 elif self.symbol.id == self.scanner.CONNECTIONS_ID:
-                    self.CONNECTIONS_found = True
-                    self.parse_section('CONNECTIONS')
-                    sections_found.append('CONNECTIONS')
+                    if self.CONNECTIONS_found:
+                        self.scanner.display_error(
+                            NetworkError, "CONNECTIONS already defined.")
+
+                    if self.DEVICES_found:
+                        self.CONNECTIONS_found = True
+                        self.parse_section('CONNECTIONS')
+                        sections_found.append('CONNECTIONS')
+
+                    else:
+                        self.scanner.display_error(
+                            NetworkError, "Cannot define CONNECTIONS "
+                            "before DEVICES.")
 
                 elif self.symbol.id == self.scanner.MONITORS_ID:
-                    self.MONITORS_found = True
-                    self.parse_section('MONITORS')
-                    sections_found.append('MONITORS')
+                    if self.MONITORS_found:
+                        self.scanner.display_error(
+                            NetworkError, "MONITORS already defined.")
+                        
+                    if self.CONNECTIONS_found:
+                        self.MONITORS_found = True
+                        self.parse_section('MONITORS')
+                        sections_found.append('MONITORS')
+                    
+                    else:
+                        self.scanner.display_error(
+                            NetworkError, "Cannot define MONITORS "
+                            "before CONNECTIONS.")
 
             # Or it's the end of the file
             elif self.symbol.type == self.scanner.EOF:
