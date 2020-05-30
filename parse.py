@@ -101,12 +101,12 @@ class Parser:
                     if self.MONITORS_found:
                         self.scanner.display_error(
                             NetworkError, "MONITORS already defined.")
-                        
+
                     if self.CONNECTIONS_found:
                         self.MONITORS_found = True
                         self.parse_section('MONITORS')
                         sections_found.append('MONITORS')
-                    
+
                     else:
                         self.scanner.display_error(
                             NetworkError, "Cannot define MONITORS "
