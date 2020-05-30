@@ -856,7 +856,6 @@ class Gui(wx.Frame):
         if switch_id is not None:
             switch_state = self.choice_2_selection
             if switch_state == "1":
-                print("High")
                 self.devices.set_switch(switch_id, self.devices.HIGH)
             else:
                 self.devices.set_switch(switch_id, self.devices.LOW)
