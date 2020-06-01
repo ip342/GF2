@@ -141,13 +141,13 @@ class MyGLCanvas(wxcanvas.GLCanvas):
                 GL.glBegin(GL.GL_LINES)
                 # for i in range(len(signal_list)):
                 GL.glVertex2f(0, (50 * j))
-                GL.glVertex2f(10000, (50 * j))
+                GL.glVertex2f(self.cycles * 20 + 1000, (50 * j))
                 GL.glEnd()
 
                 GL.glBegin(GL.GL_LINES)
                 # for i in range(len(signal_list)):
                 GL.glVertex2f(0, (50 * j) - 50)
-                GL.glVertex2f(self.last_vertical+10000, (50 * j) - 50)
+                GL.glVertex2f(self.cycles * 20 + 1000, (50 * j) - 50)
                 self.last_horizontal = (50 * j) - 50
                 GL.glEnd()
 
@@ -504,6 +504,9 @@ class Gui(wx.Frame):
         self.device_list = []
         self.monitor_names = []
         self.load_new = False
+        self.continuous_speed = 450
+        self.slider_position = 450
+        self.continuous_running = False
 
         if self.start_up is False:
             self.device_id_list = self.devices.find_devices()
@@ -609,6 +612,7 @@ class Gui(wx.Frame):
         self.reset_button = wx.Button(self, wx.ID_ANY, "Reset")
         self.continuous_button = wx.Button(self, wx.ID_ANY, "Continuous")
         self.stop_button = wx.Button(self, wx.ID_ANY, "Stop")
+        self.speed_slider = wx.Slider(self, wx.ID_ANY, 500, minValue=1, maxValue=900)
 
         # Configure the widget properties
         self.SetBackgroundColour(wx.Colour(40, 40, 40))
@@ -630,6 +634,7 @@ class Gui(wx.Frame):
         self.reset_button.Bind(wx.EVT_BUTTON, self.on_reset_button)
         self.continuous_button.Bind(wx.EVT_BUTTON, self.on_continuous_button)
         self.stop_button.Bind(wx.EVT_BUTTON, self.on_stop_button)
+        self.speed_slider.Bind(wx.EVT_SCROLL, self.on_speed_slider)
 
         self.timer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.update, self.timer)
@@ -642,14 +647,16 @@ class Gui(wx.Frame):
         sizer_4 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_5 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_6 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_7 = wx.BoxSizer(wx.HORIZONTAL)
         top_right_sizer = wx.BoxSizer(wx.VERTICAL)
         bottom_right_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         top_right_sizer.Add(sizer_2, 1, wx.EXPAND | wx.ALL, 5)
         top_right_sizer.Add(sizer_3, 1, wx.EXPAND | wx.ALL, 0)
-        top_right_sizer.Add(sizer_4, 1, wx.EXPAND | wx.BOTTOM, 10)
-        top_right_sizer.Add(sizer_5, 1, wx.EXPAND | wx.TOP, 10)
-        top_right_sizer.Add(sizer_6, 1, wx.EXPAND | wx.BOTTOM, 10)
+        top_right_sizer.Add(sizer_4, 1, wx.EXPAND | wx.ALL, 0)
+        top_right_sizer.Add(sizer_5, 1, wx.EXPAND | wx.BOTTOM, 10)
+        top_right_sizer.Add(sizer_6, 1, wx.EXPAND | wx.TOP, 10)
+        top_right_sizer.Add(sizer_7, 1, wx.EXPAND | wx.BOTTOM, 10)
         bottom_right_sizer.Add(self.load_button, 1, wx.ALL, 10)
         bottom_right_sizer.Add(self.reset_button, 1, wx.ALL, 10)
 
@@ -666,11 +673,13 @@ class Gui(wx.Frame):
         sizer_4.Add(self.continuous_button, 1, wx.ALL, 10)
         sizer_4.Add(self.stop_button, 1, wx.ALL, 10)
 
-        sizer_5.Add(label_2, 1, wx.ALL, 10)
-        sizer_5.Add(self.choice_1, 1, wx.ALL, 10)
+        sizer_5.Add(self.speed_slider, 1, wx.ALL, 10)
+
+        sizer_6.Add(label_2, 1, wx.ALL, 10)
+        sizer_6.Add(self.choice_1, 1, wx.ALL, 10)
         
-        sizer_6.Add(self.choice_2, 1, wx.ALL, 10)
-        sizer_6.Add(self.button_3, 1, wx.ALL, 10)
+        sizer_7.Add(self.choice_2, 1, wx.ALL, 10)
+        sizer_7.Add(self.button_3, 1, wx.ALL, 10)
 
         main_sizer.Add(panel_sizer, 2, wx.ALIGN_LEFT | wx.EXPAND, 0)
         main_sizer.Add(self.canvas, 5, wx.EXPAND | wx.ALL, 5)
@@ -868,17 +877,27 @@ class Gui(wx.Frame):
             text = "No definition file loaded."
             frame = PopUpFrame(self, title="Error!", text=text)
         else:
-            self.timer.Start(1000)
+            self.timer.Start(self.continuous_speed)
             self.continuous_button.Show(False)
+            self.continuous_running = True
 
     def on_stop_button(self, event):
-        """Handle the event when the user clicks the continuous button."""
+        """Handle the event when the user clicks the stop button."""
         if self.start_up is True:
             text = "No definition file loaded."
             frame = PopUpFrame(self, title="Error!", text=text)
         else:
             self.timer.Stop()
             self.continuous_button.Show(True)
+            self.continuous_running = False
+
+    def on_speed_slider(self, event):
+        """Handle the event when the user changes the speed slider."""
+        self.slider_position = self.speed_slider.GetValue()
+        self.continuous_speed = -self.slider_position + 1001
+        if self.continuous_running is True:
+            self.timer.Stop()
+            self.timer.Start(self.continuous_speed)
 
     def read_name(self, name_string):
         """Return the name ID of the current string if valid.
