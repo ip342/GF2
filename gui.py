@@ -594,8 +594,8 @@ class Gui(wx.Frame):
         self.button_3 = wx.Button(self, wx.ID_ANY, _("Set"))
         self.load_button = wx.Button(self, wx.ID_ANY, _("Load New"))
         self.reset_button = wx.Button(self, wx.ID_ANY, _("Reset"))
-        self.continuous_button = wx.Button(self, wx.ID_ANY, "Continuous")
-        self.stop_button = wx.Button(self, wx.ID_ANY, "Stop")
+        self.continuous_button = wx.Button(self, wx.ID_ANY, _("Continuous"))
+        self.stop_button = wx.Button(self, wx.ID_ANY, _("Stop"))
         self.speed_slider = wx.Slider(self, wx.ID_ANY, 500, minValue=1, maxValue=900)
 
         # Configure the widget properties
@@ -704,8 +704,8 @@ class Gui(wx.Frame):
     def on_all(self, event):
         """Handle the event when the user checks all."""
         if self.start_up is True:
-            text = "No definition file loaded."
-            frame = PopUpFrame(self, title="Error!", text=text)
+            text = _("No definition file loaded.")
+            frame = PopUpFrame(self, title=_("Error!"), text=text)
         else:
             text = 'All ticked'
             for i in range(len(self.cbList.Items)):
@@ -741,7 +741,7 @@ class Gui(wx.Frame):
     def on_button_1(self, event):
         """Handle the event when the user clicks button 1 (Continue)."""
         if self.start_up is True:
-            text = "No definition file loaded."
+            text = _("No definition file loaded.")
             frame = PopUpFrame(self, title=_("Error!"), text=text)
         else:
             text = "Continue button pressed."
@@ -858,8 +858,8 @@ class Gui(wx.Frame):
     def on_continuous_button(self, event):
         """Handle the event when the user clicks the continuous button."""
         if self.start_up is True:
-            text = "No definition file loaded."
-            frame = PopUpFrame(self, title="Error!", text=text)
+            text = _("No definition file loaded.")
+            frame = PopUpFrame(self, title=_("Error!"), text=text)
         else:
             self.timer.Start(self.continuous_speed)
             self.continuous_button.Show(False)
@@ -868,11 +868,11 @@ class Gui(wx.Frame):
     def on_stop_button(self, event):
         """Handle the event when the user clicks the stop button."""
         if self.start_up is True:
-            text = "No definition file loaded."
-            frame = PopUpFrame(self, title="Error!", text=text)
+            text = _("No definition file loaded.")
+            frame = PopUpFrame(self, title=_("Error!"), text=text)
         elif self.continuous_running is False:
-            text = "Nothing to stop."
-            frame = PopUpFrame(self, title="Error!", text=text)
+            text = _("Nothing to stop.")
+            frame = PopUpFrame(self, title=_("Error!"), text=text)
         else:
             self.timer.Stop()
             self.continuous_button.Show(True)
