@@ -11,6 +11,7 @@ import wx
 import wx.glcanvas as wxcanvas
 import ntpath
 import math
+import time
 from OpenGL import GL, GLUT
 
 from names import Names
@@ -121,6 +122,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
                 longest_name_len = 0
             else:
                 longest_name_len = len(max(self.device_list, key=len))
+            self.offset = longest_name_len
 
             # Draw signal traces
             j = 1
@@ -131,6 +133,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
                 signal_list = self.monitors.monitors_dictionary[
                     (device_id, output_id)]
                 self.render_text(monitor_name, 10, (50 * j) - 18, 24)
+                self.cycles = len(signal_list)
 
                 # seperator line between traces
                 GL.glColor3f(0.870, 0.411, 0.129)
@@ -164,7 +167,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
                         x = (i * 20) + (longest_name_len * 20)
                         GL.glVertex2f(x, (50 * j))
                         GL.glVertex2f(x, (50 * j) - 55)
-                        self.last_vertical = x
+                        # self.last_vertical = x
 
                 GL.glEnd()
 
@@ -302,7 +305,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         size = self.GetClientSize()
 
         if keycode == wx.WXK_RIGHT:
-            if self.pan_x <= - self.last_vertical + size.width - 100:
+            if self.pan_x <= - self.cycles * 20 - self.offset * 20 - 100 + size.width:
                 pass
             else:
                 self.pan_x -= 50
@@ -335,6 +338,24 @@ class MyGLCanvas(wxcanvas.GLCanvas):
                 self.pan_y -= 50
             self.init = False
             text = "Down Arrow Key"
+
+        self.Refresh()  # triggers the paint event
+        
+    def move_right(self):
+        """Handle automatic right scrolling events."""
+        size = self.GetClientSize()
+        if self.pan_x <= - (self.cycles+1) * 20 - self.offset * 20 - 100 + size.width:
+            pass
+        else:
+            self.pan_x -= 20
+        self.init = False
+
+        self.Refresh()  # triggers the paint event
+        
+    def zero_canvas(self):
+        """Handle moving canvas back to x=0."""
+        self.pan_x = 0
+        self.init = False
 
         self.Refresh()  # triggers the paint event
 
@@ -579,7 +600,7 @@ class Gui(wx.Frame):
         label_1 = wx.StaticText(self, wx.ID_ANY, "Cycles")
         label_2 = wx.StaticText(self, wx.ID_ANY, "Switch")
         label_3 = wx.StaticText(self, wx.ID_ANY, "CONTROLS")
-        self.spin_ctrl_1 = wx.SpinCtrl(self, wx.ID_ANY, "10", min=0, max=40)
+        self.spin_ctrl_1 = wx.SpinCtrl(self, wx.ID_ANY, "10", min=0, max=100)
         self.choice_1 = wx.Choice(self, wx.ID_ANY, choices=self.switch_list)
         self.choice_2 = wx.Choice(self, wx.ID_ANY, choices=["0", "1"])
         self.button_1 = wx.Button(self, wx.ID_ANY, "Continue")
@@ -587,6 +608,8 @@ class Gui(wx.Frame):
         self.button_3 = wx.Button(self, wx.ID_ANY, "Set")
         self.load_button = wx.Button(self, wx.ID_ANY, "Load New")
         self.reset_button = wx.Button(self, wx.ID_ANY, "Reset")
+        self.continuous_button = wx.Button(self, wx.ID_ANY, "Continuous")
+        self.stop_button = wx.Button(self, wx.ID_ANY, "Stop")
 
         # Configure the widget properties
         self.SetBackgroundColour(wx.Colour(40, 40, 40))
@@ -606,6 +629,11 @@ class Gui(wx.Frame):
         self.button_3.Bind(wx.EVT_BUTTON, self.on_button_3)
         self.load_button.Bind(wx.EVT_BUTTON, self.on_load_button)
         self.reset_button.Bind(wx.EVT_BUTTON, self.on_reset_button)
+        self.continuous_button.Bind(wx.EVT_BUTTON, self.on_continuous_button)
+        self.stop_button.Bind(wx.EVT_BUTTON, self.on_stop_button)
+
+        self.timer = wx.Timer(self)
+        self.Bind(wx.EVT_TIMER, self.update, self.timer)
 
         # Configure sizers for layout
         main_sizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -614,13 +642,15 @@ class Gui(wx.Frame):
         sizer_3 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_4 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_5 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_6 = wx.BoxSizer(wx.HORIZONTAL)
         top_right_sizer = wx.BoxSizer(wx.VERTICAL)
         bottom_right_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         top_right_sizer.Add(sizer_2, 1, wx.EXPAND | wx.ALL, 5)
         top_right_sizer.Add(sizer_3, 1, wx.EXPAND | wx.ALL, 0)
-        top_right_sizer.Add(sizer_4, 1, wx.EXPAND | wx.ALL, 10)
-        top_right_sizer.Add(sizer_5, 1, wx.EXPAND | wx.ALL, 0)
+        top_right_sizer.Add(sizer_4, 1, wx.EXPAND | wx.BOTTOM, 10)
+        top_right_sizer.Add(sizer_5, 1, wx.EXPAND | wx.TOP, 10)
+        top_right_sizer.Add(sizer_6, 1, wx.EXPAND | wx.BOTTOM, 10)
         bottom_right_sizer.Add(self.load_button, 1, wx.ALL, 10)
         bottom_right_sizer.Add(self.reset_button, 1, wx.ALL, 10)
 
@@ -633,12 +663,15 @@ class Gui(wx.Frame):
 
         sizer_3.Add(self.button_1, 1, wx.ALL, 10)
         sizer_3.Add(self.button_2, 1, wx.ALL, 10)
+        
+        sizer_4.Add(self.continuous_button, 1, wx.ALL, 10)
+        sizer_4.Add(self.stop_button, 1, wx.ALL, 10)
 
-        sizer_4.Add(label_2, 1, wx.ALL, 10)
-        sizer_4.Add(self.choice_1, 1, wx.ALL, 10)
-
-        sizer_5.Add(self.choice_2, 1, wx.ALL, 10)
-        sizer_5.Add(self.button_3, 1, wx.ALL, 10)
+        sizer_5.Add(label_2, 1, wx.ALL, 10)
+        sizer_5.Add(self.choice_1, 1, wx.ALL, 10)
+        
+        sizer_6.Add(self.choice_2, 1, wx.ALL, 10)
+        sizer_6.Add(self.button_3, 1, wx.ALL, 10)
 
         main_sizer.Add(panel_sizer, 2, wx.ALIGN_LEFT | wx.EXPAND, 0)
         main_sizer.Add(self.canvas, 5, wx.EXPAND | wx.ALL, 5)
@@ -648,6 +681,12 @@ class Gui(wx.Frame):
         self.SetSizer(main_sizer)
 
         self.Maximize(True)
+
+    def update(self, event):
+        text = ""
+        self.continuous_command()
+        self.canvas.move_right()        #
+        # self.canvas.render(text)
 
     def on_menu(self, event):
         """Handle the event when the user selects a menu item."""
@@ -728,7 +767,7 @@ class Gui(wx.Frame):
             text = "Run button pressed."
             self.current_cycles = self.spin_ctrl_1_value
             self.run_command()
-            self.canvas.render(text)
+            self.canvas.zero_canvas()
 
     def on_button_3(self, event):
         """Handle the event when the user clicks button 3 (Set)."""
@@ -824,6 +863,22 @@ class Gui(wx.Frame):
             self.load_new = True
             self.Show(False)
             self.Destroy()
+
+    def on_continuous_button(self, event):
+        """Handle the event when the user clicks the continuous button."""
+        if self.start_up is True:
+            text = "No definition file loaded."
+            frame = PopUpFrame(self, title="Error!", text=text)
+        else:
+            self.timer.Start(1000)
+
+    def on_stop_button(self, event):
+        """Handle the event when the user clicks the continuous button."""
+        if self.start_up is True:
+            text = "No definition file loaded."
+            frame = PopUpFrame(self, title="Error!", text=text)
+        else:
+            self.timer.Stop()     
 
     def read_name(self, name_string):
         """Return the name ID of the current string if valid.
@@ -926,6 +981,11 @@ class Gui(wx.Frame):
                 frame = PopUpFrame(self, title="Error!", text=text)
             elif self.run_network(cycles):
                 self.cycles_completed += cycles
+                
+    def continuous_command(self):
+        """Run continuous simulation."""
+        self.run_network(1)
+        self.cycles_completed += 1
 
     def path_leaf(self, path):
         """Get the filename from a path."""
