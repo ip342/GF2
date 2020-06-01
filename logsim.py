@@ -60,7 +60,7 @@ def main(arg_list):
                     print(error)
                 # Initialise an instance of the userint.UserInterface() class
                 userint = UserInterface(names, devices, network, monitors)
-                userint.command_interface()  
+                userint.command_interface()
             else:
                 error_list = scanner.error_list
                 for error in error_list:
@@ -76,7 +76,7 @@ def main(arg_list):
         filename = None
         app = wx.App()
 
-        # Internationalisation 
+        # Internationalisation
         builtins._ = wx.GetTranslation
         locale = wx.Locale()
         locale.Init(wx.LANGUAGE_DEFAULT)
