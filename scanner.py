@@ -100,7 +100,6 @@ class Scanner:
         # go to current non whitespace character
         self.skip_spaces()
 
-
         # First check if in comment
         # ignore multi line comments
         if self.current_character == '#':
@@ -238,7 +237,7 @@ class Scanner:
         # check if on tab (only applies to certain text editors)
 
         if self.current_character == '\t':
-            while (self.current_character_number % 8) != 0:
+            while (self.current_character_number % 4) != 0:
                 self.current_character_number += 1
 
         # now read next character in definition file
@@ -303,6 +302,8 @@ class Scanner:
             self.advance()
             while self.current_character != '\n':
                 self.advance()
+                if self.current_character == '':
+                    break
 
         # Error recovery
         elif stop == "EOL":

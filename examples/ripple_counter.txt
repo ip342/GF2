@@ -1,8 +1,9 @@
-DEVICES [
-   # DTYPEs for 4 bit ripple counter #
-   A, B, C, D = DTYPE;
-   RST, ST = SWITCH 0;
-   CKL1 = CLOCK 1;
+# 4 bit ripple counter with DTYPE outputs 
+and clock being monitored #
+DEVICES[
+    A,B,C,D = DTYPE;
+	RST, ST = SWITCH 0;
+	CKL1 = CLOCK 1;
 ]
 
 CONNECTIONS [

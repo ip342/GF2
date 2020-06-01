@@ -55,19 +55,25 @@ def main(arg_list):
             scanner = Scanner(path, names)
             parser = Parser(names, devices, network, monitors, scanner)
             if parser.parse_network():
+                error_list = scanner.error_list
+                for error in error_list:
+                    print(error)
                 # Initialise an instance of the userint.UserInterface() class
                 userint = UserInterface(names, devices, network, monitors)
-                userint.command_interface()
+                userint.command_interface()  
+            else:
+                error_list = scanner.error_list
+                for error in error_list:
+                    print(error)
 
     if not options:  # no option given, use the graphical user interface
-        
-        
+
         path = None
         names = None
         devices = None
         network = None
         monitors = None
-        filename = None 
+        filename = None
         app = wx.App()
 
         # Internationalisation 
@@ -82,8 +88,8 @@ def main(arg_list):
         gui.Show(True)
         gui.startup_load()
         app.MainLoop()
-        
-        while gui.load_new == True:
+
+        while gui.load_new is True:
             path = gui.current_pathname
             filename = gui.current_filename
             names = Names()
@@ -94,10 +100,11 @@ def main(arg_list):
             parser = Parser(names, devices, network, monitors, scanner)
             if parser.parse_network():
                 # Initialise an instance of the gui.Gui() class
-                gui = Gui("Logic Simulator - {}".format(filename), path, names, devices, network,
-                          monitors, filename)
+                gui = Gui("Logic Simulator - {}".format(filename), path,
+                          names, devices, network, monitors, filename)
                 gui.Show(True)
                 app.MainLoop()
+
 
 if __name__ == "__main__":
     main(sys.argv[1:])

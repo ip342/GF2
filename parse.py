@@ -13,7 +13,6 @@ from errors import *
 
 
 class Parser:
-
     """Parse the definition file and build the logic network.
 
     The parser deals with error handling. It analyses the syntactic and
@@ -37,7 +36,6 @@ class Parser:
 
     def __init__(self, names, devices, network, monitors, scanner):
         """Initialise constants."""
-
         self.names = names
         self.devices = devices
         self.network = network
@@ -54,13 +52,12 @@ class Parser:
         self.does_not_exist_list = []
 
     def parse_network(self):
-        """Parse the circuit definition file. Calls sections DEVICES,
-        CONNECTIONS and MONITORS individually.
+        """Parse the circuit definition file.
 
-        Returns True if definition file parses successfully without
-        errors, and False otherwise."""
-
-        # List of all expected sections
+        Calls sections DEVICES, CONNECTIONS and MONITORS
+        individually. Returns True if definition file parses successfully
+        without errors, and False otherwise.
+        """
         sections = ['DEVICES', 'CONNECTIONS', 'MONITORS']
         sections_found = []
 
@@ -97,7 +94,7 @@ class Parser:
                     if section not in sections_found:
 
                         self.scanner.display_error(
-                            SyntaxError, '%s section missing' % section)
+                            NetworkError, '%s section missing' % section)
 
                 break
 
@@ -114,9 +111,12 @@ class Parser:
         return True
 
     def parse_section(self, header_ID):
-        """Parse a section (enclosed by square brackets) of the
-        circuit definition file, and build corresponding part
-        of the circuit."""
+        """Parse a section.
+
+        Parse a section of the circuit definition file enclosed by
+        square brackets, and build corresponding part of the
+        circuit.
+        """
         # FIND symbol after HEADER that isn't a space
         self.symbol = self.scanner.get_symbol(["]", ""])
 
@@ -270,6 +270,10 @@ class Parser:
                 # Make it 1 for now
                 self.devices.make_clock(device_id, 1)
 
+            elif self.symbol.id == self.devices.SIGGEN:
+                # Make it 1 for now
+                self.devices.make_siggen(device_id, "1")
+
             elif self.symbol.id == self.devices.SWITCH:
                 # Same as above, set switch off for now
                 self.devices.make_switch(device_id, 0)
@@ -326,6 +330,31 @@ class Parser:
                         clock_device = self.devices.get_device(device_id)
                         clock_device.clock_half_period = n
 
+                    elif self.devices.get_device(device_id).device_kind \
+                            == self.devices.SIGGEN:
+                        n = self.symbol.id
+                        print(n)
+
+                        # Check if specified waveform is binary
+                        for i in n:
+                            if i in '10':
+                                waveform_binary = True
+                            else:
+                                waveform_binary = False
+                                break
+
+                        if waveform_binary:
+                            # Set siggen waveform
+                            siggen_device = self.devices.get_device(device_id)
+                            # Convert to string to allow for list comprehension
+                            siggen_device.waveform = n
+
+                        else:
+                            self.scanner.display_error(
+                                SemanticError, "Siggen can only take "
+                                               "binary waveforms.")
+                            return True
+
                     elif self.devices.get_device(device_id) is None:
                         self.scanner.display_error(
                             SemanticError, "Device doesn't exist.")
@@ -349,7 +378,7 @@ class Parser:
 
             else:
                 self.scanner.display_error(
-                    SyntaxError, "Number of inputs have not been specified.")
+                    SyntaxError, "Device parameter has not been specified.")
                 return True
 
         if self.devices.get_device(device_id).device_kind \
@@ -435,7 +464,7 @@ class Parser:
 
             if con_device_name in self.all_cons_list:
                 self.scanner.display_error(
-                    SemanticError, "Connections for device '{}' already "
+                    ConnectionError, "Connections for device '{}' already "
                                    "assigned.".format(con_device_name),
                                    ["}", "]", ""])
                 return True
@@ -638,7 +667,7 @@ class Parser:
         # CHECK for start connection
         elif self.symbol.type != self.scanner.NAME:
             self.scanner.display_error(
-                SyntaxError, "Connection must start with a device name.")
+                ConnectionError, "Connection must start with a device name.")
             return True
         start_con = self.devices.get_device(self.symbol.id)
         start_con_name = self.names.get_name_string(self.symbol.id)
@@ -688,8 +717,8 @@ class Parser:
 
         if self.symbol.type != self.scanner.ARROW:
             self.scanner.display_error(
-                SyntaxError, "Expected '->' inbetween "
-                             "start and end connections.")
+                ConnectionError, "Expected '->' inbetween "
+                                 "start and end connections.")
             return True
 
         # CHECK for end connection
@@ -719,8 +748,8 @@ class Parser:
 
         elif end_con != self.con_device:
             self.scanner.display_error(
-                SyntaxError, "This connection has been listsed under the "
-                             "incorrect device \nsubsection.")
+                ConnectionError, "This connection has been listsed under the "
+                                 "incorrect device \nsubsection.")
 
             return True
 
@@ -754,7 +783,7 @@ class Parser:
                          end_con.device_id, end_con_port_id)
             if con_status == self.network.INPUT_CONNECTED:
                 self.scanner.display_error(
-                    SemanticError, "{}.{} is already connected.".format(
+                    ConnectionError, "{}.{} is already connected.".format(
                                    end_con_name,
                                    self.devices.names.get_name_string
                                    (end_con_port_id)))
@@ -791,8 +820,11 @@ class Parser:
         return True
 
     def list_of_connected_devices(self):
-        """Generates a list of devices that need to have
-        connections defined in the CONNECTIONS section."""
+        """Generate a list of devices.
+
+        Devices need to have connections defined in the CONNECTIONS
+        section.
+        """
         device_names_to_check = []
         # CHECK all DEVICES have CONNECTIONS defined
 
@@ -803,14 +835,15 @@ class Parser:
                 check_device_kind = \
                     self.devices.get_device(check_id).device_kind
                 if check_device_kind != self.devices.SWITCH and \
-                        check_device_kind != self.devices.CLOCK:
+                        check_device_kind != self.devices.CLOCK and\
+                        check_device_kind != self.devices.SIGGEN:
                     check_name = self.names.get_name_string(check_id)
                     device_names_to_check.append(check_name)
 
         return device_names_to_check
 
     def list_of_connected_devices_objects(self):
-        """Generates a list of made device objects."""
+        """Generate a list of made device objects."""
         device_object_list = []
 
         device_ids = self.names.lookup(self.all_devices_list)

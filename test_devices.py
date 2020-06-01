@@ -148,3 +148,22 @@ def test_set_switch(new_devices):
     # Set switch Sw1 to LOW
     new_devices.set_switch(SW1_ID, new_devices.LOW)
     assert switch_object.switch_state == new_devices.LOW
+
+
+def test_make_siggen(new_devices):
+    """Test for siggen device creation"""
+    names = new_devices.names
+
+    # Make a siggen
+    [SIG1_ID] = names.lookup(["Sig1"])
+    new_devices.make_siggen(SIG1_ID, "1010")
+
+    sig_object = new_devices.get_device(SIG1_ID)
+
+    # Check for waveform
+    assert sig_object.waveform == "1010"
+    # Check SIGGEN added to device list
+    assert new_devices.find_devices(new_devices.SIGGEN) == [SIG1_ID]
+    # Check name_string
+    assert names.get_name_string(
+        new_devices.find_devices(new_devices.SIGGEN)[0]) == "Sig1"
