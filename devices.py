@@ -43,6 +43,8 @@ class Device:
         self.dtype_memory = None
         self.waveform = None
         self.duration = None
+        self.RC_counter = None
+        self.sig_counter = None
 
 
 class Devices:
@@ -281,7 +283,7 @@ class Devices:
         device = self.get_device(device_id)
         device.duration = duration
         # Make use of this to count cycle
-        device.clock_counter = 0
+        device.RC_counter = 0
 
     def make_siggen(self, device_id, waveform):
         """Make a siggen device.This is similar to a clock, except it
@@ -294,7 +296,7 @@ class Devices:
         device = self.get_device(device_id)
         device.waveform = waveform
 
-        self.cold_startup()  # clock initialised to a random point in its cycle
+        self.cold_startup()  # clock to start of cycle
 
     def cold_startup(self):
         """Simulate cold start-up of D-types and clocks.
@@ -315,14 +317,14 @@ class Devices:
                     random.randrange(device.clock_half_period)
 
             elif device.device_kind == self.SIGGEN:
-                # Initialise it to a random point in its cycle.
+                # Initialise it to start of cycle
 
-                # Get random position in waveform
-                device.clock_counter = 0
+                # Initialise counter !
+                device.sig_counter = 0
 
-                # Initialise in that position
-                siggen_signal = int(device.waveform[device.clock_counter])
-                self.add_output(device.device_id, None, siggen_signal)
+                # Start it at 0, arbitrary as first value isn't seen anyway
+                # siggen_signal = int(device.waveform[device.sig_counter])
+                self.add_output(device.device_id, None, 0)
 
     def make_device(self, device_id, device_kind, device_property=None):
         """Create the specified device. Note doesn't support SIGGEN and RC.

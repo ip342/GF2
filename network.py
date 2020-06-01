@@ -54,14 +54,16 @@ class Network:
     execute_clock(self, device_id): Simulates a clock and updates its output
                                     signal value.
 
-    execute_siggen(self, device_id): Simulates a siggen and updates its output
-                                     signal value.
-
     execute_rc(self, device_id): Simulates an RC device and updates its output
                                  signal value to low after specified duration.
 
+    update_rc(self): If it is time to do so, sets RC to FALLING.
+
     update_clocks(self): If it is time to do so, sets clock signals to RISING
                          or FALLING.
+
+    update_siggen(self, device_id): Simulates a siggen and updates its output
+                                     signal value.
 
     execute_network(self): Executes all the devices in the network for one
                            simulation cycle.
@@ -343,10 +345,10 @@ class Network:
         device = self.devices.get_device(device_id)
 
         # Update to next value in waveform, periodic
-        device.clock_counter = (device.clock_counter + 1) \
+        device.sig_counter = (device.sig_counter + 1) \
             % len(device.waveform)
 
-        output_signal = int(device.waveform[device.clock_counter])
+        output_signal = int(device.waveform[device.sig_counter])
         # Output name None
         device.outputs[None] = output_signal
 
@@ -357,14 +359,50 @@ class Network:
 
         Return True if successful"""
         device = self.devices.get_device(device_id)
+        output_signal = device.outputs[None]  # output ID is None
 
-        if device.clock_counter == device.duration:
-            device.outputs[None] = 0
+        if output_signal == self.devices.FALLING:
+            new_signal = self.update_signal(output_signal, self.devices.LOW)
+            if new_signal is None:  # update is unsuccessful
+                return False
+            device.outputs[None] = new_signal
+            return True
+
+        elif output_signal in [self.devices.HIGH, self.devices.LOW]:
+            return True
 
         else:
-            device.clock_counter += 1
+            return False
 
-        return True
+    # All siggen logic is here, no need to 'execute'
+    def update_siggen(self):
+        """If it is time to do so, update siggen."""
+        sig_devices = self.devices.find_devices(self.devices.SIGGEN)
+
+        # Update to next value in waveform, periodic
+
+        for device_id in sig_devices:
+            device = self.devices.get_device(device_id)
+
+            output_signal = int(device.waveform[device.sig_counter])
+
+            device.sig_counter = (device.sig_counter + 1) \
+                % len(device.waveform)
+
+            device.outputs[None] = output_signal
+        pass
+
+    def update_rc(self):
+        """If it is time to do so, set RC to fall."""
+        RC_devices = self.devices.find_devices(self.devices.RC)
+
+        for device_id in RC_devices:
+            device = self.devices.get_device(device_id)
+            if device.RC_counter == device.duration:
+                output_signal = self.get_output_signal(device_id,
+                                                       output_id=None)
+                device.outputs[None] = self.devices.FALLING
+            device.RC_counter += 1
 
     def update_clocks(self):
         """If it is time to do so, set clock signals to RISING or FALLING."""
@@ -399,6 +437,8 @@ class Network:
 
         # This sets clock signals to RISING or FALLING, where necessary
         self.update_clocks()
+        self.update_rc()
+        self.update_siggen()
 
         # Number of iterations to wait for the signals to settle before
         # declaring the network unstable
@@ -420,10 +460,7 @@ class Network:
             for device_id in clock_devices:  # complete clock executions
                 if not self.execute_clock(device_id):
                     return False
-            for device_id in siggen_devices:  # complete siggen executions
-                if not self.execute_siggen(device_id):
-                    return False
-            for device_id in rc_devices:
+            for device_id in rc_devices:    # complete rc executions
                 if not self.execute_rc(device_id):
                     return False
             for device_id in and_devices:  # execute AND gate devices
