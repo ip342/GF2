@@ -102,7 +102,7 @@ class Scanner:
 
         # First check if in comment
         # ignore multi line comments
-        while self.current_character == '#':
+        if self.current_character == '#':
             self.advance()
             while self.current_character != '#':
                 self.advance()
@@ -237,7 +237,7 @@ class Scanner:
         # check if on tab (only applies to certain text editors)
 
         if self.current_character == '\t':
-            while (self.current_character_number % 8) != 0:
+            while (self.current_character_number % 4) != 0:
                 self.current_character_number += 1
 
         # now read next character in definition file
@@ -282,17 +282,27 @@ class Scanner:
         if 'test' in sys.argv[0].lower():
             raise error_type
 
-        self.errors = Error(error_type, error_message, self.current_line,
-                            self.file_as_list[self.current_line],
-                            self.current_character_number)
-
-        self.error_list.append(self.errors.error_message)
+        try:
+            self.errors = Error(error_type, error_message, self.current_line,
+                        self.file_as_list[self.current_line],
+                        self.current_character_number)
+    
+            self.error_list.append(self.errors.error_message)
+        # In case of blank lines at end of file being stripped by rstrip method 
+        except IndexError:
+            self.errors = Error(error_type, error_message, self.current_line,
+                        self.file_as_list[-1],
+                        self.current_character_number)
+    
+            self.error_list.append(self.errors.error_message)
 
         # Comment error special case
         if error_type == CommentError:
             self.advance()
             while self.current_character != '\n':
                 self.advance()
+                if self.current_character == '':
+                    break
 
         # Error recovery
         elif stop == "EOL":

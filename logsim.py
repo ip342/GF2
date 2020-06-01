@@ -14,6 +14,7 @@ import getopt
 import sys
 
 import wx
+import builtins
 
 from names import Names
 from devices import Devices
@@ -74,6 +75,14 @@ def main(arg_list):
         monitors = None
         filename = None
         app = wx.App()
+
+        # Internationalisation 
+        builtins._ = wx.GetTranslation
+        locale = wx.Locale()
+        locale.Init(wx.LANGUAGE_DEFAULT)
+        locale.AddCatalogLookupPathPrefix('./locale')
+        locale.AddCatalog('messages')
+
         gui = Gui("Logic Simulator", path, names, devices, network,
                   monitors, filename, True)
         gui.Show(True)
