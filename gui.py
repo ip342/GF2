@@ -322,7 +322,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
             text = "Down Arrow Key"
 
         self.Refresh()  # triggers the paint event
-        
+
     def move_right(self):
         """Handle automatic right scrolling events."""
         size = self.GetClientSize()
@@ -333,7 +333,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         self.init = False
 
         self.Refresh()  # triggers the paint event
-        
+
     def zero_canvas(self):
         """Handle moving canvas back to x=0."""
         self.pan_x = 0
@@ -513,7 +513,8 @@ class Gui(wx.Frame):
             for switch in self.switch_id_list:
                 switch_device = self.devices.get_device(switch)
                 if switch_device.outputs[None] == 0:
-                    self.switch_high_list.append(self.names.get_name_string(switch))
+                    self.switch_high_list.append(
+                        self.names.get_name_string(switch))
 
             for device_id, output_id in self.monitors.monitors_dictionary:
                 monitor_name = self.devices.get_signal_name(
@@ -540,14 +541,15 @@ class Gui(wx.Frame):
         # Canvas for drawing signals
         self.canvas = MyGLCanvas(self, devices, monitors, names, self.start_up)
 
-        # LEFT PANEL FOR MONITORING SIGNALS 
+        # LEFT PANEL FOR MONITORING SIGNALS
         panel_sizer = wx.BoxSizer(wx.VERTICAL)
         all_button_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # Configure left panel widgets
-        monitors_label = wx.StaticText(self, wx.ID_ANY, _("SIGNALS TO MONITOR"))
+        monitors_label = wx.StaticText(self,
+                                       wx.ID_ANY, _("SIGNALS TO MONITOR"))
         self.all_button = wx.Button(self, wx.ID_ANY, _("ALL"))
-        # add lang 
+        # add lang
         self.deselect_all_button = wx.Button(self, wx.ID_ANY, _("DESELCT ALL"))
         monitors_label.SetForegroundColour(wx.Colour(243, 201, 62))
         monitors_label.SetFont(wx.Font(17, wx.FONTFAMILY_DEFAULT,
@@ -561,14 +563,15 @@ class Gui(wx.Frame):
                                       style=wx.ALIGN_RIGHT)
         self.cbList.SetFont(wx.Font(14, wx.DEFAULT, wx.NORMAL, wx.NORMAL,
                             0, "MS Shell Dlg 2"))
-        # Add buttons below checklistbox 
+        # Add buttons below checklistbox
         all_button_sizer.Add(self.all_button, 1, wx.EXPAND | wx.ALL, 10)
-        all_button_sizer.Add(self.deselect_all_button, 1, wx.EXPAND | wx.ALL, 10)
+        all_button_sizer.Add(
+            self.deselect_all_button, 1, wx.EXPAND | wx.ALL, 10)
 
         panel_sizer.Add(self.cbList, 1, wx.EXPAND | wx.ALL, 20)
         panel_sizer.Add(all_button_sizer, 1, wx.CENTER | wx.BOTTOM, 20)
 
-        # Tick boxes for monitors specified in definition file 
+        # Tick boxes for monitors specified in definition file
         for i in range(len(self.device_list)):
             if self.device_list[i] in self.monitor_names:
                 self.cbList.Check(i, check=True)
@@ -582,7 +585,8 @@ class Gui(wx.Frame):
         # Configure right panel widgets
         label_1 = wx.StaticText(self, wx.ID_ANY, _("Cycles"))
         label_3 = wx.StaticText(self, wx.ID_ANY, _("CONTROLS"))
-        label_4 = wx.StaticText(self, wx.ID_ANY, _("Select to set switch to HIGH"))
+        label_4 = wx.StaticText(self, wx.ID_ANY,
+                                _("Select to set switch to HIGH"))
         self.spin_ctrl_1 = wx.SpinCtrl(self, wx.ID_ANY, "10", min=0, max=40)
         self.button_1 = wx.Button(self, wx.ID_ANY, _("Continue"))
         self.button_2 = wx.Button(self, wx.ID_ANY, _("Run"))
@@ -590,9 +594,10 @@ class Gui(wx.Frame):
         self.reset_button = wx.Button(self, wx.ID_ANY, _("Reset"))
         self.continuous_button = wx.Button(self, wx.ID_ANY, _("Continuous"))
         self.stop_button = wx.Button(self, wx.ID_ANY, _("Stop"))
-        self.speed_slider = wx.Slider(self, wx.ID_ANY, 500, minValue=1, maxValue=900)
+        self.speed_slider = wx.Slider(self, wx.ID_ANY, 500,
+                                      minValue=1, maxValue=900)
 
-        # Checkbox for switches 
+        # Checkbox for switches
         self.cbList2 = wx.CheckListBox(self, -1, (20, 40), (200, 200),
                                        choices=self.switch_list,
                                        style=wx.ALIGN_RIGHT)
@@ -652,7 +657,7 @@ class Gui(wx.Frame):
 
         sizer_3.Add(self.button_1, 1, wx.ALL, 10)
         sizer_3.Add(self.button_2, 1, wx.ALL, 10)
-        
+
         sizer_4.Add(self.continuous_button, 1, wx.ALL, 10)
         sizer_4.Add(self.stop_button, 1, wx.ALL, 10)
 
@@ -682,8 +687,9 @@ class Gui(wx.Frame):
         if Id == wx.ID_EXIT:
             self.Close(True)
         if Id == wx.ID_ABOUT:
-            wx.MessageBox(_("Logic Simulator\nCreated by Mojisola Agboola\n2017",
-                          "About Logsim"), wx.ICON_INFORMATION | wx.OK)
+            wx.MessageBox(_("Logic Simulator\nCreated by Mojisola\
+                            Agboola\n2017", "About Logsim"),
+                          wx.ICON_INFORMATION | wx.OK)
 
     def on_monitor_checkbox(self, event):
         """Handle the event when the user checks a checkbox."""
@@ -738,7 +744,6 @@ class Gui(wx.Frame):
 
             if not self.cbList2.IsChecked(index):
                 self.devices.set_switch(switch_id, self.devices.LOW)
-
 
     def on_spin_ctrl_1(self, event):
         """Handle the event when the user changes the cycles value."""
@@ -859,8 +864,9 @@ class Gui(wx.Frame):
                             text += ('\n'*8)
                     text_list.append(text)
 
-                frame = DefinitionErrors(self, title=_("Error!"), text=text_list,
-                                         tabs=tab_labels, overview=overview)
+                frame = DefinitionErrors(self, title=_("Error!"),
+                                         text=text_list, tabs=tab_labels,
+                                         overview=overview)
 
                 return
 
@@ -974,7 +980,8 @@ class Gui(wx.Frame):
             if self.monitors.remove_monitor(device, port):
                 pass
             else:
-                text = _("Not currently monitoring {}.").format(self.checked_name)
+                text = _("Not currently monitoring {}.").format(
+                    self.checked_name)
                 frame = PopUpFrame(self, title=_("Error!"), text=text)
 
     def run_network(self, cycles):
@@ -1012,7 +1019,7 @@ class Gui(wx.Frame):
                 frame = PopUpFrame(self, title=_("Error!"), text=text)
             elif self.run_network(cycles):
                 self.cycles_completed += cycles
-                
+
     def continuous_command(self):
         """Run continuous simulation."""
         self.run_network(1)
@@ -1087,8 +1094,9 @@ class Gui(wx.Frame):
                             text += ('\n'*8)
                     text_list.append(text)
 
-                frame = DefinitionErrors(self, title=_("Error!"), text=text_list,
-                                         tabs=tab_labels, overview=overview)
+                frame = DefinitionErrors(self, title=_("Error!"),
+                                         text=text_list, tabs=tab_labels,
+                                         overview=overview)
 
                 return
 
