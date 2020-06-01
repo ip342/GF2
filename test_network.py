@@ -256,6 +256,29 @@ def test_execute_non_xor_gates(new_network, gate_id, switch_outputs,
     assert network.get_output_signal(gate_id, None) == eval(gate_output)
 
 
+def test_execute_rc(new_network):
+    """Test if execute_network returns the correct output for RC device."""
+    network = new_network
+    devices = network.devices
+    names = devices.names
+
+    [RC_ID] = names.lookup(["rc1"])
+
+    # High for 5 cycles then low
+    devices.make_rc(RC_ID, 5)
+
+    rc_device = devices.get_device(RC_ID)
+    assert rc_device.outputs[None] == 1
+
+    cycles_to_low = 0
+    while rc_device.outputs[None] == 1:
+        network.execute_network()
+        cycles_to_low += 1
+
+    # Will be low on 6th cycle
+    assert cycles_to_low == 6
+
+
 def test_execute_non_gates(new_network):
     """Test if execute_network returns the correct output for non-gate devices.
 
