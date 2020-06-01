@@ -886,6 +886,9 @@ class Gui(wx.Frame):
         if self.start_up is True:
             text = "No definition file loaded."
             frame = PopUpFrame(self, title="Error!", text=text)
+        elif self.continuous_running is False:
+            text = "Nothing to stop."
+            frame = PopUpFrame(self, title="Error!", text=text)
         else:
             self.timer.Stop()
             self.continuous_button.Show(True)
