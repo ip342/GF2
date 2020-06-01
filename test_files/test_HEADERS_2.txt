@@ -1,0 +1,24 @@
+DEVICES [
+    G1, G2 = NAND 2;
+    SW1, SW2 = SWITCH 0;
+]
+
+CONNECTIONS [
+    device G1 {
+        SW1 -> G1.I1;
+        G2 -> G1.I2;
+    }
+    device G2 {
+        SW2 -> G2.I1;
+        G1 -> G2.I2;
+    }
+]
+
+MONITORS [
+   G1, G2;
+]
+
+DEVICES [
+    G1, G2 = NAND 2;
+    SW1, SW2 = SWITCH 0;
+]
