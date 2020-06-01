@@ -167,7 +167,6 @@ class MyGLCanvas(wxcanvas.GLCanvas):
                         x = (i * 20) + (longest_name_len * 20)
                         GL.glVertex2f(x, (50 * j))
                         GL.glVertex2f(x, (50 * j) - 55)
-                        # self.last_vertical = x
 
                 GL.glEnd()
 
@@ -685,8 +684,7 @@ class Gui(wx.Frame):
     def update(self, event):
         text = ""
         self.continuous_command()
-        self.canvas.move_right()        #
-        # self.canvas.render(text)
+        self.canvas.move_right()
 
     def on_menu(self, event):
         """Handle the event when the user selects a menu item."""
@@ -871,6 +869,7 @@ class Gui(wx.Frame):
             frame = PopUpFrame(self, title="Error!", text=text)
         else:
             self.timer.Start(1000)
+            self.continuous_button.Show(False)
 
     def on_stop_button(self, event):
         """Handle the event when the user clicks the continuous button."""
@@ -878,7 +877,8 @@ class Gui(wx.Frame):
             text = "No definition file loaded."
             frame = PopUpFrame(self, title="Error!", text=text)
         else:
-            self.timer.Stop()     
+            self.timer.Stop()
+            self.continuous_button.Show(True)
 
     def read_name(self, name_string):
         """Return the name ID of the current string if valid.
