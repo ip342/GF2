@@ -1,6 +1,6 @@
 # GF2 - Software - Team 15
 
-##### Table of Contents
+# Table of Contents
 
 [Getting Started](https://github.com/ethantattersall/GF2#getting-started)
 
