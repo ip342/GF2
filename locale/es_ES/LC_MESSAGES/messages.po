@@ -376,3 +376,12 @@ msgstr "Simulador de Lógica"
 #: logsim.py:86
 msgid "Logic Simulator - {}"
 msgstr "Simulador de Lógica - {}"
+
+msgid "Continuous Mode"
+msgstr "Modo Continuo"
+
+msgid "Select to set switch to HIGH"
+msgstr "Seleccione para cambiar a ALTA"
+
+msgid "Speed"
+msgstr "Velocidad"
