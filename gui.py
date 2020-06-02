@@ -564,9 +564,9 @@ class Gui(wx.Frame):
         self.cbList.SetFont(wx.Font(14, wx.DEFAULT, wx.NORMAL, wx.NORMAL,
                             0, "MS Shell Dlg 2"))
         # Add buttons below checklistbox
-        all_button_sizer.Add(self.all_button, 1, wx.EXPAND | wx.ALL, 10)
+        all_button_sizer.Add(self.all_button, 1, wx.ALL, 10)
         all_button_sizer.Add(
-            self.deselect_all_button, 1, wx.EXPAND | wx.ALL, 10)
+            self.deselect_all_button, 1, wx.ALL, 10)
 
         panel_sizer.Add(self.cbList, 1, wx.EXPAND | wx.ALL, 20)
         panel_sizer.Add(all_button_sizer, 1, wx.CENTER | wx.BOTTOM, 20)
