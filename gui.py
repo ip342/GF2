@@ -550,7 +550,7 @@ class Gui(wx.Frame):
                                        wx.ID_ANY, _("SIGNALS TO MONITOR"))
         self.all_button = wx.Button(self, wx.ID_ANY, _("ALL"))
         # add lang
-        self.deselect_all_button = wx.Button(self, wx.ID_ANY, _("DESELCT ALL"))
+        self.deselect_all_button = wx.Button(self, wx.ID_ANY, _("NONE"))
         monitors_label.SetForegroundColour(wx.Colour(243, 201, 62))
         monitors_label.SetFont(wx.Font(17, wx.FONTFAMILY_DEFAULT,
                                wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL,
@@ -593,8 +593,8 @@ class Gui(wx.Frame):
         self.load_button = wx.Button(self, wx.ID_ANY, _("Load New"))
         self.reset_button = wx.Button(self, wx.ID_ANY, _("Reset"))
 
-        self.continuous_button = wx.Button(self, wx.ID_ANY, _("Continuous"))
-        self.stop_button = wx.Button(self, wx.ID_ANY, _("Stop"))
+        self.continuous_label = wx.StaticText(self, wx.ID_ANY, _("Continuous"))
+        self.startstop_button = wx.Button(self, wx.ID_ANY, _("Start/Stop"))
         self.speed_slider = wx.Slider(self, wx.ID_ANY, 500,
                                       minValue=1, maxValue=900)
 
@@ -615,9 +615,9 @@ class Gui(wx.Frame):
         label_3.SetForegroundColour(wx.Colour(243, 201, 62))
         label_3.SetFont(wx.Font(17, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
                                 wx.FONTWEIGHT_NORMAL, 0, ""))
-        self.continuous_label.SetFont(wx.Font(12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
+        label_4.SetFont(wx.Font(12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
                                 wx.FONTWEIGHT_NORMAL, 0, ""))
-        self.continuous_label.SetForegroundColour(wx.Colour(255, 255, 255))
+        label_4.SetForegroundColour(wx.Colour(255, 255, 255))
         self.continuous_label.SetForegroundColour(wx.Colour(255, 255, 255))
 
         # Bind events to widgets
