@@ -594,8 +594,8 @@ class Gui(wx.Frame):
         self.button_3 = wx.Button(self, wx.ID_ANY, _("Set"))
         self.load_button = wx.Button(self, wx.ID_ANY, _("Load New"))
         self.reset_button = wx.Button(self, wx.ID_ANY, _("Reset"))
-        self.continuous_label = wx.StaticText(self, wx.ID_ANY, "Continuous")
-        self.startstop_button = wx.Button(self, wx.ID_ANY, "Start/Stop")
+        self.continuous_label = wx.StaticText(self, wx.ID_ANY, _("Continuous"))
+        self.startstop_button = wx.Button(self, wx.ID_ANY, _("Start/Stop"))
         self.speed_slider = wx.Slider(self, wx.ID_ANY, 500, minValue=1, maxValue=900)
 
         # Configure the widget properties
