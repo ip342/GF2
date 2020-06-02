@@ -73,18 +73,43 @@ class Parser:
             if self.symbol.type == self.scanner.HEADER:
                 # parse if HEADER is DEVICES, CONNECTIONS or MONITORS
                 if self.symbol.id == self.scanner.DEVICES_ID:
-                    self.DEVICES_found = True
-                    self.parse_section('DEVICES')
+                    if self.DEVICES_found:
+                        self.scanner.display_error(
+                            NetworkError, "DEVICES already defined.")
+
+                    else:
+                        self.DEVICES_found = True
+                        self.parse_section('DEVICES')
                     sections_found.append('DEVICES')
 
                 elif self.symbol.id == self.scanner.CONNECTIONS_ID:
-                    self.CONNECTIONS_found = True
-                    self.parse_section('CONNECTIONS')
+                    if self.CONNECTIONS_found:
+                        self.scanner.display_error(
+                            NetworkError, "CONNECTIONS already defined.")
+
+                    if self.DEVICES_found:
+                        self.CONNECTIONS_found = True
+                        self.parse_section('CONNECTIONS')
+
+                    else:
+                        self.scanner.display_error(
+                            NetworkError, "Cannot define CONNECTIONS "
+                            "before DEVICES.")
                     sections_found.append('CONNECTIONS')
 
                 elif self.symbol.id == self.scanner.MONITORS_ID:
-                    self.MONITORS_found = True
-                    self.parse_section('MONITORS')
+                    if self.MONITORS_found:
+                        self.scanner.display_error(
+                            NetworkError, "MONITORS already defined.")
+
+                    if self.CONNECTIONS_found:
+                        self.MONITORS_found = True
+                        self.parse_section('MONITORS')
+
+                    else:
+                        self.scanner.display_error(
+                            NetworkError, "Cannot define MONITORS "
+                            "before CONNECTIONS.")
                     sections_found.append('MONITORS')
 
             # Or it's the end of the file
@@ -274,6 +299,10 @@ class Parser:
                 # Make it 1 for now
                 self.devices.make_siggen(device_id, "1")
 
+            elif self.symbol.id == self.devices.RC:
+                # Make it 1 for now
+                self.devices.make_rc(device_id, 1)
+
             elif self.symbol.id == self.devices.SWITCH:
                 # Same as above, set switch off for now
                 self.devices.make_switch(device_id, 0)
@@ -331,9 +360,14 @@ class Parser:
                         clock_device.clock_half_period = n
 
                     elif self.devices.get_device(device_id).device_kind \
+                            == self.devices.RC:
+                        # Set RC duration before low
+                        rc_device = self.devices.get_device(device_id)
+                        rc_device.duration = n
+
+                    elif self.devices.get_device(device_id).device_kind \
                             == self.devices.SIGGEN:
                         n = self.symbol.id
-                        print(n)
 
                         # Check if specified waveform is binary
                         for i in n:
@@ -465,8 +499,8 @@ class Parser:
             if con_device_name in self.all_cons_list:
                 self.scanner.display_error(
                     ConnectionError, "Connections for device '{}' already "
-                                   "assigned.".format(con_device_name),
-                                   ["}", "]", ""])
+                                     "assigned.".format(con_device_name),
+                                     ["}", "]", ""])
                 return True
 
             if self.con_device is None:
@@ -828,15 +862,16 @@ class Parser:
         device_names_to_check = []
         # CHECK all DEVICES have CONNECTIONS defined
 
+        devices_with_no_inputs = [self.devices.SWITCH, self.devices.CLOCK,
+                                  self.devices.SIGGEN, self.devices.RC]
+
         device_ids = self.names.lookup(self.all_devices_list)
         check_device_ids = []
         for check_id in device_ids:
             if self.devices.get_device(check_id) is not None:
                 check_device_kind = \
                     self.devices.get_device(check_id).device_kind
-                if check_device_kind != self.devices.SWITCH and \
-                        check_device_kind != self.devices.CLOCK and\
-                        check_device_kind != self.devices.SIGGEN:
+                if check_device_kind not in devices_with_no_inputs:
                     check_name = self.names.get_name_string(check_id)
                     device_names_to_check.append(check_name)
 

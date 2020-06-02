@@ -227,7 +227,7 @@ class Scanner:
 
     def advance(self):
         """ Advance to next character """
-  
+
         # first check if on new line
 
         if self.current_character == '\n':
@@ -275,7 +275,6 @@ class Scanner:
         Raises the error only in test mode, otherwise uses the Error class
         in errors.py to print the error. Error recovery is handled by
         advancing until specified stopping symbols. """
-
 
         self.error_count += 1
 

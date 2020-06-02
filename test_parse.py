@@ -10,7 +10,6 @@ from monitors import Monitors
 from errors import *
 
 
-# @pytest.fixture
 def new_parser(path):
     """Return a new instance of the Parser class."""
     new_names = Names()
@@ -32,6 +31,26 @@ def test_find_header():
         parser.MONITORS_found
 
     assert HEADERS_found is True
+
+
+@pytest.mark.parametrize("inputs, trial", [
+    # DEVICES moved to the end
+    ("test_files/test_HEADERS_1.txt", 1),
+    # DEVICES defined again after monitors
+    ("test_files/test_HEADERS_2.txt", 2),
+    # Duplicate MONITORS
+    ("test_files/test_HEADERS_3.txt", 3),
+    # CONNECTIONS missing
+    ("test_files/test_HEADERS_4.txt", 4),
+    # Duplicate all sections
+    ("test_files/test_HEADERS_5.txt", 5),
+])
+def test_header_orders(inputs, trial):
+    """Checks for HEADER ordering and HEADER duplication errors"""
+    parser = new_parser(inputs)
+
+    with pytest.raises(NetworkError):
+        parser.parse_network()
 
 
 @pytest.mark.parametrize("inputs, trial", [

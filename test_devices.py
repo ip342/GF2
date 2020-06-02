@@ -167,3 +167,22 @@ def test_make_siggen(new_devices):
     # Check name_string
     assert names.get_name_string(
         new_devices.find_devices(new_devices.SIGGEN)[0]) == "Sig1"
+
+
+def test_make_rc(new_devices):
+    """Test for RC device creation"""
+    names = new_devices.names
+
+    # Make RC
+    [RC1_ID] = names.lookup(["RC1"])
+    new_devices.make_rc(RC1_ID, 10)
+
+    RC_object = new_devices.get_device(RC1_ID)
+
+    # Check for duration value
+    assert RC_object.duration == 10
+    # Check RC added to device list
+    assert new_devices.find_devices(new_devices.RC) == [RC1_ID]
+    # Check name_string
+    assert names.get_name_string(
+        new_devices.find_devices(new_devices.RC)[0]) == "RC1"

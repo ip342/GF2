@@ -592,6 +592,7 @@ class Gui(wx.Frame):
         self.button_2 = wx.Button(self, wx.ID_ANY, _("Run"))
         self.load_button = wx.Button(self, wx.ID_ANY, _("Load New"))
         self.reset_button = wx.Button(self, wx.ID_ANY, _("Reset"))
+
         self.continuous_button = wx.Button(self, wx.ID_ANY, _("Continuous"))
         self.stop_button = wx.Button(self, wx.ID_ANY, _("Stop"))
         self.speed_slider = wx.Slider(self, wx.ID_ANY, 500,
@@ -614,9 +615,10 @@ class Gui(wx.Frame):
         label_3.SetForegroundColour(wx.Colour(243, 201, 62))
         label_3.SetFont(wx.Font(17, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
                                 wx.FONTWEIGHT_NORMAL, 0, ""))
-        label_4.SetFont(wx.Font(12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
+        self.continuous_label.SetFont(wx.Font(12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
                                 wx.FONTWEIGHT_NORMAL, 0, ""))
-        label_4.SetForegroundColour(wx.Colour(255, 255, 255))
+        self.continuous_label.SetForegroundColour(wx.Colour(255, 255, 255))
+        self.continuous_label.SetForegroundColour(wx.Colour(255, 255, 255))
 
         # Bind events to widgets
         self.Bind(wx.EVT_MENU, self.on_menu)
@@ -625,8 +627,7 @@ class Gui(wx.Frame):
         self.button_2.Bind(wx.EVT_BUTTON, self.on_button_2)
         self.load_button.Bind(wx.EVT_BUTTON, self.on_load_button)
         self.reset_button.Bind(wx.EVT_BUTTON, self.on_reset_button)
-        self.continuous_button.Bind(wx.EVT_BUTTON, self.on_continuous_button)
-        self.stop_button.Bind(wx.EVT_BUTTON, self.on_stop_button)
+        self.startstop_button.Bind(wx.EVT_BUTTON, self.on_startstop_button)
         self.speed_slider.Bind(wx.EVT_SCROLL, self.on_speed_slider)
         self.cbList2.Bind(wx.EVT_CHECKLISTBOX, self.on_switch_checkbox)
 
@@ -658,8 +659,9 @@ class Gui(wx.Frame):
         sizer_3.Add(self.button_1, 1, wx.ALL, 10)
         sizer_3.Add(self.button_2, 1, wx.ALL, 10)
 
-        sizer_4.Add(self.continuous_button, 1, wx.ALL, 10)
-        sizer_4.Add(self.stop_button, 1, wx.ALL, 10)
+        sizer_4.Add(self.continuous_label, 1, wx.ALL, 10)
+        sizer_4.Add(self.startstop_button, 1, wx.ALL, 10)
+
 
         sizer_5.Add(self.speed_slider, 1, wx.ALL, 10)
 
@@ -886,27 +888,16 @@ class Gui(wx.Frame):
             self.Show(False)
             self.Destroy()
 
-    def on_continuous_button(self, event):
-        """Handle the event when the user clicks the continuous button."""
-        if self.start_up is True:
-            text = _("No definition file loaded.")
-            frame = PopUpFrame(self, title=_("Error!"), text=text)
-        else:
-            self.timer.Start(self.continuous_speed)
-            self.continuous_button.Show(False)
-            self.continuous_running = True
-
-    def on_stop_button(self, event):
+    def on_startstop_button(self, event):
         """Handle the event when the user clicks the stop button."""
         if self.start_up is True:
             text = _("No definition file loaded.")
             frame = PopUpFrame(self, title=_("Error!"), text=text)
         elif self.continuous_running is False:
-            text = _("Nothing to stop.")
-            frame = PopUpFrame(self, title=_("Error!"), text=text)
+            self.timer.Start(self.continuous_speed)
+            self.continuous_running = True
         else:
             self.timer.Stop()
-            self.continuous_button.Show(True)
             self.continuous_running = False
 
     def on_speed_slider(self, event):
