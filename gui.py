@@ -287,7 +287,8 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         size = self.GetClientSize()
 
         if keycode == wx.WXK_RIGHT:
-            if self.pan_x <= - self.cycles * 20 - self.offset * 20 - 100 + size.width:
+            if self.pan_x <= - self.cycles * 20 - self.offset * 20 \
+                    - 100 + size.width:
                 pass
             else:
                 self.pan_x -= 50
@@ -326,7 +327,8 @@ class MyGLCanvas(wxcanvas.GLCanvas):
     def move_right(self):
         """Handle automatic right scrolling events."""
         size = self.GetClientSize()
-        if self.pan_x <= - (self.cycles+1) * 20 - self.offset * 20 - 100 + size.width:
+        if self.pan_x <= - (self.cycles+1) * 20 \
+                - self.offset * 20 - 100 + size.width:
             pass
         else:
             self.pan_x -= 20
@@ -587,13 +589,14 @@ class Gui(wx.Frame):
         label_3 = wx.StaticText(self, wx.ID_ANY, _("CONTROLS"))
         label_4 = wx.StaticText(self, wx.ID_ANY,
                                 _("Select to set switch to HIGH"))
-        label_5 = wx.StaticText(self, wx.ID_ANY,_("Speed"))
+        label_5 = wx.StaticText(self, wx.ID_ANY, _("Speed"))
         self.spin_ctrl_1 = wx.SpinCtrl(self, wx.ID_ANY, "10", min=0, max=40)
         self.button_1 = wx.Button(self, wx.ID_ANY, _("Continue"))
         self.button_2 = wx.Button(self, wx.ID_ANY, _("Run"))
         self.load_button = wx.Button(self, wx.ID_ANY, _("Load New"))
         self.reset_button = wx.Button(self, wx.ID_ANY, _("Reset"))
-        self.continuous_label = wx.StaticText(self, wx.ID_ANY, _("Continuous Mode"))
+        self.continuous_label = wx.StaticText(self, wx.ID_ANY, _("Continuous "
+                                                                 "Mode"))
         self.startstop_button = wx.Button(self, wx.ID_ANY, _("Start/Stop"))
         self.speed_slider = wx.Slider(self, wx.ID_ANY, 500,
                                       minValue=1, maxValue=900)
@@ -687,6 +690,7 @@ class Gui(wx.Frame):
         self.Maximize(True)
 
     def update(self, event):
+        """Handle the event when the timer is running."""
         text = ""
         self.continuous_command()
         self.canvas.move_right()
