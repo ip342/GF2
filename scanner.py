@@ -110,7 +110,7 @@ class Scanner:
                 if self.current_character == '':
                     self.display_error(
                         CommentError,
-                        'Expected # at the end of multi-line comment', stop)
+                        _('Expected # at the end of multi-line comment'), stop)
                     symbol.type = self.EOF
                     break
 
@@ -126,8 +126,8 @@ class Scanner:
 
             else:
                 self.display_error(
-                    CommentError, "Expected '/' after '/' to "
-                                  "indicate comment", stop)
+                    CommentError, _("Expected '/' after '/' to "
+                                  "indicate comment"), stop)
                 self.error = True
 
             self.advance()
@@ -185,14 +185,14 @@ class Scanner:
                 self.advance()
             else:
                 self.display_error(
-                    ArrowError, "Unexpected character, expected "
-                                "'>' after '-'", stop)
+                    ArrowError, _("Unexpected character, expected "
+                                "'>' after '-'"), stop)
                 self.error = True
 
         elif self.current_character == '>':
             self.advance()
             self.display_error(
-                ArrowError, "Unexpected character, '>' must follow '-'", stop)
+                ArrowError, _("Unexpected character, '>' must follow '-'"), stop)
             self.error = True
 
         elif self.current_character == '.':
@@ -214,7 +214,7 @@ class Scanner:
         # invalid character
         else:
             self.advance()
-            self.display_error(SyntaxError, 'Invalid character', stop)
+            self.display_error(SyntaxError, _('Invalid character'), stop)
             self.error = True
 
         return symbol
