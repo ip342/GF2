@@ -1,10 +1,15 @@
 # GF2 - Software - Team 15
 
 ##### Table of Contents
+
 [Getting Started](https://github.com/ethantattersall/GF2#getting-started)
+
 [Running the Program](https://github.com/ethantattersall/GF2#running-the-program)
+
 [Language Support](https://github.com/ethantattersall/GF2#language-support)
+
 [User Guide](https://github.com/ethantattersall/GF2#user-guide)
+
 [Unit Test](https://github.com/ethantattersall/GF2#unit-test)
 
 ## Getting Started
