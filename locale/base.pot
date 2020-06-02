@@ -423,5 +423,12 @@ msgstr ""
 
 #: scanner.py:217
 msgid "Invalid character"
+
+#: logsim.py:86
+msgid "Logic Simulator"
+msgstr ""
+
+#: logsim.py:86
+msgid "Logic Simulator - {}"
 msgstr ""
 

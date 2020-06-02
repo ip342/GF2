@@ -368,3 +368,11 @@ msgstr "Carácter inesperado, ‘>’ debe seguir ‘-‘"
 #: scanner.py:217
 msgid "Invalid character"
 msgstr "Carácter invalido"
+
+#: logsim.py:86
+msgid "Logic Simulator"
+msgstr "Simulador de Lógica"
+
+#: logsim.py:86
+msgid "Logic Simulator - {}"
+msgstr "Simulador de Lógica - {}"

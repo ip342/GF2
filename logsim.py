@@ -60,7 +60,7 @@ def main(arg_list):
                     print(error)
                 # Initialise an instance of the userint.UserInterface() class
                 userint = UserInterface(names, devices, network, monitors)
-                userint.command_interface()  
+                userint.command_interface()
             else:
                 error_list = scanner.error_list
                 for error in error_list:
@@ -76,14 +76,14 @@ def main(arg_list):
         filename = None
         app = wx.App()
 
-        # Internationalisation 
+        # Internationalisation
         builtins._ = wx.GetTranslation
         locale = wx.Locale()
         locale.Init(wx.LANGUAGE_DEFAULT)
         locale.AddCatalogLookupPathPrefix('./locale')
         locale.AddCatalog('messages')
 
-        gui = Gui("Logic Simulator", path, names, devices, network,
+        gui = Gui(_("Logic Simulator"), path, names, devices, network,
                   monitors, filename, True)
         gui.Show(True)
         gui.startup_load()
@@ -100,7 +100,7 @@ def main(arg_list):
             parser = Parser(names, devices, network, monitors, scanner)
             if parser.parse_network():
                 # Initialise an instance of the gui.Gui() class
-                gui = Gui("Logic Simulator - {}".format(filename), path,
+                gui = Gui(_("Logic Simulator - {}").format(filename), path,
                           names, devices, network, monitors, filename)
                 gui.Show(True)
                 app.MainLoop()

@@ -862,16 +862,16 @@ class Parser:
         device_names_to_check = []
         # CHECK all DEVICES have CONNECTIONS defined
 
+        devices_with_no_inputs = [self.devices.SWITCH, self.devices.CLOCK,
+                                  self.devices.SIGGEN, self.devices.RC]
+
         device_ids = self.names.lookup(self.all_devices_list)
         check_device_ids = []
         for check_id in device_ids:
             if self.devices.get_device(check_id) is not None:
                 check_device_kind = \
                     self.devices.get_device(check_id).device_kind
-                if check_device_kind != self.devices.SWITCH and \
-                        check_device_kind != self.devices.CLOCK and\
-                        check_device_kind != self.devices.SIGGEN and\
-                        check_device_kind != self.devices.RC:
+                if check_device_kind not in devices_with_no_inputs:
                     check_name = self.names.get_name_string(check_id)
                     device_names_to_check.append(check_name)
 
