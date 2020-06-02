@@ -1,0 +1,39 @@
+# 4 bit ripple counter with DTYPE outputs 
+and clock being monitored #
+DEVICES[
+    A,B,C,D = DTYPE;
+	RST, ST = SWITCH 1;
+	CKL1 = CLOCK 1;
+]
+
+CONNECTIONS [
+   device A {
+       A.QBAR -> A.DATA;
+       RST -> A.CLEAR;
+       ST -> A.SET;
+       CKL1 -> A.CLK;
+   }
+   device B {
+       B.QBAR -> B.DATA;
+       RST -> B.CLEAR;
+       ST -> B.SET;
+       A.Q -> B.CLK;
+   }
+   device C {
+       C.QBAR -> C.DATA;
+       RST -> C.CLEAR;
+       ST -> C.SET;
+       B.Q -> C.CLK;
+   }
+   device D {
+       D.QBAR -> D.DATA;
+       RST -> D.CLEAR;
+       ST -> D.SET;
+       C.Q -> D.CLK;
+   }
+]
+
+MONITORS [
+   # Monitor DTYPE outputs and clock #
+   A.Q, B.Q, C.Q, D.Q, CKL1;
+]

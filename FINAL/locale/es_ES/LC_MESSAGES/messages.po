@@ -1,0 +1,159 @@
+# Spanish (Spain) translations for PROJECT.
+# Copyright (C) 2020 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2020.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2020-06-01 11:00+0100\n"
+"PO-Revision-Date: 2020-06-01 11:00+0100\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: es_ES\n"
+"Language-Team: es_ES <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.7.0\n"
+
+#: gui.py:284 gui.py:321
+msgid "Close"
+msgstr "cerca"
+
+#: gui.py:459
+msgid "&About"
+msgstr "acerca de"
+
+#: gui.py:460
+msgid "&Exit"
+msgstr "salida"
+
+#: gui.py:461
+msgid "&File"
+msgstr "limar"
+
+#: gui.py:473
+msgid "SIGNALS TO MONITOR"
+msgstr "SEÑALES PARA MONITOREAR"
+
+#: gui.py:474
+msgid "ALL"
+msgstr "TODAS"
+
+#: gui.py:509
+msgid "Cycles"
+msgstr "El ciclo"
+
+#: gui.py:510
+msgid "Switch"
+msgstr "El interruptor"
+
+#: gui.py:511
+msgid "CONTROLS"
+msgstr "EL CONTROL"
+
+#: gui.py:515
+msgid "Continue"
+msgstr "Seguir"
+
+#: gui.py:516
+msgid "Run"
+msgstr "Ejecutar"
+
+#: gui.py:517
+msgid "Set"
+msgstr "Establecer"
+
+#: gui.py:518
+msgid "Load New"
+msgstr "Cargar nueva"
+
+#: gui.py:519
+msgid "Reset"
+msgstr "Reiniciar"
+
+#: gui.py:588
+msgid ""
+"Logic Simulator\n"
+"Created by Mojisola Agboola\n"
+"2017"
+msgstr ""
+"Simulador de lógica\n"
+"Creado por Mojisola Agboola\n"
+"2017"
+
+#: gui.py:644 gui.py:655 gui.py:666 gui.py:737 gui.py:752 gui.py:811 gui.py:822
+#: gui.py:833 gui.py:855 gui.py:928
+msgid "Error!"
+msgstr "¡Error!"
+
+#: gui.py:654 gui.py:665 gui.py:751
+msgid "No definition file loaded."
+msgstr "No se ha cargado ningún archivo de definición."
+
+#: gui.py:676 gui.py:867
+msgid "Open Definition file"
+msgstr "Abrir archivo de definición"
+
+#: gui.py:719 gui.py:910
+msgid ""
+"\n"
+"Definition file '{}' contains {} error."
+msgstr "Archivo de definición '{}' contiene {} error."
+
+#: gui.py:722 gui.py:913
+msgid ""
+"\n"
+"Definition file '{}' contains {} errors."
+msgstr "Archivo de definición '{}' contiene {} errores."
+
+#: gui.py:792
+msgid "High"
+msgstr "Alta"
+
+#: gui.py:796
+msgid "Switch {} set to {}."
+msgstr "Cambie {} a {}."
+
+#: gui.py:798
+msgid "Success!"
+msgstr "¡Éxito!"
+
+#: gui.py:810
+msgid "Already monitoring {}."
+msgstr "Ya estoy monitoreando {}."
+
+#: gui.py:821
+msgid "Not currently monitoring {}."
+msgstr "Actualmente no se está monitoreando {}."
+
+#: gui.py:832
+msgid "Network oscillating."
+msgstr "Red oscilante."
+
+#: gui.py:854
+msgid "Nothing to continue. Run first."
+msgstr "Nada para continuar. Corre primero."
+
+#: gui.py:874
+msgid "Nothing to stop."
+msgstr "Nada para parar."
+
+#: gui.py:597
+msgid "Continuous"
+msgstr "Continuamente"
+
+#: gui.py:598
+msgid "Stop"
+msgstr "Detener"
+
+#: logsim.py:86
+msgid "Logic Simulator"
+msgstr "Simulador de Lógica"
+
+#: logsim.py:86
+msgid "Logic Simulator - {}"
+msgstr "Simulador de Lógica - {}"
+

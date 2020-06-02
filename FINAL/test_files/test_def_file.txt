@@ -1,16 +1,12 @@
 DEVICES [
-    # Devices set up as in Figure 2 #
-    A = OR 2;
-    B = AND 2;
+    A, H = XOR;
+    B = OR 2;
     C, G = NAND 2;
     D = AND 3;
     E = NOR 2;
     F = DTYPE;
-    H = XOR;
     S1, S2, S3, S4 = SWITCH 0;
     CLK = CLOCK 4;
-    S = SIGGEN 0000000100011011101;
-    R = RC 13;
 ]
 
 CONNECTIONS [
@@ -52,6 +48,5 @@ CONNECTIONS [
 ]
 
 MONITORS [
-    // Monitor outputs G and H
-    G, H;
+   G, H;
 ]
