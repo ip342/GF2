@@ -81,7 +81,7 @@ msgid ""
 "2017"
 msgstr ""
 "Simulador de lógica\n"
-"Created by Mojisola Agboola\n"
+"Creado por Mojisola Agboola\n"
 "2017"
 
 #: gui.py:644 gui.py:655 gui.py:666 gui.py:737 gui.py:752 gui.py:811 gui.py:822
@@ -136,4 +136,24 @@ msgstr "Red oscilante."
 #: gui.py:854
 msgid "Nothing to continue. Run first."
 msgstr "Nada para continuar. Corre primero."
+
+#: gui.py:874
+msgid "Nothing to stop."
+msgstr "Nada para parar."
+
+#: gui.py:597
+msgid "Continuous"
+msgstr "Continuamente"
+
+#: gui.py:598
+msgid "Stop"
+msgstr "Detener"
+
+#: logsim.py:86
+msgid "Logic Simulator"
+msgstr "Simulador de Lógica"
+
+#: logsim.py:86
+msgid "Logic Simulator - {}"
+msgstr "Simulador de Lógica - {}"
 

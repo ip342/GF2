@@ -133,3 +133,23 @@ msgstr ""
 msgid "Nothing to continue. Run first."
 msgstr ""
 
+#: gui.py:874
+msgid "Nothing to stop."
+msgstr ""
+
+#: gui.py:597
+msgid "Continuous"
+msgstr ""
+
+#: gui.py:598
+msgid "Stop"
+msgstr ""
+
+#: logsim.py:86
+msgid "Logic Simulator"
+msgstr ""
+
+#: logsim.py:86
+msgid ""Logic Simulator - {}""
+msgstr ""
+

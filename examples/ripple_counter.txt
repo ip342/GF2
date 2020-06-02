@@ -2,7 +2,7 @@
 and clock being monitored #
 DEVICES[
     A,B,C,D = DTYPE;
-	RST, ST = SWITCH 0;
+	RST, ST = SWITCH 1;
 	CKL1 = CLOCK 1;
 ]
 

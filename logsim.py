@@ -83,7 +83,7 @@ def main(arg_list):
         locale.AddCatalogLookupPathPrefix('./locale')
         locale.AddCatalog('messages')
 
-        gui = Gui("Logic Simulator", path, names, devices, network,
+        gui = Gui(_("Logic Simulator"), path, names, devices, network,
                   monitors, filename, True)
         gui.Show(True)
         gui.startup_load()
@@ -100,7 +100,7 @@ def main(arg_list):
             parser = Parser(names, devices, network, monitors, scanner)
             if parser.parse_network():
                 # Initialise an instance of the gui.Gui() class
-                gui = Gui("Logic Simulator - {}".format(filename), path,
+                gui = Gui(_("Logic Simulator - {}").format(filename), path,
                           names, devices, network, monitors, filename)
                 gui.Show(True)
                 app.MainLoop()
