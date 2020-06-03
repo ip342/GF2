@@ -135,7 +135,6 @@ class Parser:
                     SyntaxError, _("%s is an invalid "
                                    "header") % name, ["]", ""])
 
-
             # SYNTAX error - invalid HEADER name
             else:
                 self.scanner.display_error(
