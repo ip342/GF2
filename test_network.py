@@ -258,12 +258,12 @@ def test_execute_non_xor_gates(new_network, gate_id, switch_outputs,
 
 # Checking for correct value of siggen after each cycle
 @pytest.mark.parametrize("value, index", [
-    (1, 0),
-    (0, 1),
-    (1, 2),
+    (1, 1),
+    (0, 2),
     (1, 3),
-    (0, 4),
+    (1, 4),
     (0, 5),
+    (0, 6),
 ])
 def test_execute_siggen(new_network, value, index):
     """Test if execute_network returns the correct output for siggen device."""
