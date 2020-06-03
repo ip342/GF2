@@ -135,7 +135,6 @@ class Parser:
                     SyntaxError, _("%s is an invalid "
                                    "header") % name, ["]", ""])
 
-
             # SYNTAX error - invalid HEADER name
             else:
                 self.scanner.display_error(
@@ -543,7 +542,6 @@ class Parser:
             self.scanner.display_error(
                 SyntaxError, _("Expected '{' after device "
                                "name."), ["}", "]", ""])
-
             return True
 
         counter = 0
@@ -730,7 +728,6 @@ class Parser:
                 self.scanner.display_error(
                     SemanticError, _("Device '{}' does not exist.").format
                                     (start_con_name))
-
                 return True
 
         elif start_con.device_kind == self.devices.D_TYPE:
