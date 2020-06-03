@@ -370,12 +370,12 @@ msgid "Invalid character"
 msgstr "Carácter invalido"
 
 #: logsim.py:86
-msgid "Logic Simulator"
-msgstr "Simulador de Lógica"
+msgid "பனி Logic Simulator"
+msgstr "பனி Simulador de Lógica"
 
 #: logsim.py:86
-msgid "Logic Simulator - {}"
-msgstr "Simulador de Lógica - {}"
+msgid "பனி Logic Simulator - {}"
+msgstr "பனி Simulador de Lógica - {}"
 
 msgid "Continuous Mode"
 msgstr "Modo Continuo"
