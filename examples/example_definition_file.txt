@@ -8,6 +8,7 @@ DEVICES [
     S1, S3 = SWTICH 0;
     S2 = SWITCH 1;
     CLK = CLOCK 1 cycle;
+    S = SIGGEN 011001011;
 ]
 
 CONNECTIONS [

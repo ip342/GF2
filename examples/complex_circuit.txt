@@ -1,25 +1,27 @@
 DEVICES [
-    # Devices set up as in Figure 2 #
+    // Complex circuit with all possible device types 
     A = OR 2;
     B = AND 2;
     C, G = NAND 2;
-    D = AND 3;
+    D = AND 2;
     E = NOR 2;
     F = DTYPE;
     H = XOR;
-    S1, S2 = SWITCH 0;
-    S3, S4 = SWITCH 1;
+    S1 = SWITCH 0;
+    S2 = SWITCH 1;
     CLK = CLOCK 4;
+    S = SIGGEN 0000000100011011101;
+    R = RC 13;
 ]
 
 CONNECTIONS [
     device A {
         S1 -> A.I1;
-        S2 -> A.I2;
+        S -> A.I2;
     }
     device B {
-        S3 -> B.I1;
-        S4 -> B.I2;
+        S2 -> B.I1;
+        R -> B.I2;
     }
     device C {
         A -> C.I1;
@@ -28,7 +30,6 @@ CONNECTIONS [
     device D {
         S1 -> D.I1;
         A -> D.I2;
-        C -> D.I3;
     }
     device E {
         C -> E.I1;
@@ -46,7 +47,7 @@ CONNECTIONS [
     }
     device H {
         F.QBAR -> H.I1;
-        S4 -> H.I2;
+        B -> H.I2;
     }
 ]
 
