@@ -8,133 +8,77 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-06-01 11:00+0100\n"
+"POT-Creation-Date: 2020-06-01 15:48+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.7.0\n"
+"Generated-By: Babel 2.8.0\n"
 
-#: gui.py:284 gui.py:321
+#: errors.py:46
+msgid "Line number "
+msgstr ""
+
+#: errors.py:46
+msgid ", Character "
+msgstr ""
+
+#: gui.py:354 gui.py:393
 msgid "Close"
 msgstr ""
 
-#: gui.py:459
+#: gui.py:535
 msgid "&About"
 msgstr ""
 
-#: gui.py:460
+#: gui.py:536
 msgid "&Exit"
 msgstr ""
 
-#: gui.py:461
+#: gui.py:537
 msgid "&File"
 msgstr ""
 
-#: gui.py:473
+#: gui.py:549
 msgid "SIGNALS TO MONITOR"
 msgstr ""
 
-#: gui.py:474
+#: gui.py:550
 msgid "ALL"
 msgstr ""
 
-#: gui.py:509
+#: gui.py:586
 msgid "Cycles"
 msgstr ""
 
-#: gui.py:510
+#: gui.py:587
 msgid "Switch"
 msgstr ""
 
-#: gui.py:511
+#: gui.py:588
 msgid "CONTROLS"
 msgstr ""
 
-#: gui.py:515
+#: gui.py:592
 msgid "Continue"
 msgstr ""
 
-#: gui.py:516
+#: gui.py:593
 msgid "Run"
 msgstr ""
 
-#: gui.py:517
+#: gui.py:594
 msgid "Set"
 msgstr ""
 
-#: gui.py:518
+#: gui.py:595
 msgid "Load New"
 msgstr ""
 
-#: gui.py:519
+#: gui.py:596
 msgid "Reset"
-msgstr ""
-
-#: gui.py:588
-msgid ""
-"Logic Simulator\n"
-"Created by Mojisola Agboola\n"
-"2017"
-msgstr ""
-
-#: gui.py:644 gui.py:655 gui.py:666 gui.py:737 gui.py:752 gui.py:811 gui.py:822
-#: gui.py:833 gui.py:855 gui.py:928
-msgid "Error!"
-msgstr ""
-
-#: gui.py:654 gui.py:665 gui.py:751
-msgid "No definition file loaded."
-msgstr ""
-
-#: gui.py:676 gui.py:867
-msgid "Open Definition file"
-msgstr ""
-
-#: gui.py:719 gui.py:910
-msgid ""
-"\n"
-"Definition file '{}' contains {} error."
-msgstr ""
-
-#: gui.py:722 gui.py:913
-msgid ""
-"\n"
-"Definition file '{}' contains {} errors."
-msgstr ""
-
-#: gui.py:792
-msgid "High"
-msgstr ""
-
-#: gui.py:796
-msgid "Switch {} set to {}."
-msgstr ""
-
-#: gui.py:798
-msgid "Success!"
-msgstr ""
-
-#: gui.py:810
-msgid "Already monitoring {}."
-msgstr ""
-
-#: gui.py:821
-msgid "Not currently monitoring {}."
-msgstr ""
-
-#: gui.py:832
-msgid "Network oscillating."
-msgstr ""
-
-#: gui.py:854
-msgid "Nothing to continue. Run first."
-msgstr ""
-
-#: gui.py:874
-msgid "Nothing to stop."
 msgstr ""
 
 #: gui.py:597
@@ -142,14 +86,349 @@ msgid "Continuous"
 msgstr ""
 
 #: gui.py:598
-msgid "Stop"
+msgid "Start/Stop"
 msgstr ""
+
+#: gui.py:688
+msgid ""
+"Logic Simulator\n"
+"Created by Mojisola Agboola\n"
+"2017"
+msgstr ""
+
+#: gui.py:745 gui.py:756 gui.py:767 gui.py:837 gui.py:852 gui.py:941 gui.py:952
+#: gui.py:964 gui.py:986 gui.py:1064
+msgid "Error!"
+msgstr ""
+
+#: gui.py:755 gui.py:766 gui.py:851
+msgid "No definition file loaded."
+msgstr ""
+
+#: gui.py:776 gui.py:1003
+msgid "Open Definition file"
+msgstr ""
+
+#: gui.py:819 gui.py:1046
+msgid ""
+"\n"
+"Definition file '{}' contains {} error."
+msgstr ""
+
+#: gui.py:822 gui.py:1049
+msgid ""
+"\n"
+"Definition file '{}' contains {} errors."
+msgstr ""
+
+#: gui.py:926
+msgid "Switch {} set to {}."
+msgstr ""
+
+#: gui.py:928
+msgid "Success!"
+msgstr ""
+
+#: gui.py:940
+msgid "Already monitoring {}."
+msgstr ""
+
+#: gui.py:951
+msgid "Not currently monitoring {}."
+msgstr ""
+
+#: gui.py:963
+msgid "Network oscillating."
+msgstr ""
+
+#: gui.py:985
+msgid "Nothing to continue. Run first."
+msgstr ""
+
+#: parse.py:78
+msgid "DEVICES already defined."
+msgstr ""
+
+#: parse.py:88
+msgid "CONNECTIONS already defined."
+msgstr ""
+
+#: parse.py:103
+msgid "MONITORS already defined."
+msgstr ""
+
+#: parse.py:111
+msgid "Cannot define MONITORS before CONNECTIONS."
+msgstr ""
+
+#: parse.py:122
+#, python-format
+msgid "%s section missing"
+msgstr ""
+
+#: parse.py:129
+#, python-format
+msgid "%s is an invalid header"
+msgstr ""
+
+#: parse.py:134
+msgid "Expected a header"
+msgstr ""
+
+#: parse.py:155
+msgid "Expecting opening square bracket after "
+msgstr ""
+
+#: parse.py:156
+msgid "section header"
+msgstr ""
+
+#: parse.py:195
+msgid "Device name '{}' has already "
+msgstr ""
+
+#: parse.py:196
+msgid "been assigned."
+msgstr ""
+
+#: parse.py:211 parse.py:267
+msgid "Expecting a device name."
+msgstr ""
+
+#: parse.py:227 parse.py:232 parse.py:242
+msgid "Expecting comma or equals."
+msgstr ""
+
+#: parse.py:257
+msgid "Device name '{}' has already been "
+msgstr ""
+
+#: parse.py:258
+msgid "assigned."
+msgstr ""
+
+#: parse.py:312 parse.py:326
+msgid "Expected a device type"
+msgstr ""
+
+#: parse.py:320
+#, python-format
+msgid "%s is an "
+msgstr ""
+
+#: parse.py:321
+msgid "invalid device type."
+msgstr ""
+
+#: parse.py:352
+msgid "Switch can only take "
+msgstr ""
+
+#: parse.py:353
+msgid "state 0 or 1"
+msgstr ""
+
+#: parse.py:388
+msgid "Siggen can only take "
+msgstr ""
+
+#: parse.py:389
+msgid "binary waveforms."
+msgstr ""
+
+#: parse.py:394
+msgid "Device doesn't exist."
+msgstr ""
+
+#: parse.py:401
+msgid "Device can only "
+msgstr ""
+
+#: parse.py:402
+msgid "have 1-16 inputs."
+msgstr ""
+
+#: parse.py:415
+msgid "Device parameter has not been specified."
+msgstr ""
+
+#: parse.py:436
+msgid "Cannot specify inputs "
+msgstr ""
+
+#: parse.py:437
+msgid "for {}"
+msgstr ""
+
+#: parse.py:442 parse.py:447
+msgid "Expected ';' to end device line."
+msgstr ""
+
+#: parse.py:473
+msgid "The following device(s) do not have "
+msgstr ""
+
+#: parse.py:474
+#, python-format
+msgid "connections defined: %s"
+msgstr ""
+
+#: parse.py:484
+msgid "List of connections must start "
+msgstr ""
+
+#: parse.py:485
+msgid "with the word 'device'."
+msgstr ""
+
+#: parse.py:501
+msgid "Connections for device '{}' already assigned."
+msgstr ""
+
+#: parse.py:512 parse.py:714 parse.py:779
+msgid "Device '{}' does not exist."
+msgstr ""
+
+#: parse.py:520
+msgid "Expected a device name after the "
+msgstr ""
+
+#: parse.py:521
+msgid "word 'device'."
+msgstr ""
+
+#: parse.py:533
+msgid "Expected '{' after device name."
+msgstr ""
+
+#: parse.py:548
+msgid "Device {} has not had all inputs "
+msgstr ""
+
+#: parse.py:549
+msgid "defined"
+msgstr ""
+
+#: parse.py:589
+msgid "Device '{}' already assigned for "
+msgstr ""
+
+#: parse.py:590
+msgid "monitoring."
+msgstr ""
+
+#: parse.py:598
+#, python-format
+msgid "%s is not a valid "
+msgstr ""
+
+#: parse.py:599
+msgid "device."
+msgstr ""
+
+#: parse.py:610
+#, python-format
+msgid "%s is not a valid device."
+msgstr ""
+
+#: parse.py:639
+msgid "DTYPE can only use .Q or .QBAR"
+msgstr ""
+
+#: parse.py:645
+msgid "DTYPE must be followed by ."
+msgstr ""
+
+#: parse.py:675
+msgid "Invalid symbol"
+msgstr ""
+
+#: parse.py:698
+msgid "Expected '}' to end connections subsection."
+msgstr ""
+
+#: parse.py:704
+msgid "Connection must start with a device name."
+msgstr ""
+
+#: parse.py:726
+msgid "Expected '.' after DTYPE name."
+msgstr ""
+
+#: parse.py:737
+msgid "Invalid DTYPE output name"
+msgstr ""
+
+#: parse.py:754
+msgid "Expected '->' inbetween "
+msgstr ""
+
+#: parse.py:755
+msgid "start and end connections."
+msgstr ""
+
+#: parse.py:767
+msgid "A device name must follow "
+msgstr ""
+
+#: parse.py:768
+msgid "the connection arrow."
+msgstr ""
+
+#: parse.py:785
+msgid "This connection has been listsed under the "
+msgstr ""
+
+#: parse.py:786
+msgid ""
+"incorrect device \n"
+"subsection."
+msgstr ""
+
+#: parse.py:798
+msgid "Expected '.' after device name"
+msgstr ""
+
+#: parse.py:809
+msgid "Invalid port name."
+msgstr ""
+
+#: parse.py:820
+msgid "{}.{} is already connected."
+msgstr ""
+
+#: parse.py:828
+msgid "Invalid port index."
+msgstr ""
+
+#: parse.py:846 parse.py:851
+msgid "Expected ';' to end connection line."
+msgstr ""
+
+#: scanner.py:113
+msgid "Expected # at the end of multi-line comment"
+msgstr ""
+
+#: scanner.py:129
+msgid "Expected '/' after '/' to indicate comment"
+msgstr ""
+
+#: scanner.py:188
+msgid "Unexpected character, expected '>' after '-'"
+msgstr ""
+
+#: scanner.py:195
+msgid "Unexpected character, '>' must follow '-'"
+msgstr ""
+
+#: scanner.py:217
+msgid "Invalid character"
 
 #: logsim.py:86
 msgid "Logic Simulator"
 msgstr ""
 
 #: logsim.py:86
-msgid ""Logic Simulator - {}""
+msgid "Logic Simulator - {}"
 msgstr ""
 

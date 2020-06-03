@@ -43,7 +43,7 @@ class Error(Exception):
         elif error_type == ConnectionError:
             error_class = 'ConnectionError'
 
-        self.error_message = ('\n' + 'Line number ' + str(line_number + 1) + ', Character ' + str(character - 1) + '\n'
+        self.error_message = ('\n' + _('Line number ') + str(line_number + 1) + _(', Character ') + str(character - 1) + '\n'
                  + line + '\n' + (character - 2)*' ' + '^' + '\n'
                  + error_class +': ' + str(message) + '\n\n' + '*'*76)
 

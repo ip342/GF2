@@ -287,7 +287,8 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         size = self.GetClientSize()
 
         if keycode == wx.WXK_RIGHT:
-            if self.pan_x <= - self.cycles * 20 - self.offset * 20 - 100 + size.width:
+            if self.pan_x <= - self.cycles * 20 - self.offset * 20 \
+                    - 100 + size.width:
                 pass
             else:
                 self.pan_x -= 50
@@ -326,7 +327,8 @@ class MyGLCanvas(wxcanvas.GLCanvas):
     def move_right(self):
         """Handle automatic right scrolling events."""
         size = self.GetClientSize()
-        if self.pan_x <= - (self.cycles+1) * 20 - self.offset * 20 - 100 + size.width:
+        if self.pan_x <= - (self.cycles+1) * 20 \
+                - self.offset * 20 - 100 + size.width:
             pass
         else:
             self.pan_x -= 20
@@ -564,9 +566,9 @@ class Gui(wx.Frame):
         self.cbList.SetFont(wx.Font(14, wx.DEFAULT, wx.NORMAL, wx.NORMAL,
                             0, "MS Shell Dlg 2"))
         # Add buttons below checklistbox
-        all_button_sizer.Add(self.all_button, 1, wx.EXPAND | wx.ALL, 10)
+        all_button_sizer.Add(self.all_button, 1, wx.ALL, 10)
         all_button_sizer.Add(
-            self.deselect_all_button, 1, wx.EXPAND | wx.ALL, 10)
+            self.deselect_all_button, 1, wx.ALL, 10)
 
         panel_sizer.Add(self.cbList, 1, wx.EXPAND | wx.ALL, 20)
         panel_sizer.Add(all_button_sizer, 1, wx.CENTER | wx.BOTTOM, 20)
@@ -587,13 +589,14 @@ class Gui(wx.Frame):
         label_3 = wx.StaticText(self, wx.ID_ANY, _("CONTROLS"))
         label_4 = wx.StaticText(self, wx.ID_ANY,
                                 _("Select to set switch to HIGH"))
+        label_5 = wx.StaticText(self, wx.ID_ANY, _("Speed"))
         self.spin_ctrl_1 = wx.SpinCtrl(self, wx.ID_ANY, "10", min=0, max=40)
         self.button_1 = wx.Button(self, wx.ID_ANY, _("Continue"))
         self.button_2 = wx.Button(self, wx.ID_ANY, _("Run"))
         self.load_button = wx.Button(self, wx.ID_ANY, _("Load New"))
         self.reset_button = wx.Button(self, wx.ID_ANY, _("Reset"))
-
-        self.continuous_label = wx.StaticText(self, wx.ID_ANY, _("Continuous"))
+        self.continuous_label = wx.StaticText(self, wx.ID_ANY, _("Continuous "
+                                                                 "Mode"))
         self.startstop_button = wx.Button(self, wx.ID_ANY, _("Start/Stop"))
         self.speed_slider = wx.Slider(self, wx.ID_ANY, 500,
                                       minValue=1, maxValue=900)
@@ -618,6 +621,7 @@ class Gui(wx.Frame):
         label_4.SetFont(wx.Font(12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
                                 wx.FONTWEIGHT_NORMAL, 0, ""))
         label_4.SetForegroundColour(wx.Colour(255, 255, 255))
+        label_5.SetForegroundColour(wx.Colour(255, 255, 255))
         self.continuous_label.SetForegroundColour(wx.Colour(255, 255, 255))
 
         # Bind events to widgets
@@ -637,35 +641,42 @@ class Gui(wx.Frame):
         # Configure sizers for layout
         main_sizer = wx.BoxSizer(wx.HORIZONTAL)
         side_sizer = wx.BoxSizer(wx.VERTICAL)
+        sizer_0 = wx.BoxSizer(wx.VERTICAL)
+        sizer_1 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_2 = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_3 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_4 = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_5 = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_6 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_5 = wx.BoxSizer(wx.VERTICAL)
+        sizer_6 = wx.BoxSizer(wx.VERTICAL)
         sizer_7 = wx.BoxSizer(wx.HORIZONTAL)
 
         side_sizer.Add(label_3, 0, wx.CENTER | wx.TOP, 20)
-        side_sizer.Add(sizer_2, 1, wx.EXPAND | wx.ALL, 5)
-        side_sizer.Add(sizer_3, 1, wx.EXPAND | wx.ALL, 0)
-        side_sizer.Add(sizer_4, 1, wx.EXPAND | wx.ALL, 0)
-        side_sizer.Add(sizer_5, 1, wx.EXPAND | wx.BOTTOM, 10)
-        side_sizer.Add(label_4, 1, wx.TOP, 20)
-        side_sizer.Add(sizer_6, 1, wx.EXPAND | wx.TOP, 10)
-        side_sizer.Add(sizer_7, 1, wx.EXPAND | wx.TOP, 10)
+        side_sizer.Add(sizer_0, 1, wx.EXPAND | wx.BOTTOM, 0)
+        side_sizer.Add((5, 5), 1, 0, 0)
+        side_sizer.Add(sizer_5, 1, wx.EXPAND | wx.TOP, 0)
+        side_sizer.Add((5, 5), 1, 0, 0)
+        side_sizer.Add(sizer_6, 1, wx.EXPAND | wx.TOP, 0)
+        side_sizer.Add((5, 5), 1, 0, 0)
+        side_sizer.Add(sizer_7, 1, wx.EXPAND | wx.TOP, 0)
 
-        sizer_2.Add(label_1, 1, wx.ALL, 10)
-        sizer_2.Add(self.spin_ctrl_1, 0, wx.ALL, 10)
+        sizer_0.Add(sizer_1, 1, wx.EXPAND | wx.ALL, 5)
+        sizer_0.Add(sizer_2, 1, wx.EXPAND | wx.ALL, 5)
 
-        sizer_3.Add(self.button_1, 1, wx.ALL, 10)
-        sizer_3.Add(self.button_2, 1, wx.ALL, 10)
+        sizer_1.Add(label_1, 1, wx.ALL, 10)
+        sizer_1.Add(self.spin_ctrl_1, 0, wx.ALL, 10)
+
+        sizer_2.Add(self.button_1, 1, wx.ALL, 10)
+        sizer_2.Add(self.button_2, 1, wx.ALL, 10)
 
         sizer_4.Add(self.continuous_label, 1, wx.ALL, 10)
         sizer_4.Add(self.startstop_button, 1, wx.ALL, 10)
 
+        sizer_5.Add(sizer_4, 0, wx.CENTRE | wx.BOTTOM, 10, 0)
+        sizer_5.Add(label_5, 0, wx.CENTRE | wx.BOTTOM, 1)
+        sizer_5.Add(self.speed_slider, 1, wx.CENTRE | wx.ALL, 10)
 
-        sizer_5.Add(self.speed_slider, 1, wx.ALL, 10)
+        sizer_6.Add(label_4, 0, wx.CENTRE, 0)
+        sizer_6.Add(self.cbList2, 0, wx.CENTRE, 0)
 
-        sizer_6.Add(self.cbList2, 1, wx.TOP, 20)
         sizer_7.Add(self.load_button, 1, wx.ALL, 10)
         sizer_7.Add(self.reset_button, 1, wx.ALL, 10)
 
@@ -679,6 +690,7 @@ class Gui(wx.Frame):
         self.Maximize(True)
 
     def update(self, event):
+        """Handle the event when the timer is running."""
         text = ""
         self.continuous_command()
         self.canvas.move_right()

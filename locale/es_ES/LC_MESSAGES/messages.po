@@ -1,4 +1,4 @@
-# Spanish (Spain) translations for PROJECT.
+# Translations template for PROJECT.
 # Copyright (C) 2020 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2020.
@@ -7,74 +7,91 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-06-01 11:00+0100\n"
-"PO-Revision-Date: 2020-06-01 11:00+0100\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language: es_ES\n"
-"Language-Team: es_ES <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"POT-Creation-Date: 2020-06-01 15:48+0100\n"
+"PO-Revision-Date: 2020-06-02 10:53+0100\n"
+"Language-Team: \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.7.0\n"
+"Generated-By: Babel 2.8.0\n"
+"X-Generator: Poedit 2.3.1\n"
+"Last-Translator: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: es\n"
 
-#: gui.py:284 gui.py:321
+#: errors.py:46
+msgid "Line number "
+msgstr "Número de línea "
+
+#: errors.py:46
+msgid ", Character "
+msgstr ", Carácter "
+
+#: gui.py:354 gui.py:393
 msgid "Close"
-msgstr "cerca"
+msgstr "Cerrar"
 
-#: gui.py:459
+#: gui.py:535
 msgid "&About"
-msgstr "acerca de"
+msgstr "&Acerca de"
 
-#: gui.py:460
+#: gui.py:536
 msgid "&Exit"
-msgstr "salida"
+msgstr "&Salir"
 
-#: gui.py:461
+#: gui.py:537
 msgid "&File"
-msgstr "limar"
+msgstr "&Archivo"
 
-#: gui.py:473
+#: gui.py:549
 msgid "SIGNALS TO MONITOR"
 msgstr "SEÑALES PARA MONITOREAR"
 
-#: gui.py:474
+#: gui.py:550
 msgid "ALL"
-msgstr "TODAS"
+msgstr "TODOS"
 
-#: gui.py:509
+#: gui.py:586
 msgid "Cycles"
-msgstr "El ciclo"
+msgstr "Ciclos"
 
-#: gui.py:510
+#: gui.py:587
 msgid "Switch"
-msgstr "El interruptor"
+msgstr "Interruptor"
 
-#: gui.py:511
+#: gui.py:588
 msgid "CONTROLS"
-msgstr "EL CONTROL"
+msgstr "CONTROL"
 
-#: gui.py:515
+#: gui.py:592
 msgid "Continue"
 msgstr "Seguir"
 
-#: gui.py:516
+#: gui.py:593
 msgid "Run"
 msgstr "Ejecutar"
 
-#: gui.py:517
+#: gui.py:594
 msgid "Set"
 msgstr "Establecer"
 
-#: gui.py:518
+#: gui.py:595
 msgid "Load New"
 msgstr "Cargar nueva"
 
-#: gui.py:519
+#: gui.py:596
 msgid "Reset"
 msgstr "Reiniciar"
 
-#: gui.py:588
+#: gui.py:597
+msgid "Continuous"
+msgstr "Continuo"
+
+#: gui.py:598
+msgid "Start/Stop"
+msgstr "Iniciar/Parar"
+
+#: gui.py:688
 msgid ""
 "Logic Simulator\n"
 "Created by Mojisola Agboola\n"
@@ -84,70 +101,273 @@ msgstr ""
 "Creado por Mojisola Agboola\n"
 "2017"
 
-#: gui.py:644 gui.py:655 gui.py:666 gui.py:737 gui.py:752 gui.py:811 gui.py:822
-#: gui.py:833 gui.py:855 gui.py:928
+#: gui.py:745 gui.py:756 gui.py:767 gui.py:837 gui.py:852 gui.py:941 gui.py:952
+#: gui.py:964 gui.py:986 gui.py:1064
 msgid "Error!"
 msgstr "¡Error!"
 
-#: gui.py:654 gui.py:665 gui.py:751
+#: gui.py:755 gui.py:766 gui.py:851
 msgid "No definition file loaded."
 msgstr "No se ha cargado ningún archivo de definición."
 
-#: gui.py:676 gui.py:867
+#: gui.py:776 gui.py:1003
 msgid "Open Definition file"
 msgstr "Abrir archivo de definición"
 
-#: gui.py:719 gui.py:910
+#: gui.py:819 gui.py:1046
 msgid ""
 "\n"
 "Definition file '{}' contains {} error."
-msgstr "Archivo de definición '{}' contiene {} error."
+msgstr ""
+"\n"
+"Archivo de definición ‘{}’ contiene {} error."
 
-#: gui.py:722 gui.py:913
+#: gui.py:822 gui.py:1049
 msgid ""
 "\n"
 "Definition file '{}' contains {} errors."
-msgstr "Archivo de definición '{}' contiene {} errores."
+msgstr ""
+"\n"
+"Archivo de definición ‘{}’ contiene {} errores."
 
-#: gui.py:792
-msgid "High"
-msgstr "Alta"
-
-#: gui.py:796
+#: gui.py:926
 msgid "Switch {} set to {}."
 msgstr "Cambie {} a {}."
 
-#: gui.py:798
+#: gui.py:928
 msgid "Success!"
 msgstr "¡Éxito!"
 
-#: gui.py:810
+#: gui.py:940
 msgid "Already monitoring {}."
 msgstr "Ya estoy monitoreando {}."
 
-#: gui.py:821
+#: gui.py:951
 msgid "Not currently monitoring {}."
 msgstr "Actualmente no se está monitoreando {}."
 
-#: gui.py:832
+#: gui.py:963
 msgid "Network oscillating."
 msgstr "Red oscilante."
 
-#: gui.py:854
+#: gui.py:985
 msgid "Nothing to continue. Run first."
 msgstr "Nada para continuar. Corre primero."
 
-#: gui.py:874
-msgid "Nothing to stop."
-msgstr "Nada para parar."
+#: parse.py:78
+msgid "DEVICES already defined."
+msgstr "DEVICES ya definidos."
 
-#: gui.py:597
-msgid "Continuous"
-msgstr "Continuamente"
+#: parse.py:88
+msgid "CONNECTIONS already defined."
+msgstr "CONNECTIONS ya definidas."
 
-#: gui.py:598
-msgid "Stop"
-msgstr "Detener"
+#: parse.py:103
+msgid "MONITORS already defined."
+msgstr "MONITORS YA DEFINIDOS."
+
+#: parse.py:111
+msgid "Cannot define MONITORS before CONNECTIONS."
+msgstr "No se pueden definir MONITORS antes de CONNECTIONS."
+
+#: parse.py:122
+#, python-format
+msgid "%s section missing"
+msgstr "%s sección faltante"
+
+#: parse.py:129
+#, python-format
+msgid "%s is an invalid header"
+msgstr "%s es un encabezado no válido"
+
+#: parse.py:134
+msgid "Expected a header"
+msgstr "Se esperaba un encabezado"
+
+#: parse.py:155
+msgid "Expecting opening square bracket after section header"
+msgstr "Esperando abrir corchete después encabezado de sección"
+
+#: parse.py:195
+msgid "Device name '{}' has already been assigned."
+msgstr "Nombre del dispositivo '{}' ya ha sido asignado."
+
+#: parse.py:211 parse.py:267
+msgid "Expecting a device name."
+msgstr "Esperando el nombre de un dispositivo."
+
+#: parse.py:227 parse.py:232 parse.py:242
+msgid "Expecting comma or equals."
+msgstr "Esperando coma o igual."
+
+#: parse.py:257
+msgid "Device name '{}' has already been assigned."
+msgstr "Nombre del dispositivo '{}' ya ha sido asignado."
+
+#: parse.py:312 parse.py:326
+msgid "Expected a device type"
+msgstr "Se esperaba un tipo de dispositivo"
+
+#: parse.py:320
+#, python-format
+msgid "%s is an invalid device type."
+msgstr "%s es un tipo de dispositivo no válido."
+
+#: parse.py:352
+msgid "Switch can only take state 0 or 1"
+msgstr "El interruptor solo puede tomar estado 0 o 1"
+
+#: parse.py:388
+msgid "Siggen can only take binary waveforms."
+msgstr "Siggen solo puede tomar formas de onda binarias."
+
+#: parse.py:394
+msgid "Device doesn't exist."
+msgstr "El dispositivo no existe."
+
+#: parse.py:401
+msgid "Device can only have 1-16 inputs."
+msgstr "El dispositivo solo puede tener 1-16 entradas."
+
+#: parse.py:415
+msgid "Device parameter has not been specified."
+msgstr "El parámetro del dispositivo no se ha especificado."
+
+#: parse.py:436
+msgid "Cannot specify inputs for {}"
+msgstr "No se pueden especificar entradas para {}"
+
+#: parse.py:442 parse.py:447
+msgid "Expected ';' to end device line."
+msgstr "Esperado ‘;’ para finalizar la línea del dispositivo."
+
+#: parse.py:473
+msgid "The following device(s) do not have connections defined: %s"
+msgstr "Los siguientes dispositivos no tienen conexiones definidas: %s"
+
+#: parse.py:484
+msgid "List of connections must start with the word 'device'."
+msgstr "La lista de conexiones debe comenzar con la palabra 'device'."
+
+#: parse.py:501
+msgid "Connections for device '{}' already assigned."
+msgstr "Conexiones para el dispositivo '{}' ya asignadas."
+
+#: parse.py:512 parse.py:714 parse.py:779
+msgid "Device '{}' does not exist."
+msgstr "El dispositivo '{}' no existe."
+
+#: parse.py:520
+msgid "Expected a device name after the word 'device'."
+msgstr "Se esperaba un nombre de dispositivo después de palabra 'device'."
+
+#: parse.py:533
+msgid "Expected '{' after device name."
+msgstr "Se esperaba '{' después del nombre del dispositivo."
+
+#: parse.py:548
+msgid "Device {} has not had all inputs defined"
+msgstr "El dispositivo {} no ha definido todas las entradas"
+
+#: parse.py:589
+msgid "Device '{}' already assigned for monitoring."
+msgstr "Dispositivo '{}' ya asignado para supervisión."
+
+#: parse.py:598
+#, python-format
+msgid "%s is not a valid device."
+msgstr "%s no es un dispositivo válido."
+
+#: parse.py:610
+#, python-format
+msgid "%s is not a valid device."
+msgstr "%s no es un dispositivo válido."
+
+#: parse.py:639
+msgid "DTYPE can only use .Q or .QBAR"
+msgstr "DTYPE solo puede usar .Q o .QBAR"
+
+#: parse.py:645
+msgid "DTYPE must be followed by ."
+msgstr "DTYPE debe ser seguido por ."
+
+#: parse.py:675
+msgid "Invalid symbol"
+msgstr "Símbolo inválido"
+
+#: parse.py:698
+msgid "Expected '}' to end connections subsection."
+msgstr "Se esperaba '}' para finalizar la subsección de conexiones."
+
+#: parse.py:704
+msgid "Connection must start with a device name."
+msgstr "La conexión debe comenzar con un nombre de dispositivo."
+
+#: parse.py:726
+msgid "Expected '.' after DTYPE name."
+msgstr "Esperado '.' después del nombre DTYPE."
+
+#: parse.py:737
+msgid "Invalid DTYPE output name"
+msgstr "Nombre de salida DTYPE no válido"
+
+#: parse.py:754
+msgid "Expected '->' inbetween "
+msgstr "Se esperaba ‘->’ entre "
+
+#: parse.py:755
+msgid "start and end connections."
+msgstr "conexiones de inicio y fin."
+
+#: parse.py:767
+msgid "A device name must follow the connection arrow."
+msgstr "El nombre del dispositivo debe seguir la flecha de conexión."
+
+#: parse.py:785
+msgid "This connection has been listsed under the incorrect device \n"
+"subsection."
+msgstr "Esta conexión se ha enumerado en la subsección de dispositivo \n"
+"incorrecta."
+
+#: parse.py:798
+msgid "Expected '.' after device name"
+msgstr "Esperado '.' después del nombre del dispositivo"
+
+#: parse.py:809
+msgid "Invalid port name."
+msgstr "Nombre de puerto no válido."
+
+#: parse.py:820
+msgid "{}.{} is already connected."
+msgstr "{}. {} ya está conectado."
+
+#: parse.py:828
+msgid "Invalid port index."
+msgstr "Índice de puerto no válido."
+
+#: parse.py:846 parse.py:851
+msgid "Expected ';' to end connection line."
+msgstr "Esperado ‘;’ para finalizar la línea de conexión."
+
+#: scanner.py:113
+msgid "Expected # at the end of multi-line comment"
+msgstr "Se esperaba # al final del comentario de varias líneas"
+
+#: scanner.py:129
+msgid "Expected '/' after '/' to indicate comment"
+msgstr "Se esperaba '/' después de '/' para indicar comentario"
+
+#: scanner.py:188
+msgid "Unexpected character, expected '>' after '-'"
+msgstr "Carácter inesperado, esperado ‘>’ después de ‘-‘"
+
+#: scanner.py:195
+msgid "Unexpected character, '>' must follow '-'"
+msgstr "Carácter inesperado, ‘>’ debe seguir ‘-‘"
+
+#: scanner.py:217
+msgid "Invalid character"
+msgstr "Carácter invalido"
 
 #: logsim.py:86
 msgid "Logic Simulator"
@@ -157,3 +377,11 @@ msgstr "Simulador de Lógica"
 msgid "Logic Simulator - {}"
 msgstr "Simulador de Lógica - {}"
 
+msgid "Continuous Mode"
+msgstr "Modo Continuo"
+
+msgid "Select to set switch to HIGH"
+msgstr "Seleccione para cambiar a ALTA"
+
+msgid "Speed"
+msgstr "Velocidad"
