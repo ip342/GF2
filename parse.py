@@ -10,6 +10,8 @@ Parser - parses the definition file and builds the logic network.
 """
 
 from errors import *
+import wx
+import builtins
 
 
 class Parser:
@@ -50,6 +52,9 @@ class Parser:
         self.all_cons_list = []
         self.all_monitors_list = []
         self.does_not_exist_list = []
+
+        # Internationalisation ?
+        builtins._ = wx.GetTranslation
 
     def parse_network(self):
         """Parse the circuit definition file.
@@ -109,7 +114,7 @@ class Parser:
                     else:
                         self.scanner.display_error(
                             NetworkError, _("Cannot define MONITORS "
-                            "before CONNECTIONS."))
+                                            "before CONNECTIONS."))
                     sections_found.append('MONITORS')
 
             # Or it's the end of the file
@@ -126,7 +131,8 @@ class Parser:
             elif self.symbol.type == self.scanner.NAME:
                 name = self.names.get_name_string(self.symbol.id)
                 self.scanner.display_error(
-                    SyntaxError, _("%s is an invalid header") % name, ["]", ""])
+                    SyntaxError, _("%s is an invalid header") % name,
+                    ["]", ""])
 
             # SYNTAX error - invalid HEADER name
             else:
@@ -153,7 +159,7 @@ class Parser:
         if self.symbol.type != self.scanner.OPEN_SQUARE:
             self.scanner.display_error(
                 SyntaxError, _("Expecting opening square bracket after "
-                             "section header"))
+                               "section header"))
             return
 
         # Keeps parsing respective sections until doesn't return True (error)
@@ -193,7 +199,7 @@ class Parser:
             if device_name in self.all_devices_list:
                 self.scanner.display_error(
                     SemanticError, _("Device name '{}' has already "
-                                   "been assigned.").format(device_name))
+                                     "been assigned.").format(device_name))
                 return True
 
             device_name_list.append(device_name)
@@ -254,8 +260,9 @@ class Parser:
                         self.symbol.id)
                     if device_name in self.all_devices_list:
                         self.scanner.display_error(
-                            SemanticError, _("Device name '{}' has already been "
-                                           "assigned.").format(device_name))
+                            SemanticError, _("Device name '{}' has already "
+                                             "been assigned.").format(
+                                                 device_name))
                         return True
 
                     device_name_list.append(device_name)
@@ -318,7 +325,7 @@ class Parser:
                     self.symbol.id)
                 self.scanner.display_error(
                     SyntaxError, _("%s is an "
-                    "invalid device type.") % invalid_device)
+                                   "invalid device type.") % invalid_device)
                 return True
 
             else:
@@ -350,7 +357,7 @@ class Parser:
                         else:
                             self.scanner.display_error(
                                 SemanticError, _("Switch can only take "
-                                               "state 0 or 1"))
+                                                 "state 0 or 1"))
                             return True
 
                     elif self.devices.get_device(device_id).device_kind \
@@ -386,7 +393,7 @@ class Parser:
                         else:
                             self.scanner.display_error(
                                 SemanticError, _("Siggen can only take "
-                                               "binary waveforms."))
+                                                 "binary waveforms."))
                             return True
 
                     elif self.devices.get_device(device_id) is None:
@@ -399,7 +406,7 @@ class Parser:
                         if n > 16:
                             self.scanner.display_error(
                                 SemanticError, _("Device can only "
-                                               "have 1-16 inputs."))
+                                                 "have 1-16 inputs."))
                             return True
 
                         # Add all the inputs to the device..
@@ -434,7 +441,7 @@ class Parser:
         elif self.symbol.type == self.scanner.NUMBER:
             self.scanner.display_error(
                 SyntaxError, _("Cannot specify inputs "
-                             "for {}").format(device_error_type_name))
+                               "for {}").format(device_error_type_name))
             return True
 
         elif self.symbol.type == self.scanner.CLOSE_SQUARE:
@@ -471,8 +478,8 @@ class Parser:
                 self.scanner.display_error(
 
                     SemanticError, _("The following device(s) do not have "
-                                   "connections defined: %s") %
-                                   undefined_connections)
+                                     "connections defined: %s") %
+                    undefined_connections)
 
             return False
 
@@ -482,7 +489,7 @@ class Parser:
         elif self.symbol.id != self.scanner.DEVICE:
             self.scanner.display_error(
                 SyntaxError, _("List of connections must start "
-                             "with the word 'device'."), ["}", "]", ""])
+                               "with the word 'device'."), ["}", "]", ""])
             return True
 
         # CHECK for device name
@@ -499,8 +506,8 @@ class Parser:
             if con_device_name in self.all_cons_list:
                 self.scanner.display_error(
                     ConnectionError, _("Connections for device '{}' already "
-                                     "assigned.").format(con_device_name),
-                                     ["}", "]", ""])
+                                       "assigned.").format(con_device_name),
+                    ["}", "]", ""])
                 return True
 
             if self.con_device is None:
@@ -510,15 +517,15 @@ class Parser:
                     self.does_not_exist_list.append(con_device_name)
                     self.scanner.display_error(
                         SemanticError, _("Device '{}' does not exist.")
-                                       .format(con_device_name),
-                                       ["}", "]", ""])
+                        .format(con_device_name),
+                        ["}", "]", ""])
                     return True
 
             self.all_cons_list.append(con_device_name)
         else:
             self.scanner.display_error(
                 SyntaxError, _("Expected a device name after the "
-                             "word 'device'."), ["}", "]", ""])
+                               "word 'device'."), ["}", "]", ""])
             return True
 
         # CHECK for opening curly bracket
@@ -530,7 +537,8 @@ class Parser:
 
         if self.symbol.type != self.scanner.OPEN_CURLY:
             self.scanner.display_error(
-                SyntaxError, _("Expected '{' after device name."), ["}", "]", ""])
+                SyntaxError, _("Expected '{' after device name."),
+                ["}", "]", ""])
             return True
 
         counter = 0
@@ -546,7 +554,7 @@ class Parser:
 
             self.scanner.display_error(
                 SemanticError, _("Device {} has not had all inputs "
-                               "defined").format(con_device_name))
+                                 "defined").format(con_device_name))
             return True
 
         if self.square_instead_of_curly is True:
@@ -587,7 +595,8 @@ class Parser:
             if monitor_device_name in self.all_monitors_list:
                 self.scanner.display_error(
                     SemanticError, _("Device '{}' already assigned for "
-                                   "monitoring.").format(monitor_device_name))
+                                     "monitoring.").format(
+                                         monitor_device_name))
                 return True
 
             self.all_monitors_list.append(monitor_device_name)
@@ -596,7 +605,7 @@ class Parser:
             if self.symbol.id is None:
                 self.scanner.display_error(
                     SemanticError, _("%s is not a valid "
-                                   "device.") % monitor_device_name)
+                                     "device.") % monitor_device_name)
                 return True
 
             device = self.devices.get_device(self.symbol.id)
@@ -701,7 +710,8 @@ class Parser:
         # CHECK for start connection
         elif self.symbol.type != self.scanner.NAME:
             self.scanner.display_error(
-                ConnectionError, _("Connection must start with a device name."))
+                ConnectionError, _("Connection must start with "
+                                   "a device name."))
             return True
         start_con = self.devices.get_device(self.symbol.id)
         start_con_name = self.names.get_name_string(self.symbol.id)
@@ -712,7 +722,7 @@ class Parser:
 
                 self.scanner.display_error(
                     SemanticError, _("Device '{}' does not exist.")
-                                   .format(start_con_name))
+                    .format(start_con_name))
                 return True
 
         elif start_con.device_kind == self.devices.D_TYPE:
@@ -752,7 +762,7 @@ class Parser:
         if self.symbol.type != self.scanner.ARROW:
             self.scanner.display_error(
                 ConnectionError, _("Expected '->' inbetween "
-                                 "start and end connections."))
+                                   "start and end connections."))
             return True
 
         # CHECK for end connection
@@ -765,7 +775,7 @@ class Parser:
         if self.symbol.type != self.scanner.NAME:
             self.scanner.display_error(
                 SyntaxError, _("A device name must follow "
-                             "the connection arrow."))
+                               "the connection arrow."))
             return True
 
         end_con = self.devices.get_device(self.symbol.id)
@@ -777,13 +787,13 @@ class Parser:
 
                 self.scanner.display_error(
                     SemanticError, _("Device '{}' does not exist.")
-                                   .format(end_con_name))
+                    .format(end_con_name))
                 return True
 
         elif end_con != self.con_device:
             self.scanner.display_error(
-                ConnectionError, _("This connection has been listsed under the "
-                                 "incorrect device \nsubsection."))
+                ConnectionError, _("This connection has been listsed under "
+                                   "the incorrect device \nsubsection."))
 
             return True
 
