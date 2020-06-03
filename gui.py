@@ -287,8 +287,9 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         size = self.GetClientSize()
 
         if keycode == wx.WXK_RIGHT:
-            if self.pan_x <= - self.cycles * 20 - self.offset * 20 \
-                    - 100 + size.width:
+
+            if self.pan_x <= - self.cycles * 20 - \
+                    self.offset * 20 - 100 + size.width:
                 pass
             else:
                 self.pan_x -= 50
@@ -327,8 +328,9 @@ class MyGLCanvas(wxcanvas.GLCanvas):
     def move_right(self):
         """Handle automatic right scrolling events."""
         size = self.GetClientSize()
-        if self.pan_x <= - (self.cycles+1) * 20 \
-                - self.offset * 20 - 100 + size.width:
+
+        if self.pan_x <= - (self.cycles+1) * 20 - \
+                self.offset * 20 - 100 + size.width:
             pass
         else:
             self.pan_x -= 20
@@ -437,7 +439,7 @@ class DefinitionErrors(wx.Frame):
 
         self.close_button.Bind(wx.EVT_BUTTON, self.on_close_button)
 
-        self.SetSizeHints(600, 560, maxW=600, maxH=560)
+        self.SetSizeHints(600, 560)
 
         self.SetSizer(sizer_1)
         self.Show()
@@ -595,8 +597,10 @@ class Gui(wx.Frame):
         self.button_2 = wx.Button(self, wx.ID_ANY, _("Run"))
         self.load_button = wx.Button(self, wx.ID_ANY, _("Load New"))
         self.reset_button = wx.Button(self, wx.ID_ANY, _("Reset"))
-        self.continuous_label = wx.StaticText(self, wx.ID_ANY, _("Continuous "
-                                                                 "Mode"))
+
+        self.continuous_label = wx.StaticText(
+            self, wx.ID_ANY, _("Continuous Mode"))
+        
         self.startstop_button = wx.Button(self, wx.ID_ANY, _("Start/Stop"))
         self.speed_slider = wx.Slider(self, wx.ID_ANY, 500,
                                       minValue=1, maxValue=900)

@@ -10,6 +10,8 @@ Parser - parses the definition file and builds the logic network.
 """
 
 from errors import *
+import wx
+import builtins
 
 
 class Parser:
@@ -50,6 +52,9 @@ class Parser:
         self.all_cons_list = []
         self.all_monitors_list = []
         self.does_not_exist_list = []
+
+        # Internationalisation ?
+        builtins._ = wx.GetTranslation
 
     def parse_network(self):
         """Parse the circuit definition file.
@@ -126,8 +131,10 @@ class Parser:
             elif self.symbol.type == self.scanner.NAME:
                 name = self.names.get_name_string(self.symbol.id)
                 self.scanner.display_error(
+
                     SyntaxError, _("%s is an invalid "
                                    "header") % name, ["]", ""])
+
 
             # SYNTAX error - invalid HEADER name
             else:
@@ -257,7 +264,8 @@ class Parser:
                         self.scanner.display_error(
                             SemanticError, _("Device name '{}' has already "
                                              "been assigned.").format(
-                                             device_name))
+                                                 device_name))
+
                         return True
 
                     device_name_list.append(device_name)
@@ -473,8 +481,8 @@ class Parser:
                 self.scanner.display_error(
 
                     SemanticError, _("The following device(s) do not have "
-                                     "connections defined: "
-                                     "%s") % undefined_connections)
+                                     "connections defined: %s") %
+                    undefined_connections)
 
             return False
 
@@ -501,8 +509,8 @@ class Parser:
             if con_device_name in self.all_cons_list:
                 self.scanner.display_error(
                     ConnectionError, _("Connections for device '{}' already "
-                                       "assigned.").format(
-                                       con_device_name), ["}", "]", ""])
+                                       "assigned.").format(con_device_name),
+                    ["}", "]", ""])
                 return True
 
             if self.con_device is None:
@@ -511,9 +519,10 @@ class Parser:
                     # Prevent showing follow on errors if device does not exist
                     self.does_not_exist_list.append(con_device_name)
                     self.scanner.display_error(
-                        SemanticError, _("Device '{}' does not "
-                                         "exist.").format(
-                                         con_device_name), ["}", "]", ""])
+                        SemanticError, _("Device '{}' does not exist.")
+                        .format(con_device_name),
+                        ["}", "]", ""])
+
                     return True
 
             self.all_cons_list.append(con_device_name)
@@ -534,6 +543,7 @@ class Parser:
             self.scanner.display_error(
                 SyntaxError, _("Expected '{' after device "
                                "name."), ["}", "]", ""])
+
             return True
 
         counter = 0
@@ -591,7 +601,8 @@ class Parser:
                 self.scanner.display_error(
                     SemanticError, _("Device '{}' already assigned for "
                                      "monitoring.").format(
-                                     monitor_device_name))
+                                         monitor_device_name))
+
                 return True
 
             self.all_monitors_list.append(monitor_device_name)
@@ -705,8 +716,9 @@ class Parser:
         # CHECK for start connection
         elif self.symbol.type != self.scanner.NAME:
             self.scanner.display_error(
-                ConnectionError, _("Connection must start with a device "
-                                   "name."))
+                ConnectionError, _("Connection must start with "
+                                   "a device name."))
+
             return True
         start_con = self.devices.get_device(self.symbol.id)
         start_con_name = self.names.get_name_string(self.symbol.id)
@@ -718,6 +730,7 @@ class Parser:
                 self.scanner.display_error(
                     SemanticError, _("Device '{}' does not exist.").format
                                     (start_con_name))
+
                 return True
 
         elif start_con.device_kind == self.devices.D_TYPE:
