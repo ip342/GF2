@@ -7,7 +7,8 @@ DEVICES [
     E = NOR 2;
     F = DTYPE;
     H = XOR;
-    S1, S2, S3, S4 = SWITCH 0;
+    S1, S2 = SWITCH 0;
+    S3, S4 = SWITCH 1;
     CLK = CLOCK 4;
     S = SIGGEN 0000000100011011101;
     R = RC 13;

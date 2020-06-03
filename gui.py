@@ -516,7 +516,7 @@ class Gui(wx.Frame):
 
             for switch in self.switch_id_list:
                 switch_device = self.devices.get_device(switch)
-                if switch_device.outputs[None] == 0:
+                if switch_device.switch_state == 1:
                     self.switch_high_list.append(
                         self.names.get_name_string(switch))
 
