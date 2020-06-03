@@ -192,9 +192,8 @@ class Scanner:
         elif self.current_character == '>':
             self.advance()
             self.display_error(
-                               ArrowError,
-                               _("Unexpected character, '>' must follow '-'"),
-                               stop)
+                ArrowError, _("Unexpected character, '>' must follow '-'"),
+                stop)
             self.error = True
 
         elif self.current_character == '.':
