@@ -1,7 +1,0 @@
-[
-    A = AND 3;
-    B = DTYPE;
-]
-device A {
-    B.QQ -> A.I1;
-}

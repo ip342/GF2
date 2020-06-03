@@ -1,7 +1,0 @@
-[
-    A, H = XOR;
-]
-device A 
-    S1 -> A.I1;
-    S2 -> A.I2;
-}

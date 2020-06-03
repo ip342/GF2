@@ -127,7 +127,7 @@ class Scanner:
             else:
                 self.display_error(
                     CommentError, _("Expected '/' after '/' to "
-                                  "indicate comment"), stop)
+                                    "indicate comment"), stop)
                 self.error = True
 
             self.advance()
@@ -186,13 +186,15 @@ class Scanner:
             else:
                 self.display_error(
                     ArrowError, _("Unexpected character, expected "
-                                "'>' after '-'"), stop)
+                                  "'>' after '-'"), stop)
                 self.error = True
 
         elif self.current_character == '>':
             self.advance()
             self.display_error(
-                ArrowError, _("Unexpected character, '>' must follow '-'"), stop)
+                               ArrowError,
+                               _("Unexpected character, '>' must follow '-'"),
+                               stop)
             self.error = True
 
         elif self.current_character == '.':
@@ -282,20 +284,19 @@ class Scanner:
         if 'test' in sys.argv[0].lower():
             raise error_type
 
-        else:
-            try:
-                self.errors = Error(error_type, error_message, self.current_line,
-                            self.file_as_list[self.current_line],
-                            self.current_character_number)
-        
-                self.error_list.append(self.errors.error_message)
-            # In case of blank lines at end of file being stripped by rstrip method 
-            except IndexError:
-                self.errors = Error(error_type, error_message, self.current_line,
-                            self.file_as_list[-1],
-                            self.current_character_number)
-        
-                self.error_list.append(self.errors.error_message)
+        try:
+            self.errors = Error(error_type, error_message, self.current_line,
+                                self.file_as_list[self.current_line],
+                                self.current_character_number)
+
+            self.error_list.append(self.errors.error_message)
+        # In case of blank lines at end of file being stripped by rstrip method
+        except IndexError:
+            self.errors = Error(error_type, error_message, self.current_line,
+                                self.file_as_list[-1],
+                                self.current_character_number)
+
+            self.error_list.append(self.errors.error_message)
 
         # Comment error special case
         if error_type == CommentError:

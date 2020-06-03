@@ -1,8 +1,0 @@
-[
-    A, B = AND 2;
-    S1, S2 = SWITCH 0;
-]
-device A {
-    S1 -> B.I1;
-    S2 -> A.I2;
-}
