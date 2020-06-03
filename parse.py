@@ -131,8 +131,10 @@ class Parser:
             elif self.symbol.type == self.scanner.NAME:
                 name = self.names.get_name_string(self.symbol.id)
                 self.scanner.display_error(
-                    SyntaxError, _("%s is an invalid header") % name,
-                    ["]", ""])
+
+                    SyntaxError, _("%s is an invalid "
+                                   "header") % name, ["]", ""])
+
 
             # SYNTAX error - invalid HEADER name
             else:
@@ -263,6 +265,7 @@ class Parser:
                             SemanticError, _("Device name '{}' has already "
                                              "been assigned.").format(
                                                  device_name))
+
                         return True
 
                     device_name_list.append(device_name)
@@ -519,6 +522,7 @@ class Parser:
                         SemanticError, _("Device '{}' does not exist.")
                         .format(con_device_name),
                         ["}", "]", ""])
+
                     return True
 
             self.all_cons_list.append(con_device_name)
@@ -537,8 +541,9 @@ class Parser:
 
         if self.symbol.type != self.scanner.OPEN_CURLY:
             self.scanner.display_error(
-                SyntaxError, _("Expected '{' after device name."),
-                ["}", "]", ""])
+                SyntaxError, _("Expected '{' after device "
+                               "name."), ["}", "]", ""])
+
             return True
 
         counter = 0
@@ -597,6 +602,7 @@ class Parser:
                     SemanticError, _("Device '{}' already assigned for "
                                      "monitoring.").format(
                                          monitor_device_name))
+
                 return True
 
             self.all_monitors_list.append(monitor_device_name)
@@ -712,6 +718,7 @@ class Parser:
             self.scanner.display_error(
                 ConnectionError, _("Connection must start with "
                                    "a device name."))
+
             return True
         start_con = self.devices.get_device(self.symbol.id)
         start_con_name = self.names.get_name_string(self.symbol.id)
@@ -721,8 +728,9 @@ class Parser:
                 self.does_not_exist_list.append(start_con_name)
 
                 self.scanner.display_error(
-                    SemanticError, _("Device '{}' does not exist.")
-                    .format(start_con_name))
+                    SemanticError, _("Device '{}' does not exist.").format
+                                    (start_con_name))
+
                 return True
 
         elif start_con.device_kind == self.devices.D_TYPE:
@@ -786,8 +794,8 @@ class Parser:
                 self.does_not_exist_list.append(end_con_name)
 
                 self.scanner.display_error(
-                    SemanticError, _("Device '{}' does not exist.")
-                    .format(end_con_name))
+                    SemanticError, _("Device '{}' does not exist.").format
+                                    (end_con_name))
                 return True
 
         elif end_con != self.con_device:

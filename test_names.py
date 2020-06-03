@@ -70,3 +70,21 @@ def test_query(used_names, new_names, expected_name_id, name_string):
     assert used_names.query(name_string) == expected_name_id
     # Name is absent
     assert new_names.query(name_string) is None
+
+
+def test_lookup_raises_exceptions(used_names):
+    """Test if lookup raises expected exceptions."""
+    with pytest.raises(TypeError):
+        used_names.lookup(1)
+    with pytest.raises(TypeError):
+        used_names.lookup("Chang")
+
+
+@pytest.mark.parametrize("name_string_list, expected_name_id_list", [
+    (["Chang", "Ethan", "Ilakya"], [0, 1, 2])
+])
+def test_lookup(used_names, new_names, expected_name_id_list,
+                name_string_list):
+    """Test if lookup returns the expected name ID."""
+    # Name is present
+    assert used_names.lookup(name_string_list) == expected_name_id_list
