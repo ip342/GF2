@@ -2,7 +2,7 @@
 and clock being monitored #
 DEVICES[
     A,B,C,D = DTYPE;
-	RST, ST = SWITCH 1;
+	RST, ST = SWITCH 0;
 	CKL1 = CLOCK 1;
 ]
 
@@ -34,6 +34,5 @@ CONNECTIONS [
 ]
 
 MONITORS [
-   # Monitor DTYPE outputs and clock #
    A.Q, B.Q, C.Q, D.Q, CKL1;
 ]
