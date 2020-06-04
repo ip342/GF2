@@ -34,6 +34,28 @@ class Parser:
     Public methods
     --------------
     parse_network(self): Parses the circuit definition file.
+
+    parse_section(self, header_ID): Parse a section of the circuit definition
+                                    file enclosed by square brackets, and
+                                    build corresponding part of the circuit.
+
+    parse_DEVICES_section(self): Parse and build the DEVICES section line by
+                                 line.
+
+    parse_CONNECTIONS_section(self): Parse the CONNECTIONS section device by
+                                     device.
+
+    parse_MONITORS_section(self): Parse the MONITORS section.
+
+    parse_Connections_lines(self): Parse a CONNECTION line in a CONNECTION
+                                   subsection.
+
+    list_of_connected_devices(self): Generate a list of devices. Devices
+                                     need to have connections defined in
+                                     the CONNECTIONS section.
+
+    list_of_connected_devices_objects(self): Generate a list of made device
+                                             objects.
     """
 
     def __init__(self, names, devices, network, monitors, scanner):
