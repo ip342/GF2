@@ -1,4 +1,4 @@
-# GF2 - Software - Team 15
+# GF2 - Logic Simulator Program - Team 15
 
 # Table of Contents
 
