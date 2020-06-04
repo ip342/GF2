@@ -1,5 +1,5 @@
-DEVICES [
-    // Complex circuit with all possible device types 
+// Complex circuit with all possible device types
+DEVICES [ 
     A = OR 2;
     B = AND 2;
     C, G = NAND 2;
@@ -52,6 +52,6 @@ CONNECTIONS [
 ]
 
 MONITORS [
-    // Monitor outputs G and H
-    G, H;
+    // Monitor outputs G, H, S and R
+    G, H, S, R;
 ]

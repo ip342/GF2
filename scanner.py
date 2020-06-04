@@ -48,6 +48,20 @@ class Scanner:
     -------------
     get_symbol(self): Translates the next sequence of characters into a symbol
                       and returns the symbol.
+
+    skip_spaces(self): Advances until non space symbol is encountered.
+
+    advance(self): Advances to next character.
+
+    get_name(self): Returns whole word when the current character is a letter.
+
+    get_number(self): Returns whole number when the current character is a
+                        number.
+
+    display_error(self, error_type, error_message='', stop=None):
+                                            Raises the error only in test mode,
+                                            otherwise handles display of errors
+                                            and error recovery.
     """
 
     def __init__(self, path, names):
@@ -289,6 +303,7 @@ class Scanner:
                                 self.current_character_number)
 
             self.error_list.append(self.errors.error_message)
+
         # In case of blank lines at end of file being stripped by rstrip method
         except IndexError:
             self.errors = Error(error_type, error_message, self.current_line,
