@@ -75,20 +75,20 @@ into the console.
 
 #### Windows
 
-- In your Python terminal, type either pip install wxpython or conda install wxpython, depending on whether you are using a pip or conda  environment.
-- Download an unofficial WIndows binary of PyOpenGL from here. You need to make sure you download the right version, for example PyOpenGL‑3.1.5‑cp38‑cp38‑win_amd64.whl  for 64-bit Python 3.8.  If you are not sure which version you need, run python and check the first line of output, which contains version and architecture information.
-- Type pip install PyOpenGL-////.whl (substitute //// for the version you downloaded). Make sure you first navigate to the folder containing the downloaded .whl file.
-- Check you have pytest installed if you wish to run unit tests: if not, install using pip or conda.
+- In your Python terminal, type either **pip install wxpython** or **conda install wxpython**, depending on whether you are using a pip or conda  environment.
+- Download an unofficial WIndows binary of PyOpenGL from here. You need to make sure you download the right version, for example **PyOpenGL‑3.1.5‑cp38‑cp38‑win_amd64.whl**  for 64-bit Python 3.8.  If you are not sure which version you need, run python and check the first line of output, which contains version and architecture information.
+- Type **pip install PyOpenGL-////.whl** (substitute //// for the version you downloaded). Make sure you first navigate to the folder containing the downloaded .whl file.
+- Check you have **pytest** installed if you wish to run unit tests: if not, install using pip or conda.
 
 #### MacOS
 
-- In your Python terminal, type either pip3 install wxpython or conda install wxpython, depending on whether you are using a pip or conda  environment.
-- Next, type  pip3/conda install PyOpenGL.
-- For Anaconda distributions only, type conda install python.app. To allow Anaconda to access graphics, scripts must be run using the command pythonw filename.py rather than the usual python3 filename.py.
-- Check you have pytest installed if you wish to run unit tests: if not, install using pip or conda.
+- In your Python terminal, type either **pip3 install wxpython** or **conda install wxpython**, depending on whether you are using a pip or conda  environment.
+- Next, type  **pip3/conda install PyOpenGL**.
+- For Anaconda distributions only, type **conda install python.app**. To allow Anaconda to access graphics, scripts must be run using the command **pythonw filename.py** rather than the usual **python3 filename.py**.
+- Check you have **pytest** installed if you wish to run unit tests: if not, install using pip or conda.
 
 #### Linux
-For Ubuntu 18.04, you will find everything you need in the standard Python packages. Anaconda is not required. Specific packages to install include python3-pycodestyle, python3-pydocstyle, python3-pytest,  python3-opengl, python3-wxgtk4.0 and freeglut3-dev.
+- For Ubuntu 18.04, you will find everything you need in the standard Python packages. Anaconda is not required. Specific packages to install include **python3-pycodestyle, python3-pydocstyle, python3-pytest,  python3-opengl, python3-wxgtk4.0 and freeglut3-dev**.
 
 
 
