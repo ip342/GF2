@@ -1,8 +1,0 @@
-DEVICES [
-]
-
-CONNECTIONS [
-]
-
-MONITORS [
-]
