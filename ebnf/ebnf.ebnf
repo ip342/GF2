@@ -8,7 +8,9 @@ device = name , {"," , name} , "=" , devices_type , ";";
 device_connections = "device" , name , "{" , connection , {connection} , "}";
 connection = start_con , "->" , end_con , ";"; 
 
-devices_type = ( "DTYPE" | "XOR" | single_gate | clock | switch );
+devices_type = ( "DTYPE" | "XOR" | siggen | rc | single_gate | clock | switch );
+siggen = "SIGGEN" , ("0" | "1") , {"0" | "1"}; 
+rc = "RC" , digit , {digit};
 single_gate = ("NAND" | "NOR" | "AND" | "OR") , digit , [digit];
 clock = "CLOCK" , digit;
 switch = "SWITCH" , ("0" | "1");
