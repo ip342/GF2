@@ -2,17 +2,17 @@
 
 # Table of Contents
 
-[Getting Started](https://github.com/ethantattersall/GF2#getting-started)
+* [Getting Started](https://github.com/ethantattersall/GF2#getting-started)
 
-[Running the Program](https://github.com/ethantattersall/GF2#running-the-program)
+* [Running the Program](https://github.com/ethantattersall/GF2#running-the-program)
 
-[Language Support](https://github.com/ethantattersall/GF2#language-support)
+* [Language Support](https://github.com/ethantattersall/GF2#language-support)
 
-[User Guide](https://github.com/ethantattersall/GF2#user-guide)
+* [User Guide](https://github.com/ethantattersall/GF2#user-guide)
 
-[Unit Test](https://github.com/ethantattersall/GF2#unit-test)
+* [Unit Test](https://github.com/ethantattersall/GF2#unit-test)
 
-[Installing wxPython and PyOpenGL](https://github.com/ethantattersall/GF2#installing-wxpython-and-opengl)
+* [Installing wxPython and PyOpenGL](https://github.com/ethantattersall/GF2#installing-wxpython-and-opengl)
 
 ## Getting Started
 
@@ -20,7 +20,7 @@ To install, first clone the repository by running the following from your termin
 
 ```
 git clone https://github.com/ethantattersall/GF2/
-cd GF2/
+cd GF2/final
 ```
 
 You will also need to install wxPython and PyOpenGL, which can be done through the instructions found [below](https://github.com/ethantattersall/GF2#installing-wxpython-and-opengl).
@@ -59,7 +59,7 @@ Then launch the program as usual.
 
 ## User Guide
 
-INSERT USER GUIDE 
+![here](https://github.com/ethantattersall/GF2/blob/master/final/UserGuide.png)
 
 ## Unit Test
 
