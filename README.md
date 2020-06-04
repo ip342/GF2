@@ -59,7 +59,7 @@ Then launch the program as usual.
 
 ## User Guide
 
-INSERT USER GUIDE 
+![here](https://github.com/ethantattersall/GF2/blob/master/final/UserGuide.png)
 
 ## Unit Test
 
