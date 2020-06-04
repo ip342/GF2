@@ -3,14 +3,17 @@ errors occurin the definition file to allow them to understand where the error
 is and why it occurs. The error type is returned, along with the location and a
 short message describing the error.
 
-Classes
+Classes:
 -------
-Error - Base error class function which prints error type, the line which the
+Error - base error class function which prints error type, the line which the
 error occurs at, a carat pointing to the character at which the error occurs,
 and a short message describing the error.
 
 SemanticError
 CommentError
+ArrowError
+NetworkError
+ConnectionError
 """
 
 import sys
@@ -19,6 +22,23 @@ import sys
 
 
 class Error(Exception):
+    """ Base error class function which prints error type, the line which the
+    error occurs at, a carat pointing to the character at which the error occurs,
+    and a short message describing the error.
+
+    Parameters
+    ----------
+    error_type: type of error.
+    message: messsage describing the error.
+    line_number: file line number which error occured on.
+    line: full printed line which error occured on.
+    character: character number which error occured on.
+
+    Public methods
+    -------------
+    No public methods.
+    """
+
     def __init__(self, error_type, message, line_number, line, character):
 
         # Call the base class constructor with the parameters it needs
@@ -52,20 +72,25 @@ class Error(Exception):
 
 # Specific error classes for accurate pytests
 class SemanticError(Exception):
+    """ Semantic error class """
     pass
 
 
 class CommentError(Exception):
+    """ Comment error class """
     pass
 
 
 class ArrowError(Exception):
+    """ Arrow error class """
     pass
 
 
 class NetworkError(Exception):
+    """ Network error class """
     pass
 
 
 class ConnectionError(Exception):
+    """ Connection error class """
     pass

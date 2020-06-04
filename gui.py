@@ -5,6 +5,8 @@ or adjust the network properties.
 Classes:
 --------
 MyGLCanvas - handles all canvas drawing operations.
+PopUpFrame - configures event error/success message pop up windows.
+DefinitionErrors - configures definition file error messages window.
 Gui - configures the main window and all the widgets.
 """
 import wx
@@ -32,6 +34,9 @@ class MyGLCanvas(wxcanvas.GLCanvas):
     parent: parent window.
     devices: instance of the devices.Devices() class.
     monitors: instance of the monitors.Monitors() class.
+    names: instance of the names.Names() class.
+    start_up:   
+
     Public methods
     --------------
     init_gl(self): Configures the OpenGL context.
@@ -41,6 +46,11 @@ class MyGLCanvas(wxcanvas.GLCanvas):
     on_mouse(self, event): Handles mouse events.
     render_text(self, text, x_pos, y_pos): Handles text drawing
                                            operations.
+    on_keydown(self, event): Handles left and right keydown
+                                            events.
+    move_right(self): Handles moving canvas to the right in
+                                        continuous mode.
+    zero_canvas(self): Handles resetting canvas to x=0.
     """
 
     def __init__(self, parent, devices, monitors, names, start_up):
@@ -347,7 +357,18 @@ class MyGLCanvas(wxcanvas.GLCanvas):
 
 
 class PopUpFrame(wx.Frame):
-    """Class used for pop up window with an error/success messages."""
+    """Class used for pop up window with an error/success messages.
+
+    Parameters
+    ----------
+    parent: parent window.
+    title: title of frame.
+
+    Public methods
+    --------------
+    on_close_button(self, event): Closes window on event when the user clicks
+                            the close button.
+    """
 
     def __init__(self, parent, title, text):
         """Initialise variables."""
@@ -378,7 +399,20 @@ class PopUpFrame(wx.Frame):
 
 
 class DefinitionErrors(wx.Frame):
-    """Class used for pop up window with definition file error messages."""
+    """Class used for pop up window with definition file error messages.
+
+    Parameters
+    ----------
+    parent: parent window.
+    title: title of frame.
+    text: definition file errors.
+    tabs: tab displaying errors numbers currently displayed.
+    overview:   
+
+    Public methods
+    --------------
+    on_close_button(self, event): Closes window on event when the user clicks
+                            the close button."""
 
     def __init__(self, parent, title, text, tabs, overview):
         """Initialise variables."""
@@ -458,14 +492,63 @@ class Gui(wx.Frame):
     Parameters
     ----------
     title: title of the window.
+    path: path to the circuit definition file.
+    names: instance of the names.Names() class.
+    devices: instance of the devices.Devices() class.
+    network: instance of the network.Network() class.
+    monitors: instance of the monitors.Monitors() class.
+    filename: name of circuit definition file. 
+    startup:   
+
     Public methods
     --------------
+    update(self, event): Handle the event when the timer is running.
     on_menu(self, event): Event handler for the file menu.
-    on_spin(self, event): Event handler for when the user changes the spin
-                           control value.
-    on_run_button(self, event): Event handler for when the user clicks the run
-                                button.
-    on_text_box(self, event): Event handler for when the user enters text.
+    on_monitor_checkbox(self, event): Handle the event when the user checks a
+                            'Signals to Monitor' checkbox.
+    on_all(self, event): Handle the event when the user checks all signals to
+                            monitor.
+    on_de_all(self, event): Handle the event when the user deselects all
+                            signals to monitor.
+    on_switch_checkbox(self, event): Handle the event when the user checks a
+                            'Switch' checkbox.
+    on_spin_ctrl_1(self, event): Handle the event when the user changes the
+                             cycles value.
+    on_choice_1(self, event): Handle the event when the user changes the
+                             switch selection.
+    on_choice_2(self, event): Handle the event when the user changes the switch
+                            selection.
+    on_button_1(self, event): Handle the event when the user clicks button 1
+                              (Continue).
+    on_button_2(self, event): Handle the event when the user clicks button 2
+                              (Run).
+    on_button_3(self, event): Handle the event when the user clicks button 3
+                               (Set).
+    on_load_button(self, event): Handle the event when the user clicks load
+                               button.
+    on_reset_button(self, event): Handle the event when the user clicks reset
+                               button.
+    on_startstop_button(self, event): Handle the event when the user clicks the
+                               stop button.
+    on_speed_slider(self, event): Handle the event when the user changes the
+                               speed slider.
+
+    read_name(self, name_string): Returns the name ID of the current string if
+                        valid. Returns None if the current string is not a
+                        valid name string.
+    read_signal_name(self, signal_name): Returns the device and port IDs of
+                    the current signal name. Returns None if either is invalid.
+    switch_command(self): Sets the specified switch to the specified signal
+                        level.
+    monitor_command(self): Sets the specified monitor.
+    zap_command(self): Removes the specified monitor.
+    run_network(self, cycles): Runs the network for the specified number of
+                        simulation cycles. Returns True if successful.
+    run_command(self): Runs the simulation from scratch.
+    continue_command(self): Continues a previously run simulation.
+    continuous_command(self): Runs continuous trace mode.
+    path_leaf(self, path): Gets the filename from a path.
+    startup_load(self): Handles the loading of a definition file at startup.
     """
 
     def __init__(self, title, path, names, devices, network,
