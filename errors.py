@@ -18,12 +18,10 @@ ConnectionError
 
 import sys
 
-# Main error class
-
 
 class Error(Exception):
     """ Base error class function which prints error type, the line which the
-    error occurs at, a carat pointing to the character at which the error occurs,
+    error occurs, a carat pointing to the character at which the error occurs
     and a short message describing the error.
 
     Parameters
@@ -67,7 +65,7 @@ class Error(Exception):
                               + _(', Character ') + str(character - 1) + '\n'
                               + line + '\n' + (character - 2)*' ' + '^' + '\n'
                               + error_class + ': ' + str(message) + '\n\n' +
-                              '*' * 76) 
+                              '*' * 76)
 
 
 # Specific error classes for accurate pytests
