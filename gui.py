@@ -35,7 +35,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
     devices: instance of the devices.Devices() class.
     monitors: instance of the monitors.Monitors() class.
     names: instance of the names.Names() class.
-    start_up:   
+    start_up: True when no file loaded.
 
     Public methods
     --------------
@@ -407,7 +407,7 @@ class DefinitionErrors(wx.Frame):
     title: title of frame.
     text: definition file errors.
     tabs: tab displaying errors numbers currently displayed.
-    overview:   
+    overview: message containing total errors.
 
     Public methods
     --------------
@@ -497,8 +497,8 @@ class Gui(wx.Frame):
     devices: instance of the devices.Devices() class.
     network: instance of the network.Network() class.
     monitors: instance of the monitors.Monitors() class.
-    filename: name of circuit definition file. 
-    startup:   
+    filename: name of circuit definition file.
+    startup: True when no file loaded.
 
     Public methods
     --------------
