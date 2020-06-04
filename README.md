@@ -20,7 +20,7 @@ To install, first clone the repository by running the following from your termin
 
 ```
 git clone https://github.com/ethantattersall/GF2/
-cd GF2/
+cd GF2/final
 ```
 
 You will also need to install wxPython and PyOpenGL, which can be done through the instructions found [below](https://github.com/ethantattersall/GF2#installing-wxpython-and-opengl).
